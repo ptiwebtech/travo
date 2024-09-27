@@ -127,21 +127,34 @@ export default class OnboardIndexController extends Controller {
 
         return this.fetch
             .post('onboard/create-account', input)
-            .then(({ status, skipVerification, token, session }) => {
-                if (status === 'success') {
-                    if (skipVerification === true && token) {
-                        // only manually authenticate if skip verification
-                        this.session.isOnboarding().manuallyAuthenticate(token);
+            .then((response) => {
+                try {
+                    // Ensure the response is in JSON format
+                    //const data = JSON.parse(response);
+                    const data = response;
+                    // Destructure the necessary data
+                    const { status, skipVerification, token, session } = data;
 
-                        return this.router.transitionTo('console').then(() => {
-                            this.notifications.success('Welcome to Fleetbase!');
-                        });
+                    if (status === 'success') {
+                        if (skipVerification === true && token) {
+                            // Manually authenticate if skip verification is true
+                            this.session.isOnboarding().manuallyAuthenticate(token);
+
+                            return this.router.transitionTo('console').then(() => {
+                                this.notifications.success('Welcome to Fleetbase!');
+                            });
+                        }
+
+                        // Redirect to email verification if no skip verification
+                        return this.router.transitionTo('onboard.verify-email', { queryParams: { hello: session } });
                     }
-
-                    return this.router.transitionTo('onboard.verify-email', { queryParams: { hello: session } });
+                } catch (e) {
+                    console.error('Response is not valid JSON:', response);
+                    throw new Error('Invalid JSON response');
                 }
             })
             .catch((error) => {
+                console.error('API error:', error);
                 this.notifications.serverError(error);
             })
             .finally(() => {

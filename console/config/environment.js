@@ -37,7 +37,7 @@ module.exports = function (environment) {
         socket: {
             path: getenv('SOCKETCLUSTER_PATH', '/socketcluster/'),
             hostname: getenv('SOCKETCLUSTER_HOST'),
-            secure: toBoolean(getenv('SOCKETCLUSTER_SECURE', false)),
+            secure: toBoolean(getenv('SOCKETCLUSTER_SECURE', true)),
             port: getenv('SOCKETCLUSTER_PORT', 38000),
         },
 

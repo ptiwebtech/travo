@@ -2,24 +2,19 @@ services:
   cache:
     image: redis:4-alpine
 
-  database:
-    image: mysql:8.0-oracle
-    ports:
-      - "3306:3306"
-    volumes:
-      - "./docker/database/:/docker-entrypoint-initdb.d/"
-      - "./docker/database/mysql:/var/lib/mysql"
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: "fleetbase"
-
   socket:
-    image: socketcluster/socketcluster:v17.4.0
+    image: socketcluster/socketcluster:v19.1.2
     ports:
       - "38000:8000"
     environment:
       SOCKETCLUSTER_WORKERS: 10
       SOCKETCLUSTER_BROKERS: 10
+      SOCKETCLUSTER_PORT: 8000
+      SOCKETCLUSTER_PATH: /socketcluster/
+      SOCKETCLUSTER_SECURE: true
+      SOCKETCLUSTER_KEY_FILE: /etc/ssl/2024/travo.com.key
+      SOCKETCLUSTER_CERT_FILE: /etc/ssl/2024/travo_ng.crt
+      SOCKETCLUSTER_CA_FILE: /etc/ssl/2024/travo_ng.ca-bundle
 
   queue:
     build:
@@ -27,9 +22,9 @@ services:
       dockerfile: docker/Dockerfile
       target: events-dev
       args:
-        ENVIRONMENT: development
+        ENVIRONMENT: production
     environment:
-      DATABASE_URL: "mysql://root@database/fleetbase"
+      DATABASE_URL: "mysql://fltnop@206.189.123.95/travo_production"
       QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       CACHE_PATH: /fleetbase/api/storage/framework/cache
@@ -41,25 +36,25 @@ services:
       context: .
       dockerfile: console/Dockerfile.server-build
       args:
-        ENVIRONMENT: development
+        ENVIRONMENT: production
     ports:
       - "4200:4200"
     volumes:
       - console-build:/console
 
   application:
+    container_name: fleetbase-application-1
     build:
       context: .
       dockerfile: docker/Dockerfile
       target: app-dev
       args:
-        ENVIRONMENT: development
+        ENVIRONMENT: production
         GITHUB_AUTH_KEY: ${GITHUB_AUTH_KEY}
     volumes:
       - console-build:/fleetbase/console
     environment:
-      ENVIRONMENT: development
-      DATABASE_URL: "mysql://root@database/fleetbase"
+      ENVIRONMENT: production
       QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       CACHE_PATH: /fleetbase/api/storage/framework/cache
@@ -77,7 +72,6 @@ services:
       REGISTRY_PREINSTALLED_EXTENSIONS: 'true'
       OSRM_HOST: https://router.project-osrm.org
     depends_on:
-      - database
       - cache
       - queue
 

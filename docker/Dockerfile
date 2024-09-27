@@ -28,7 +28,7 @@ RUN install-php-extensions \
 # Update PHP configurations
 RUN sed -e 's/^expose_php.*/expose_php = Off/' "$PHP_INI_DIR/php.ini-production" > "$PHP_INI_DIR/php.ini" \
   && sed -i -e 's/^upload_max_filesize.*/upload_max_filesize = 600M/' -e 's/^post_max_size.*/post_max_size = 0/' \
-  -e 's/^memory_limit.*/memory_limit = 600M/' "$PHP_INI_DIR/php.ini"
+  -e 's/^memory_limit.*/memory_limit = 6000M/' "$PHP_INI_DIR/php.ini"
 
 # Install global node modules
 RUN npm install -g chokidar pnpm ember-cli npm-cli-login
@@ -130,7 +130,7 @@ CMD ["php", "artisan", "queue:work"]
 FROM base as app-dev
 ENTRYPOINT ["docker-php-entrypoint"]
 # Add --watch flag later
-CMD ["sh", "-c", "php artisan octane:frankenphp --workers=6 --max-requests=250 --port=8000 --host=0.0.0.0 --caddyfile $CADDYFILE_PATH"] 
+CMD ["sh", "-c", "php artisan octane:frankenphp --workers=6 --max-requests=250 --port=8000 --host=0.0.0.0 --caddyfile $CADDYFILE_PATH"]
 
 # Application stage
 FROM base as app

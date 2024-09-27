@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "socketcluster-client": "^19.2.2"
+  }
+}
