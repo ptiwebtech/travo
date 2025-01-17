@@ -126,7 +126,7 @@ export default class OnboardIndexController extends Controller {
         this.isLoading = true;
 
         return this.fetch
-            .post('onboard/create-account', input)
+            .post('fltonboard/create-account', input)
             .then((response) => {
                 try {
                     // Ensure the response is in JSON format

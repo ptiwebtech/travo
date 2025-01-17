@@ -279,7 +279,7 @@ console:
         title: Organizations
         owner-name-column: Owner
         owner-phone-column: Owner Phone
-        owner-email-column: Owner Phone
+        owner-email-column: Email
         users-count-column: Users
         phone-column: Phone
         email-column: Email

@@ -34,3 +34,4 @@ packages/projectargus-engine
 packages/solid
 solid
 verdaccio
+node_modules

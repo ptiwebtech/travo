@@ -4,6 +4,7 @@ services:
 
   socket:
     image: socketcluster/socketcluster:v19.1.2
+    container_name: fleetbase-db
     ports:
       - "38000:8000"
     environment:
