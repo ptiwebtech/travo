@@ -36,3 +36,4 @@ solid
 verdaccio
 node_modules
 console/console.tar.gz
+backup.sql
