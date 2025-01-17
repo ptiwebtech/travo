@@ -1,3 +1,77 @@
+<div class="px-10 padd_spa">
+<div class="grid">
+    <div class="flex flex-col">
+        <div class="mt-4">
+            <div class="grid grid-cols-2 lg:grid-cols-12 gap-4 sendparcel_all_button">
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=sendparcel">SEND PARCEL</a></h1>
+                    <p>Ship a Parcel or Package Quickly and Securely</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=haulage">HAULAGE</a></h1>
+                    <p>Reserve a Van or Truck for Heavy-Duty Transport</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=driver">DRIVER </a></h1>
+                    <p>Book a Car with a Driver for Convenient Travel</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=travel">TRAVEL</a></h1>
+                    <p>Book Your Bus or Train Ticket for Easy Commutes</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=storefront">STORE FRONT</a></h1>
+                    <p>Order Food or Home Essentials Delivered to Your Door</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=exportimport">EXPORT/IMPORT</a></h1>
+                    <p>Ship a Container for Global Trade and Logistics</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="grid grid-cols-2 lg:grid-cols-12 gap-4 sendparcel_all_button">
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=utilities">UTILITIES</a></h1>
+                    <p>LPG, Water, and Diesel Subscription Services Available</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=foodcatering">FOOD & CATERING</a></h1>
+                    <p>Order Food and Catering Services for Delivery</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=breakdownsresponse">BREAKDOWN RESPONSE </a></h1>
+                    <p>Fast Assistance for Car Breakdowns and Emergencies</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=rubbishcollection">RUBBISH COLLECTION</a></h1>
+                    <p>Skip Hire and Waste Collection Made Easy</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=airportpickup">AIRPORT PICKUP</a></h1>
+                    <p>Meet-and-Greet Airport Pickup for Your Arrival</p>
+                </div>
+            
+                <div class="widget-count  lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=emergencyservice">EMERGENCY SERVICES</a></h1>
+                    <p>Request Police, Fire, or Medical Assistance Instantly</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
 <div class="fleetbase-dashboard-grid flex items-center justify-between mb-4 mt-6 px-14">
     <div class="left-section">
         <h1 class="text-lg font-bold">{{this.dashboard.currentDashboard.name}}</h1>
@@ -97,3 +171,43 @@
         </EmberWormhole>
     {{/if}}
 </div>
+<style type="text/css">
+    .sendparcel_all_button h1{font-size: 25px;}
+    .sendparcel_all_button p {
+    font-size: 13px;
+}
+.sendparcel_all_button h1 {
+    font-size: 15px;
+    border-bottom: solid 1px #374151;
+}
+.sendparcel_all_button p {
+    font-size: 13px;
+    padding-top: 14px;
+    padding-left: 5px;
+    padding-right: 0px;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+.padd_spa {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+.padd_spa .grid-cols-2 {
+    grid-template-columns: repeat(1,minmax(0,1fr));
+    max-width: 90%;
+    margin: 0px auto;
+}
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+.sendparcel_all_button h1 {
+    font-size: 10px;
+}
+}
+
+@media (min-width: 1200px) and (max-width: 1300px) {
+.sendparcel_all_button h1 {
+    font-size: 13px;
+}
+}
+</style>

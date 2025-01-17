@@ -5,7 +5,9 @@
     <div class="container mx-auto h-screen" {{increase-height-by 800}}>
         <div class="max-w-3xl my-10 mx-auto space-y-6">
             <div class="grid grid-cols-3 xs:grid-cols-1 gap-4">
-                <StatWidget @title={{t "console.admin.index.total-users"}} @value={{@model.total_users}} />
+                <a href="/admin/organizations/" style="cursor:pointer;">
+                  <StatWidget @title={{t "console.admin.index.total-users"}} @value={{@model.total_users}} />
+                </a>
                 <StatWidget @title={{t "console.admin.index.total-organizations"}} @value={{@model.total_organizations}} />
                 <StatWidget @title={{t "console.admin.index.total-transactions"}} @value={{@model.total_transactions}} />
             </div>

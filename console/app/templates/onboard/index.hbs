@@ -1,6 +1,7 @@
 <div class="bg-white dark:bg-gray-800 py-5 px-4 shadow rounded-lg w-full">
     <div class="mb-4">
-        <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 h-14 mx-auto" />
+        <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" />
+         <h4 class="mt-6 mb-3 text-2 font-extrabold leading-9 text-center text-gray-900 dark:text-gray-100">Send Anything, Anywhere. Guaranteed.</h4>
         <h2 class="text-center text-lg font-extrabold text-gray-900 dark:text-white truncate">
             {{t "onboard.index.title"}}
         </h2>
@@ -30,6 +31,7 @@
         <InputGroup @name={{t "onboard.index.confirm-password"}} @value={{this.password_confirmation}} @type="password" @helpText={{t "onboard.index.confirm-password-help-text"}} @inputClass="input-lg" />
 
         <div class="flex items-center justify-end mt-5">
+            <p class="already_accout" style="color:#fff; padding-right: 71px;font-size: 14px;"><a style="cursor: pointer !important;" href="https://travo.ng/auth">Aready have an account? Sign in</a></p>
             <Button @icon="check" @iconPrefix="fas" @type="primary" @size="lg" @text={{t "onboard.index.continue-button-text"}} @isLoading={{this.isLoading}} @disabled={{this.readyToSubmit}} @onClick={{this.startOnboard}} />
         </div>
     </form>

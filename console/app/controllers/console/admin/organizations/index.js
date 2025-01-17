@@ -110,19 +110,19 @@ export default class ConsoleAdminOrganizationsController extends Controller {
      */
     columns = [
         {
+            label: this.intl.t('console.admin.organizations.index.owner-name-column'),
+            valuePath: 'owner.name',
+            width: '200px',
+            resizable: true,
+            sortable: true,
+        },
+        {
             label: this.intl.t('common.name'),
             valuePath: 'name',
             resizable: true,
             sortable: true,
             filterable: true,
             filterComponent: 'filter/string',
-        },
-        {
-            label: this.intl.t('console.admin.organizations.index.owner-name-column'),
-            valuePath: 'owner.name',
-            width: '200px',
-            resizable: true,
-            sortable: true,
         },
         {
             label: this.intl.t('console.admin.organizations.index.owner-email-column'),
