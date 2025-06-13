@@ -104,17 +104,36 @@ export default class OnboardIndexController extends Controller {
      * @return {Promise}
      * @memberof OnboardIndexController
      */
+    @tracked changeset;
+    @tracked errorMessage = null;
+    constructor() {
+        super(...arguments);
+        const input = {
+            name: '',
+            email: '',
+            phone: '',
+            organization_name: '',
+            password: '',
+            password_confirmation: ''
+        };
+        this.changeset = new Changeset(input, lookupValidator(OnboardValidations), OnboardValidations);
+    }
+
     @action async startOnboard(event) {
         event.preventDefault();
-
+        this.errorMessage = null;
         // eslint-disable-next-line ember/no-get
-        const input = getProperties(this, 'name', 'email', 'phone', 'organization_name', 'password', 'password_confirmation');
-        const changeset = new Changeset(input, lookupValidator(OnboardValidations), OnboardValidations);
+        //const input = getProperties(this, 'name', 'email', 'phone', 'organization_name', 'password', 'password_confirmation');
+        //const changeset = new Changeset(input, lookupValidator(OnboardValidations), OnboardValidations);
+        const input = this.changeset.changes.reduce((acc, { key, value }) => {
+            acc[key] = value;
+            return acc;
+          }, {});
+        console.log(input);
+        await this.changeset.validate();
 
-        await changeset.validate();
-
-        if (changeset.get('isInvalid')) {
-            const errorMessage = changeset.errors.firstObject.validation.firstObject;
+        if (this.changeset.get('isInvalid')) {
+            const errorMessage = this.changeset.errors.firstObject.validation.firstObject;
 
             this.notifications.error(errorMessage);
             return;
@@ -155,7 +174,23 @@ export default class OnboardIndexController extends Controller {
             })
             .catch((error) => {
                 console.error('API error:', error);
-                this.notifications.serverError(error);
+    
+                let errorMessage = 'An unexpected error occurred.';
+    
+                // Log the full error for debugging
+                console.log('Full error object:', error);
+    
+                if (error?.response?.errors) {
+                    const errors = error.response.errors;
+                    errorMessage = Object.values(errors).flat().join(' ');
+                } else if (error?.response?.message) {
+                    errorMessage = error.response.message;
+                } else if (error?.message) {
+                    errorMessage = error.message;
+                }
+    
+                this.errorMessage = errorMessage;
+                this.notifications.serverError(errorMessage);
             })
             .finally(() => {
                 this.isLoading = false;

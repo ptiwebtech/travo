@@ -1,0 +1,111 @@
+<header class="next-view-header" ...attributes style="padding:0 24px 0 0px !important; margin-left: 0px;">
+    <div class="next-view-header-left">
+        <style type="text/css">
+            a.navbar-logo{width: 150px !important; height: auto !important;}
+           header.next-view-header span.beta {
+                font-size: 10px;
+                width: 70% !important;
+                height: auto !important;
+                display: block;
+                margin-left: auto;
+                text-align: center;
+                margin-top: -9px;
+                z-index: 9999;
+                cursor: pointer;
+                position: relative;
+            }
+            header.next-view-header span.beta p {
+                z-index: 1;
+                position: absolute;
+                background: #fff;
+                color: #000;
+                width: 280px;
+                padding: 5px;
+                display: none;
+                font-size: 12px;
+            }
+            header.next-view-header span.beta:hover p {
+                display: block !important;
+            }
+            a.navbar-logo {
+                opacity: 1 !important;
+            }
+            .next-view-header .next-view-header-left {
+                z-index: 999;
+            }
+        </style>
+        <LinkToExternal @route="console" class="logo navbar-logo mr-4">
+            <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" style="width: 70% !important; height: auto !important;" />
+            <div class="beta_text_hover">
+                <span class="beta text-xs">BETA 
+                    <p> Disclaimer: This is a beta version of our website, still undergoing final testing and refinement. We welcome your feedback, ideas, and investment interest to help shape our growth. Please note that some features may be incomplete or subject to change.
+                    </p>
+               </span>
+            </div>
+        </LinkToExternal>
+        {{#if @showSidebarToggle}}
+            <Layout::Header::SidebarToggle class="mr-2" @onToggle={{@onSidebarToggle}} @disabled={{not @sidebarToggleEnabled}} />
+        {{/if}}
+        {{#unless (media "isMobile")}}
+            <div role="menu" class="next-catalog-menu-items flex mr-4">
+                {{#each this.menuItems as |menuItem|}}
+                    <LinkToExternal
+                        @route={{menuItem.route}}
+                        id={{concat (dasherize menuItem.route) "-header-button"}}
+                        class="next-view-header-item truncate {{menuItem.class}}"
+                        role="menuitem"
+                    >
+                        <div class="w-6">
+                            {{#if menuItem.iconComponent}}
+                                {{component menuItem.iconComponent options=menuItem.iconComponentOptions}}
+                            {{else}}
+                                <FaIcon @icon={{menuItem.icon}} @prefix={{menuItem.iconPrefix}} @size="sm" />
+                            {{/if}}
+                        </div>
+                        <div>
+                            <span>{{menuItem.title}}</span>
+                        </div>
+                    </LinkToExternal>
+                {{/each}}
+            </div>
+        {{/unless}}
+        <div id="view-header-left-content-a"></div>
+        {{yield}}
+        <div id="view-header-left-content-b"></div>
+    </div>
+    <div class="next-view-header-right">
+        <Layout::Header::LoadingIndicator />
+        <div id="view-header-actions"></div>
+        <div class="flex items-center justify-between">
+            <div class="flex-1 flex items-center pr-1 space-x-1">
+                <LocaleSelectorTray />
+                <NotificationTray @registerAPI={{@registerNotificationTrayApi}} @onClickNotification={{@onClickNotification}} />
+                <ChatTray />
+            </div>
+            <div class="flex-1 flex items-center pr-1">
+                <Layout::Header::Dropdown @items={{this.organizationMenuItems}} @onAction={{@onAction}} class="flex-shrink-0" @triggerClass="flex-shrink-0" as |dd|>
+                    <div class="next-org-button-trigger flex-shrink-0 {{if dd.isOpen 'is-open'}}">
+                        <div class="org-badge">
+                            {{first-char this.currentUser.companyName}}
+                        </div>
+                        <div class="text-sm w-10 md:w-14 lg:w-10/12 truncate flex-shrink-0 text-gray-800 dark:text-white">{{this.currentUser.companyName}}</div>
+                    </div>
+                </Layout::Header::Dropdown>
+            </div>
+            <div class="flex-1 flex items-center justify-end">
+                <Layout::Header::Dropdown @items={{this.userMenuItems}} @onAction={{@onAction}} class="flex-shrink-0" @triggerClass="flex-shrink-0" as |dd|>
+                    <div class="next-user-button-trigger flex-shrink-0 {{if dd.isOpen 'is-open'}}">
+                        <Image
+                            class="rounded-full h-5 w-5 shadow-sm flex-shrink-0"
+                            height="20"
+                            width="20"
+                            src={{this.currentUser.avatarUrl}}
+                            @fallbackSrc="https://s3.ap-southeast-1.amazonaws.com/flb-assets/static/no-avatar.png"
+                            alt={{this.currentUser.name}}
+                        />
+                    </div>
+                </Layout::Header::Dropdown>
+            </div>
+        </div>
+    </div>
+</header>

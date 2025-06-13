@@ -52,6 +52,13 @@ export default class ApplicationRoute extends Route {
         if (isAuthenticated && shift) {
             return this.router.transitionTo(pathToRoute(shift));
         }
+
+        // ✅ NEW LOGIC: If authenticated, go to console.home; if not, allow public-home
+        // if (isAuthenticated) {
+        //     return this.router.transitionTo('console.home');
+        // } else {
+        //     return this.router.transitionTo('public-home');
+        // }
     }
 
     /**

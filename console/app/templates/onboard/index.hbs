@@ -1,7 +1,7 @@
 <div class="bg-white dark:bg-gray-800 py-5 px-4 shadow rounded-lg w-full">
     <div class="mb-4">
         <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" />
-         <h4 class="mt-6 mb-3 text-2 font-extrabold leading-9 text-center text-gray-900 dark:text-gray-100">Send Anything, Anywhere. Guaranteed.</h4>
+         <h4 class="mt-6 mb-3 text-2 leading-9 text-center text-gray-900 dark:text-gray-100">Send Anything, Anywhere. Guaranteed.</h4>
         <h2 class="text-center text-lg font-extrabold text-gray-900 dark:text-white truncate">
             {{t "onboard.index.title"}}
         </h2>
@@ -17,18 +17,29 @@
         </p>
     </div>
 
+    {{#if this.errorMessage}}
+    <div class="flex px-3 py-2 mb-4 rounded-md shadow-sm bg-red-200">
+        <div>
+            <FaIcon @icon="exclamation-triangle" @size="lg" class="text-red-900 mr-4" />
+        </div>
+        <p class="flex-1 text-sm text-red-900 dark:text-red-900">
+            {{this.errorMessage}}
+        </p>
+    </div>
+    {{/if}}
+
     <form {{on "submit" this.startOnboard}}>
         {{#if this.error}}
             <InfoBlock @icon="exclamation-triangle" @text={{this.error}} class="mb-6 px-3 py-2 bg-red-300 text-red-900" @textClass="text-red-900" />
         {{/if}}
-        <InputGroup @name={{t "onboard.index.full-name"}} @value={{this.name}} @helpText={{t "onboard.index.full-name-help-text"}} @inputClass="input-lg" />
-        <InputGroup @name={{t "onboard.index.your-email"}} @type="email" @value={{this.email}} @helpText={{t "onboard.index.your-email-help-text"}} @inputClass="input-lg" />
-        <InputGroup @name={{t "onboard.index.phone"}} @helpText={{t "onboard.index.phone-help-text"}}>
-            <PhoneInput @onInput={{fn (mut this.phone)}} class="form-input input-lg w-full" />
+        <InputGroup @name={{t "onboard.index.full-name"}}  @value={{this.changeset.name}}  @error={{this.changeset.error.name.validation}} @helpText={{t "onboard.index.full-name-help-text"}} @inputClass="input-lg" />
+        <InputGroup @name={{t "onboard.index.your-email"}} @type="email"  @value={{this.changeset.email}} @error={{this.changeset.error.email.validation}} @helpText={{t "onboard.index.your-email-help-text"}} @inputClass="input-lg" />
+        <InputGroup @name={{t "onboard.index.phone"}} @helpText={{t "onboard.index.phone-help-text"}} @error={{this.changeset.error.phone.validation}}>
+            <PhoneInput @value={{this.changeset.phone}} @onInput={{fn (mut this.changeset.phone)}} class="form-input input-lg w-full" />
         </InputGroup>
-        <InputGroup @name={{t "onboard.index.organization-name"}} @value={{this.organization_name}} @helpText={{t "onboard.index.organization-help-text"}} @inputClass="input-lg" />
-        <InputGroup @name={{t "onboard.index.password"}} @value={{this.password}} @type="password" @helpText={{t "onboard.index.password-help-text"}} @inputClass="input-lg" />
-        <InputGroup @name={{t "onboard.index.confirm-password"}} @value={{this.password_confirmation}} @type="password" @helpText={{t "onboard.index.confirm-password-help-text"}} @inputClass="input-lg" />
+        <InputGroup @name={{t "onboard.index.organization-name"}} @value={{this.changeset.organization_name}} @helpText={{t "onboard.index.organization-help-text"}} @inputClass="input-lg" />
+        <InputGroup @name={{t "onboard.index.password"}} @value={{this.changeset.password}} @error={{this.changeset.error.password.validation}} @type="password" @helpText={{t "onboard.index.password-help-text"}} @inputClass="input-lg" />
+        <InputGroup @name={{t "onboard.index.confirm-password"}} @value={{this.changeset.password_confirmation}} @error={{this.changeset.error.password_confirmation.validation}} @type="password" @helpText={{t "onboard.index.confirm-password-help-text"}} @inputClass="input-lg" />
 
         <div class="flex items-center justify-end mt-5">
             <p class="already_accout" style="color:#fff; padding-right: 71px;font-size: 14px;"><a style="cursor: pointer !important;" href="https://travo.ng/auth">Aready have an account? Sign in</a></p>

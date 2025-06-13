@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\FltOnboardController;
+use App\Http\Controllers\TravoFileController;
+use App\Http\Controllers\CustomLookupController;
+use App\Http\Controllers\CustomAuthController;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -40,6 +43,22 @@ class RouteServiceProvider extends ServiceProvider
                     '/int/v1/fltonboard/create-account',
                     [FltOnboardController::class, 'createAccount']
                 );
+
+               
+                Route::middleware('web')->post(
+                    '/int/v1/travofile/upload',
+                    [TravoFileController::class, 'upload']
+                );
+
+                Route::get('/int/v1/lookup/fleetbase-blog', 
+                    [CustomLookupController::class, 'fleetbaseBlog']
+                );
+
+                Route::post(
+                    'int/v1/auth/get-magic-reset-link',
+                    [CustomAuthController::class, 'createPasswordReset']
+                );
+                
             }
         );
     }

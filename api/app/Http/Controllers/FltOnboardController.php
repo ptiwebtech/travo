@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Fleetbase\Events\AccountCreated;
 use Fleetbase\Http\Controllers\Controller;
-use Fleetbase\Http\Requests\OnboardRequest;
+use App\Http\Requests\OnboardRequest;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\User;
 use Fleetbase\Models\VerificationCode;
@@ -34,8 +34,7 @@ class FltOnboardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function createAccount(OnboardRequest $request)
-    { echo "helooo";
-        die;
+    {
         // if first user make admin
         $isAdmin = !User::exists();
 
@@ -68,7 +67,8 @@ class FltOnboardController extends Controller
         $user->setUserType($isAdmin ? 'admin' : 'user');
 
         // create company
-        $company = new Company(['name' => $request->input('organization_name')]);
+        $organizationName = $request->input('organization_name', '-'); // Default to '-' if blank
+        $company = new Company(['name' => $organizationName]);
         $company->setOwner($user)->save();
 
         // assign user to organization
@@ -86,8 +86,10 @@ class FltOnboardController extends Controller
         return response()->json([
             'status'           => 'success',
             'session'          => base64_encode($user->uuid),
-            'token'            => $isAdmin ? $token->plainTextToken : null,
-            'skipVerification' => $isAdmin,
+            //'token'            => $isAdmin ? $token->plainTextToken : null,
+            'token' => $token->plainTextToken,
+            //'skipVerification' => $isAdmin,
+            'skipVerification' => true,
         ]);
     }
 

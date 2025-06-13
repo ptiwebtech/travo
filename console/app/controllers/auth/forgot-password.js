@@ -39,6 +39,8 @@ export default class AuthForgotPasswordController extends Controller {
      */
     @tracked isSent = false;
 
+    @tracked errorMessage = null;
+
     /**
      * Query parameters.
      *
@@ -53,12 +55,23 @@ export default class AuthForgotPasswordController extends Controller {
      */
     @task *sendSecureLink(event) {
         event.preventDefault();
-
+        this.errorMessage = null;
         try {
-            yield this.fetch.post('auth/get-magic-reset-link', { email: this.email });
-            this.notifications.success(this.intl.t('auth.forgot-password.success-message'));
-            this.isSent = true;
+            const response = yield this.fetch.post('auth/get-magic-reset-link', { email: this.email });
+    
+            if (response?.error) {
+                this.notifications.error(response.error);
+                // Show error in template via errorMessage variable
+                this.errorMessage = response.error;
+                this.isSent = false;
+            } else {
+                this.errorMessage = null;
+                this.notifications.success(this.intl.t('auth.forgot-password.success-message'));
+                this.isSent = true;
+            }
         } catch (error) {
+            this.errorMessage = 'Server error occurred.';
+            this.isSent = false;
             this.notifications.serverError(error);
         }
     }
