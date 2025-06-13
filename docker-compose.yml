@@ -53,6 +53,7 @@ services:
         ENVIRONMENT: production
         GITHUB_AUTH_KEY: ${GITHUB_AUTH_KEY}
     volumes:
+      - /var/www/html/api:/fleetbase/api
       - console-build:/fleetbase/console
     environment:
       ENVIRONMENT: production

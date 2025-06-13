@@ -317,7 +317,7 @@ invite:
     accept-invitation-text: Accept Invitation
 onboard:
   index:
-    title: Create your account
+    title: Create account for free
     welcome-title: <strong>Welcome to {companyName}!</strong><br />
     welcome-text: Complete the details required below to get started.
     full-name: Full name

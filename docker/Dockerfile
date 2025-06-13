@@ -20,7 +20,7 @@ RUN install-php-extensions \
   opcache \
   memcached \
   imagick \
-  geos \
+  #geos \
   sockets \
   pcntl \
   @composer

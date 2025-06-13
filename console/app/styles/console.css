@@ -48,4 +48,6 @@ body[data-theme='dark'] .two-fa-enforcement-alert button#two-fa-setup-button.btn
 body.console-admin-organizations-index-index .next-table-wrapper > table {
     table-layout: auto;
 }
-body a{cursor: pointer !important;}
+body a {
+    cursor: pointer !important;
+}

@@ -19,7 +19,11 @@ export default class FleetbaseBlogComponent extends Component {
         return this.fetch
             .get('lookup/fleetbase-blog')
             .then((response) => {
-                this.posts = response;
+                // Format the pubDate to remove time and timezone
+                this.posts = response.map((post) => ({
+                    ...post,
+                    pubDate: new Date(post.pubDate).toDateString(), // Extracts only the date part (e.g., "Mon Apr 28 2025")
+                }));
             })
             .finally(() => {
                 this.isLoading = false;
