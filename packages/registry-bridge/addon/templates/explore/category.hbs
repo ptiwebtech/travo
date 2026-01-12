@@ -1,0 +1,12 @@
+<Layout::Section::Header @searchQuery={{this.query}} @onSearch={{perform this.search}} @title={{t "registry-bridge.developers.extensions.explore.explore-extensions"}} />
+
+<Layout::Section::Body class="overflow-y-scroll h-full">
+    <div class="m-auto p-8">
+        <div class="extension-card-grid-container">
+            {{#each this.extensions as |extension|}}
+                <ExtensionCard @extension={{extension}} />
+            {{/each}}
+        </div>
+    </div>
+    <Spacer @height="300px" />
+</Layout::Section::Body>
