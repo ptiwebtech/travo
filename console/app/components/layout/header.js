@@ -31,6 +31,12 @@ export default class LayoutHeaderComponent extends Component {
         this.extensions = getOwner(this).application.extensions ?? [];
         this.company = this.currentUser.getCompany();
         this.menuItems = this.mergeMenuItems(menuItems);
+        // Remove IAM if user is not admin
+        if (!this.currentUser.isAdmin) {
+            this.menuItems = this.menuItems.filter(
+                item => item.id !== 'iam' && item.id !== 'developers'
+            );
+        }
         this.organizationMenuItems = this.mergeOrganizationMenuItems(organizationMenuItems);
         this.userMenuItems = this.mergeUserMenuItems(userMenuItems);
     }

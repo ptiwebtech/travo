@@ -26,15 +26,47 @@
 
 
 <!-- Start of HubSpot Embed Code -->
-<script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/145046781.js"></script>
+<!-- <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/145046781.js"></script> -->
 <!-- End of HubSpot Embed Code -->
 <script src="https://analytics.ahrefs.com/analytics.js" data-key="TyEvUZwwrV6I7PsJw7QoNA" async></script>
 
 <style type="text/css">
-  .ember-cli-notifications-notification__container.ember-cli-notifications-notification__container--top {
+  /* .ember-cli-notifications-notification__container.ember-cli-notifications-notification__container--top {
     display: none;
-}
+} */
+
+  #whatsapp-chat {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    z-index: 9999;
+    background-color: #25d366;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  #whatsapp-chat:hover {
+    transform: scale(1.1);
+  }
+  .next-content-overlay-panel-header .next-view-header-right {
+    justify-content: flex-end !important;
+  }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const whatsappButton = document.getElementById("whatsapp-chat");
+    const phone = "+2349163352137";
+    const message = `Hi, I am contacting you from the following page:\n${window.location.href}`;
+    const url = `https://api.whatsapp.com/send?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(message)}`;
+    whatsappButton.href = url;
+  });
+</script>
     
   </head>
   <body>
@@ -44,5 +76,10 @@
     <script src="{{rootURL}}assets/@fleetbase/console.js"></script>
 
     {{content-for "body-footer"}}
+    <a id="whatsapp-chat" target="_blank" title="Chat on WhatsApp">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+           alt="WhatsApp Chat"
+           style="width: 30px; height: 30px;">
+    </a>
   </body>
 </html>

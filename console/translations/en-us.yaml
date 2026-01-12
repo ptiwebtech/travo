@@ -142,11 +142,11 @@ auth:
   verification:
     header-title: Account Verification
     title: Verify your email address
-    message-text: <strong>Almost done!</strong><br> Check your email for a verification code.
+    message-text: <strong>Almost done!</strong><br> Check your email for a verification code.<br> Please check spam also.
     verification-code-text: Enter the verification code you received via email.
     verification-input-label: Verification Code
     verify-button-text: Verify & Continue
-    didnt-receive-a-code: Didn't receive a code yet?
+    didnt-receive-a-code: Didn't receive a code yet? <br> Make sure to check your spam folder.
     not-sent:
       message: Didn't receive a code yet?
       alternative-choice: Use alternaitve options below to verify your account.

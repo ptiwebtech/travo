@@ -12,6 +12,9 @@ use App\Http\Controllers\FltOnboardController;
 use App\Http\Controllers\TravoFileController;
 use App\Http\Controllers\CustomLookupController;
 use App\Http\Controllers\CustomAuthController;
+use App\Http\Controllers\CustomOrderConfigController;
+use App\Http\Controllers\CustomOrderController;
+
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -58,6 +61,15 @@ class RouteServiceProvider extends ServiceProvider
                     'int/v1/auth/get-magic-reset-link',
                     [CustomAuthController::class, 'createPasswordReset']
                 );
+
+                Route::prefix('int/v1')->middleware(['auth:sanctum'])->group(function () {
+                    Route::get('order-configs', [CustomOrderConfigController::class, 'index']);
+                });
+
+                // Route::prefix('int/v1')->middleware(['auth:sanctum'])->group(function () {
+                //     Route::get('orders', [CustomOrderController::class, 'query']);
+                // });
+                
                 
             }
         );
