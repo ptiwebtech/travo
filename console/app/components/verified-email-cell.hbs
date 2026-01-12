@@ -1,0 +1,14 @@
+<div class="click-to-copy" {{on "click" (fn this.copyToClipboard @value)}}>
+    {{!-- Yahan humne color logic lagaya hai --}}
+    <span class="{{if @row.owner.email_verified_at 'text-green-600 font-bold' 'text-red-500'}}">
+        {{#if @value}}
+            {{@value}}
+        {{else}}
+            {{n-a}}
+        {{/if}}
+    </span>
+
+    <span class="click-to-copy--tooltip">
+        {{if this.isCopied "Copied!" "Click to copy"}}
+    </span>
+</div>

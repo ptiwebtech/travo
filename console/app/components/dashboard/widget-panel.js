@@ -9,6 +9,7 @@ export default class DashboardWidgetPanelComponent extends Component {
     @tracked dashboard;
     @tracked isOpen = true;
     @service notifications;
+    @service currentUser;
 
     /**
      * Constructs the component and applies initial state.
@@ -16,7 +17,25 @@ export default class DashboardWidgetPanelComponent extends Component {
     constructor(owner, { dashboard }) {
         super(...arguments);
 
-        this.availableWidgets = this.universe.getDashboardWidgets();
+        // Get all widgets
+        let widgets = this.universe.getDashboardWidgets();
+        
+        // Define restricted widgets (hide for regular users)
+        const restrictedWidgets = [
+            'fleetbase-github-card',
+            'dev-api-metrics-widget',
+            'iam-metrics-widget',
+            'fleet-ops-key-metrics-widget'
+        ];
+ 
+        // If user is NOT admin → filter out restricted widgets
+        if (!this.currentUser.isAdmin) {
+            widgets = widgets.filter(
+                (widget) => !restrictedWidgets.includes(widget.widgetId)
+            );
+        }
+
+        this.availableWidgets = widgets;
         this.dashboard = dashboard;
     }
 

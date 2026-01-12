@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-800 py-5 px-4 shadow rounded-lg w-full">
+<div class="bg-white dark:bg-gray-800 py-5 px-4 shadow rounded-lg w-full mobile-logo">
     <div class="mb-4">
         <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" />
          <h4 class="mt-6 mb-3 text-2 leading-9 text-center text-gray-900 dark:text-gray-100">Send Anything, Anywhere. Guaranteed.</h4>
@@ -35,7 +35,7 @@
         <InputGroup @name={{t "onboard.index.full-name"}}  @value={{this.changeset.name}}  @error={{this.changeset.error.name.validation}} @helpText={{t "onboard.index.full-name-help-text"}} @inputClass="input-lg" />
         <InputGroup @name={{t "onboard.index.your-email"}} @type="email"  @value={{this.changeset.email}} @error={{this.changeset.error.email.validation}} @helpText={{t "onboard.index.your-email-help-text"}} @inputClass="input-lg" />
         <InputGroup @name={{t "onboard.index.phone"}} @helpText={{t "onboard.index.phone-help-text"}} @error={{this.changeset.error.phone.validation}}>
-            <PhoneInput @value={{this.changeset.phone}} @onInput={{fn (mut this.changeset.phone)}} class="form-input input-lg w-full" />
+            <PhoneInput @value={{this.changeset.phone}} @onInput={{fn (mut this.changeset.phone)}}  @onInit={{fn this.setPhoneInput}}  class="form-input input-lg w-full" />
         </InputGroup>
         <InputGroup @name={{t "onboard.index.organization-name"}} @value={{this.changeset.organization_name}} @helpText={{t "onboard.index.organization-help-text"}} @inputClass="input-lg" />
         <InputGroup @name={{t "onboard.index.password"}} @value={{this.changeset.password}} @error={{this.changeset.error.password.validation}} @type="password" @helpText={{t "onboard.index.password-help-text"}} @inputClass="input-lg" />

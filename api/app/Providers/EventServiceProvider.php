@@ -18,6 +18,10 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        \Fleetbase\FleetOps\Events\OrderReady::class => [
+            \App\Listeners\SendOrderReadyEmail::class,
+        ],
     ];
 
     /**

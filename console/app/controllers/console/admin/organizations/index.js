@@ -114,6 +114,7 @@ export default class ConsoleAdminOrganizationsController extends Controller {
             valuePath: 'owner.name',
             width: '200px',
             resizable: true,
+            cellComponent: 'click-to-copy',
             sortable: true,
         },
         {
@@ -121,6 +122,7 @@ export default class ConsoleAdminOrganizationsController extends Controller {
             valuePath: 'name',
             resizable: true,
             sortable: true,
+            cellComponent: 'click-to-copy',
             filterable: true,
             filterComponent: 'filter/string',
         },
@@ -130,6 +132,8 @@ export default class ConsoleAdminOrganizationsController extends Controller {
             width: '200px',
             resizable: true,
             sortable: true,
+            //cellComponent: 'click-to-copy',
+            cellComponent: 'verified-email-cell',
             filterable: true,
         },
         {
@@ -138,6 +142,7 @@ export default class ConsoleAdminOrganizationsController extends Controller {
             width: '200px',
             resizable: true,
             sortable: true,
+            cellComponent: 'click-to-copy',
             filterable: true,
             filterComponent: 'filter/string',
         },

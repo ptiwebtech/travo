@@ -51,3 +51,11 @@ body.console-admin-organizations-index-index .next-table-wrapper > table {
 body a {
     cursor: pointer !important;
 }
+
+@media screen and (max-width: 380px) {
+    .mobile-logo {
+        padding-top: 150px !important;
+    }
+}
+
+

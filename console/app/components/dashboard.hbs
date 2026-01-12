@@ -22,19 +22,22 @@
                     <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=travel">TRAVEL</a></h1>
                     <p>Book Your Bus or Train Ticket for Easy Commutes</p>
                 </div>
-            
+
                 <div class="widget-count  lg:col-span-2 h-full">
-                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=storefront">STORE FRONT</a></h1>
-                    <p>Order Food or Home Essentials Delivered to Your Door</p>
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=airportpickup">AIRPORT PICKUP</a></h1>
+                    <p>Meet-and-Greet Airport Pickup for Your Arrival</p>
                 </div>
             
+                {{#if this.isAdmin}}
                 <div class="widget-count  lg:col-span-2 h-full">
                     <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=exportimport">EXPORT/IMPORT</a></h1>
                     <p>Ship a Container for Global Trade and Logistics</p>
                 </div>
+                {{/if}}
             </div>
         </div>
 
+        {{#if this.isAdmin}}
         <div class="mt-4">
             <div class="grid grid-cols-2 lg:grid-cols-12 gap-4 sendparcel_all_button">
                 <div class="widget-count  lg:col-span-2 h-full">
@@ -58,9 +61,10 @@
                 </div>
             
                 <div class="widget-count  lg:col-span-2 h-full">
-                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=airportpickup">AIRPORT PICKUP</a></h1>
-                    <p>Meet-and-Greet Airport Pickup for Your Arrival</p>
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=storefront">STORE FRONT</a></h1>
+                    <p>Order Food or Home Essentials Delivered to Your Door</p>
                 </div>
+               
             
                 <div class="widget-count  lg:col-span-2 h-full">
                     <h1 class="text-3xl font-bold dark:text-gray-100 text-black "><a style="cursor: pointer !important;" href="https://travo.ng/fleet-ops/new?orderType=emergencyservice">EMERGENCY SERVICES</a></h1>
@@ -68,6 +72,7 @@
                 </div>
             </div>
         </div>
+        {{/if}}
     </div>
 </div>
 </div>

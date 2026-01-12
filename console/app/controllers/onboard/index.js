@@ -119,6 +119,11 @@ export default class OnboardIndexController extends Controller {
         this.changeset = new Changeset(input, lookupValidator(OnboardValidations), OnboardValidations);
     }
 
+    @action
+    setPhoneInput(component) {
+        this.phoneInput = component; // save component reference
+    }
+
     @action async startOnboard(event) {
         event.preventDefault();
         this.errorMessage = null;
@@ -129,7 +134,6 @@ export default class OnboardIndexController extends Controller {
             acc[key] = value;
             return acc;
           }, {});
-        console.log(input);
         await this.changeset.validate();
 
         if (this.changeset.get('isInvalid')) {
@@ -141,6 +145,15 @@ export default class OnboardIndexController extends Controller {
 
         // Set user timezone
         input.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        if (this.phoneInput?.iti) {
+            const fullNumber = this.phoneInput.iti.getNumber(
+                window.intlTelInputUtils.numberFormat.E164
+            ); 
+            input.phone = fullNumber; // +91982889266 (correct, no extra 0)
+        } else {
+            input.phone = this.changeset.phone;
+        }
 
         this.isLoading = true;
 
@@ -160,7 +173,7 @@ export default class OnboardIndexController extends Controller {
                             this.session.isOnboarding().manuallyAuthenticate(token);
 
                             return this.router.transitionTo('console').then(() => {
-                                this.notifications.success('Welcome to Fleetbase!');
+                                this.notifications.success('Welcome to Travo!');
                             });
                         }
 

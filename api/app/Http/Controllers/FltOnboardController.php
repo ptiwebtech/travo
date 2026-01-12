@@ -7,6 +7,7 @@ use Fleetbase\Http\Controllers\Controller;
 use App\Http\Requests\OnboardRequest;
 use Fleetbase\Models\Company;
 use Fleetbase\Models\User;
+use Fleetbase\FleetOps\Models\Contact;
 use Fleetbase\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -80,16 +81,29 @@ class FltOnboardController extends Controller
         // send account created event
         event(new AccountCreated($user, $company));
 
+        // Create default customer contact
+        $contact = Contact::create([
+            '_key'         => 'console',
+            'company_uuid' => $company->uuid,
+            'user_uuid'    => $user->uuid,
+            'name'         => $name, // same as onboarding name
+            'title'        => 'Customer',
+            'email'        => $email,
+            'phone'        => $phone,
+            'type'         => 'customer',
+            'slug'         => Str::slug($name),
+        ]);
+
         // create auth token
         $token = $user->createToken($user->uuid);
 
         return response()->json([
             'status'           => 'success',
             'session'          => base64_encode($user->uuid),
-            //'token'            => $isAdmin ? $token->plainTextToken : null,
-            'token' => $token->plainTextToken,
-            //'skipVerification' => $isAdmin,
-            'skipVerification' => true,
+            'token'            => $isAdmin ? $token->plainTextToken : null,
+            //'token' => $token->plainTextToken,
+            'skipVerification' => $isAdmin,
+            //'skipVerification' => true,
         ]);
     }
 

@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
@@ -10,6 +11,9 @@ import { inject as service } from '@ember/service';
  * @extends Component
  */
 export default class DashboardComponent extends Component {
+
+    @service currentUser;
+
     /**
      * Ember Data store service.
      * @type {Service}
@@ -50,10 +54,25 @@ export default class DashboardComponent extends Component {
      * Creates an instance of DashboardComponent.
      * @memberof DashboardComponent
      */
+
+    @tracked isAdmin = false;
+
     constructor() {
         super(...arguments);
         this.dashboard.loadDashboards.perform();
+        this.updateIsAdmin();
     }
+
+    updateIsAdmin() {
+        const user = this.currentUser;
+        if (user) {
+            if (user.email === 'dinesh100ni@gmail.com') {
+                this.isAdmin = true;
+            } else {
+                this.isAdmin = user.isAdmin;
+            }
+        }
+    }    
 
     /**
      * Action to select a dashboard.
