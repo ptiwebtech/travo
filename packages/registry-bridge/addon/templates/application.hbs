@@ -1,0 +1,21 @@
+<EmberWormhole @to="sidebar-menu-items">
+    <Layout::Sidebar::Item @route="console.extensions.installed" @icon="inbox" @permission="registry-bridge list extension-install" @visible={{can "registry-bridge see extension-install"}}>Installed</Layout::Sidebar::Item>
+    <Layout::Sidebar::Item @route="console.extensions.purchased" @icon="bag-shopping" @permission="registry-bridge list extension-purchase" @visible={{can "registry-bridge see extension-purchase"}}>Purchased</Layout::Sidebar::Item>
+    <Layout::Sidebar::Panel @open={{true}} @title="Explore" @visible={{can "registry-bridge see extension"}}>
+        <Layout::Sidebar::Item @route="console.extensions.explore.index" @icon="shapes" @permission="registry-bridge list extension">Explore All</Layout::Sidebar::Item>
+        {{#each this.categories as |category|}}
+            <Layout::Sidebar::Item @route="console.extensions.explore.category" @model={{category}} @icon={{category.icon}} @permission="registry-bridge list extension">{{category.name}}</Layout::Sidebar::Item>
+        {{/each}}
+    </Layout::Sidebar::Panel>
+    <Layout::Sidebar::Panel @open={{true}} @title="Developers">
+        <Layout::Sidebar::Item @route="console.extensions.developers.extensions" @icon="box-archive" @permission="registry-bridge list extension-bundle" @visible={{can "registry-bridge see extension-bundle"}}>Extensions</Layout::Sidebar::Item>
+        <Layout::Sidebar::Item @route="console.extensions.developers.analytics" @icon="chart-simple" @permission="registry-bridge list extension-analytic" @visible={{can "registry-bridge see extension-analytic"}}>Analytics</Layout::Sidebar::Item>
+        <Layout::Sidebar::Item @route="console.extensions.developers.payments" @icon="cash-register" @permission="registry-bridge list extension-payment" @visible={{can "registry-bridge see extension-payment"}}>Payments</Layout::Sidebar::Item>
+        <Layout::Sidebar::Item @route="console.extensions.developers.credentials" @icon="key" @permission="registry-bridge list registry-token" @visible={{can "registry-bridge see registry-token"}}>Credentials</Layout::Sidebar::Item>
+    </Layout::Sidebar::Panel>
+    <Spacer @height="200px" />
+</EmberWormhole>
+
+<Layout::Section::Container>
+    {{outlet}}
+</Layout::Section::Container>

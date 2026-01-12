@@ -1,0 +1,58 @@
+<div {{did-insert this.setupComponent}} ...attributes>
+  {{#let (or @place.place @place) as |place|}}
+    {{#if (is-empty place)}}
+      <div class={{@noAddressClass}}>
+        <span class="text-red-500">
+          {{#if @type}}
+            {{t "fleet-ops.component.display-panel.no-address" htmlSafe=true type=@type}}
+          {{else}}
+            {{t "fleet-ops.component.display-panel.no-address-message"}}
+          {{/if}}
+        </span>
+      </div>
+    {{else}}
+      <address class={{@addressClass}}>
+        {{!-- Address clickable to Google Maps if available --}}
+        {{#if this.googleMapsUrl}}
+          <a href="{{this.googleMapsUrl}}" target="_blank" class="hover:underline font-medium " style="cursor: pointer !important;">
+            {{#if place.name}}{{place.name}}<br />{{/if}}
+            {{#if place.street1}}{{place.street1}}<br />{{/if}}
+            {{#if place.street2}}{{place.street2}}<br />{{/if}}
+            <div class="comma-spans">
+              {{#if place.city}}<span>{{place.city}}</span>{{/if}}
+              {{#if place.province}}<span>{{place.province}}</span>{{/if}}
+              {{#if place.postal_code}}<span>{{place.postal_code}}</span>{{/if}}
+            </div>
+            <div class="comma-spans">
+              {{#if place.neighborhood}}<span>{{place.neighborhood}}</span>{{/if}}
+              {{#if place.district}}<span>{{place.district}}</span>{{/if}}
+              {{#if (and place.building (not place.street1))}}<span>{{place.building}}</span>{{/if}}
+            </div>
+          </a>
+        {{else}}
+          {{!-- Fallback: show address without link --}}
+          {{#if place.name}}{{place.name}}<br />{{/if}}
+          {{#if place.street1}}{{place.street1}}<br />{{/if}}
+          {{#if place.street2}}{{place.street2}}<br />{{/if}}
+          <div class="comma-spans">
+            {{#if place.city}}<span>{{place.city}}</span>{{/if}}
+            {{#if place.province}}<span>{{place.province}}</span>{{/if}}
+            {{#if place.postal_code}}<span>{{place.postal_code}}</span>{{/if}}
+          </div>
+          <div class="comma-spans">
+            {{#if place.neighborhood}}<span>{{place.neighborhood}}</span>{{/if}}
+            {{#if place.district}}<span>{{place.district}}</span>{{/if}}
+            {{#if (and place.building (not place.street1))}}<span>{{place.building}}</span>{{/if}}
+          </div>
+        {{/if}}
+
+        {{!-- Phone clickable separately --}}
+        {{#if place.phone}}
+          <div>
+            <a href="tel:{{place.phone}}" class="text-blue-500 hover:text-blue-400">{{place.phone}}</a>
+          </div>
+        {{/if}}
+      </address>
+    {{/if}}
+  {{/let}}
+</div>

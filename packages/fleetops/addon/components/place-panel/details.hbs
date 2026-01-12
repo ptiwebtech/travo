@@ -1,0 +1,173 @@
+<div class="p-4 space-y-4 asdadas">
+    <ContentPanel @title="Map" @open={{true}}>
+        <LeafletMap class="w-full h-48 rounded-b-md shadow-md" @lat={{@place.latitude}} @lng={{@place.longitude}} @zoom={{10}} @zoomControl={{false}} as |layers|>
+            <layers.tile @url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" />
+            <layers.marker
+                @id={{@place.id}}
+                @icon={{icon iconUrl="/engines-dist/images/building-marker.png" iconSize=(array 16 16)}}
+                @location={{point-to-coordinates @place.location}}
+                @riseOnHover={{true}}
+                @title={{@place.address}}
+                @alt={{@place.address}}
+                as |marker|
+            >
+                <marker.popup>
+                    <div>{{@place.address}}</div>
+                    <div>{{format-point @place.location}}</div>
+                </marker.popup>
+                <marker.tooltip @permanent={{false}} @sticky={{true}} @direction="bottom">{{@place.name}}</marker.tooltip>
+            </layers.marker>
+        </LeafletMap>
+    </ContentPanel>
+    <ContentPanel @title="Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-2 text-xs dark:text-gray-100">
+            <div class="field-info-container col-span-3">
+                <div class="field-name">{{t "fleet-ops.common.name"}}</div>
+                <div class="field-value uppercase">{{n-a @place.name}}</div>
+            </div>
+
+            <div class="field-info-container col-span-3">
+                <div class="field-name">{{t "fleet-ops.common.place-type"}}</div>
+                <div class="field-value uppercase placeType">{{n-a @place.type}}</div>
+            </div>
+
+            <div class="field-info-container col-span-3">
+                <div class="field-name">{{t "fleet-ops.common.street"}}</div>
+                <div class="field-value uppercase">{{n-a @place.street1}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.neighborhood"}}</div>
+                <div class="field-value uppercase">{{n-a @place.neighborhood}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.building"}}</div>
+                <div class="field-value uppercase">{{n-a @place.building}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.security-access-code"}}</div>
+                <div class="field-value uppercase">{{n-a @place.security_access_code}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.city"}}</div>
+                <div class="field-value uppercase">{{n-a @place.city}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.state"}}</div>
+                <div class="field-value uppercase">{{n-a @place.province}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.country"}}</div>
+                <div class="field-value uppercase">
+                    <CountryName @country={{@place.country_name}} @showFlag={{true}} />
+                </div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.phone"}}</div>
+                <div class="field-value uppercase">{{n-a @place.phone}}</div>
+            </div>
+
+            <div class="field-info-container space-y-2">
+                <div class="field-name">{{t "fleet-ops.common.email"}}</div>
+                <ClickToCopy class="field-value emailid">-</ClickToCopy>
+            </div>
+
+            <div class="field-info-container col-span-3">
+                <div class="field-name">
+                    {{t "fleet-ops.common.coordinates"}}
+                </div>
+                <div class="field-value">
+                    {{point-coordinates @place.location}}
+                </div>
+            </div>
+        </div>
+    </ContentPanel>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function getIconForPlace(placeType) {
+            const placeImages = {
+                "Bus Station": "/images/Bus_Station.png",
+                "Railway Station": "/images/Railway_Station.png",
+                "Ferry Terminal": "/images/Ferry_Terminal.png",
+                "Taxi Stand": "/images/Taxi_Stand.png",
+                "Airport": "/images/Airport.png",
+                "Seaport": "/images/Seaport.png",
+                "Bus Terminal": "/images/Private_Bus_Terminal.png",
+                "Car Rental Location": "/images/Car_Rental_Location.png",
+                "Bicycle Sharing Station": "/images/Bicycle_Sharing_Station.png",
+                "Korope Park": "/images/minibus.png",
+                "Heliport": "/images/heliport.png",
+                "Drone port": "/images/drone.png",
+                "Pickup/Drop-off Point": "/images/PickupDrop-off-Point.png",
+                "Border Crossing": "/images/Border_Crossing.png",
+                "Parking Lot/Garage": "/images/Parking_Lot_Garage.png",
+                "Service Station": "/images/Service_Station.png",
+                "Cargo Terminal": "/images/Cargo_Terminal.png",
+                "Rest Stops/Service Area": "/images/Rest_Stops_Service_Area.png",
+                "Courier Service Depot": "/images/Courier_Service_Depot.png",
+                "Freight Forwarding Center": "/images/Freight_Forwarding_Center.png",
+                "Warehousing Location": "/images/Warehousing_Location.png",
+                "Truck Park": "/images/Truck_Park.png",
+                "Hotel and Accommodation": "/images/Hotel_and_Accomodation.png",
+                "Serviced Apartment": "/images/Serviced_Apartment.png",
+                "Conference Center": "/images/Conference_Center.png",
+                "Guesthouse": "/images/Guesthouse.png",
+                "Event Space": "/images/event_space.png",
+                "Serviced Office": "/images/Serviced_Office.png",
+                "Storefront": "/images/Storefront.png",
+                "Food Takeaway": "/images/Food_Takeaway.png",
+                "Restaurant": "/images/Restaurant.png",
+                "Supermarket": "/images/Supermarket.png",
+                "Auto Repair Shop": "/images/Auto_Repair_Shop.png",
+                "Laundromat": "/images/Laundromat.png",
+                "Beauty Salon": "/images/Beauty_Salon.png",
+                "Barber Shop": "/images/Barber_Shop.png",
+                "Pharmacy": "/images/Pharmacy.png",
+                "Gym": "/images/Gym.png",
+                "Police Station": "/images/Police_Station.png",
+                "Clinic": "/images/Clinic.png",
+                "Hospital": "/images/Hospital.png",
+                "Fire Station": "/images/Fire_Station.png",
+            };
+            return placeImages[placeType] || '/engines-dist/images/building-marker.png';
+        }
+        var placeType = $('.placeType').text().trim();
+        var iconUrl = getIconForPlace(placeType);
+        $('.leaflet-marker-pane img').attr('src', iconUrl);
+
+        let pathParts = window.location.href.split('/');
+        let lastPart = pathParts[pathParts.length - 1]; 
+        if (lastPart.includes('?')) {
+            lastPart = lastPart.split('?')[0];
+        } else if (lastPart.includes('#')) {
+            lastPart = lastPart.split('#')[0]; 
+        }
+        if (lastPart && lastPart.startsWith('place_')) {
+            fetch(`https://african.land/travo_api/get_place_api.php?place_id=${lastPart}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('API Response:', data);
+                    if (data && data.data && data.data.email) {
+                        console.log('Found email:', data.data.email);
+                        $('.emailid').text(data.data.email);
+                        $('.emailid').val(data.data.email);
+                    } else {
+                        console.error('No email found for this place.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching place details:', error);
+                });
+        }
+
+    });
+
+</script>

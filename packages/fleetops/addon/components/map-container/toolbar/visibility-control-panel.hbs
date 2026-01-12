@@ -1,0 +1,133 @@
+<div class="next-dd-menu overflow-visible">
+    <div class="px-1">
+        <div class="text-sm flex flex-row items-center px-3 py-0.5 rounded-md my-1 text-gray-800 dark:text-gray-300">
+            {{t "fleet-ops.component.map-container.visibility-control-panel.title"}}
+        </div>
+    </div>
+    <div class="next-dd-menu-seperator"></div>
+    <div class="px-1">
+        <!-- Places Section Structured Similar to Vehicles -->
+        <BasicDropdownHover @horizontalPosition="right" @calculatePosition={{this.calculatePosition}} @renderInPlace={{true}} as |dd|>
+            <dd.Trigger class="next-dd-item flex-row items-center justify-between relative {{if dd.isOpen 'active'}}">
+                <div class="flex flex-row items-center">
+                    <div class="w-6">
+                        <FaIcon @icon="building" />
+                    </div>
+                    <span>{{t "fleet-ops.component.map-container.visibility-control-panel.places.title"}}</span>
+                </div>
+                <div>
+                    <Badge @status="info" @hideStatusDot={{true}} @spanClass="rounded-full -mr-2">{{this.liveMap.originalResources.places.length}}</Badge>
+                </div>
+            </dd.Trigger>
+            <dd.Content>
+               <div class="next-dd-menu showdropdown">
+                    <div class="px-1">
+                        <div class="text-sm flex flex-row items-center px-3 py-0.5 rounded-md my-1 text-gray-800 dark:text-gray-300 truncate">
+                            <FaIcon @icon="binoculars" class="mr-2" />
+                            <span>{{t "fleet-ops.component.map-container.visibility-control-panel.places.controls"}}</span>
+                        </div>
+                    </div>
+                    <div class="next-dd-menu-seperator"></div>
+                    <div class="px-1">
+                        {{!-- <a href="javascript:;" class="next-dd-item" {{on "click" (fn this.triggerCallback "toggleVisibility" "places")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "places")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.hide-places"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.show-places"}}
+                            {{/if}}
+                        </a> --}}
+                        <a href="javascript:;" class="next-dd-item" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "TransitHubs")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "TransitHubs")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.transit-hubs.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.transit-hubs.show"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item see-more">See more..</a>
+                        <a href="javascript:;" class="next-dd-item tosee" style="display: none;" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "LogisticsTravelPoints")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "LogisticsTravelPoints")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.logistics-travel-points.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.logistics-travel-points.show"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item tosee" style="display: none;" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "CommercialAccommodation")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "CommercialAccommodation")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.commercial-accommodation.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.commercial-accommodation.show"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item tosee" style="display: none;" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "RetailServiceLocations")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "RetailServiceLocations")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.retail-service-locations.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.retail-service-locations.show"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item tosee" style="display: none;" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "EmergencyServices")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "EmergencyServices")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.emergency-services.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.emergency-services.show"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item tosee" style="display: none;" {{on "click" (fn this.triggerCallback "toggleCategoryVisibility" "Education")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "Education")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.education.hide"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.places.categories.education.show"}}
+                            {{/if}}
+                        </a>
+                    </div>
+                </div>
+            </dd.Content>
+        </BasicDropdownHover>
+        <!-- Vehicles Section -->
+        <BasicDropdownHover @horizontalPosition="right" @calculatePosition={{this.calculatePosition}} @renderInPlace={{true}} as |dd|>
+            <dd.Trigger class="next-dd-item flex-row items-center justify-between relative {{if dd.isOpen 'active'}}">
+                <div class="flex flex-row items-center">
+                    <div class="w-6">
+                        <FaIcon @icon="car" />
+                    </div>
+                    <span>{{t "fleet-ops.component.map-container.visibility-control-panel.vehicles"}}</span>
+                </div>
+                <div>
+                    <Badge @status="info" @hideStatusDot={{true}} @spanClass="rounded-full -mr-2">{{this.liveMap.originalResources.vehicles.length}}</Badge>
+                </div>
+            </dd.Trigger>
+            <dd.Content>
+                <div class="next-dd-menu">
+                    <div class="px-1">
+                        <div class="text-sm flex flex-row items-center px-3 py-0.5 rounded-md my-1 text-gray-800 dark:text-gray-300 truncate">
+                            <FaIcon @icon="binoculars" class="mr-2" />
+                            <span>{{t "fleet-ops.component.map-container.visibility-control-panel.vehicle-controls"}}</span>
+                        </div>
+                    </div>
+                    <div class="next-dd-menu-seperator"></div>
+                    <div class="px-1">
+                        <a href="javascript:;" class="next-dd-item" {{on "click" (fn this.triggerCallback "toggleAllOnlineOffline" "vehicles")}}>
+                            {{#if (is-visibility-control-visible this.liveMap "vehicles")}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.hide-vehicles"}}
+                            {{else}}
+                                {{t "fleet-ops.component.map-container.visibility-control-panel.show-vehicles"}}
+                            {{/if}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item" {{on "click" (fn this.triggerCallback "showOnline" "vehicles")}}>
+                            {{t "fleet-ops.component.map-container.visibility-control-panel.online-vehicles"}}
+                        </a>
+                        <a href="javascript:;" class="next-dd-item" {{on "click" (fn this.triggerCallback "showOffline" "vehicles")}}>
+                            {{t "fleet-ops.component.map-container.visibility-control-panel.offline-vehicles"}}
+                        </a>
+                    </div>
+                </div>
+            </dd.Content>
+        </BasicDropdownHover>
+    </div>
+</div>
+<script>
+    $(document).on('click', '.see-more', function() {
+        $('.tosee').css('display', 'block');
+        $('.see-more').css('display','none');
+    });
+</script>

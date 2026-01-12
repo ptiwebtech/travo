@@ -1,0 +1,54 @@
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-2">
+    <div class="input-group mb-2">
+        <InputLabel @labelText={{t "fleet-ops.component.avatar-picker.select-map-avatar"}} @helpText={{t "fleet-ops.component.avatar-picker.select-avatar-rendering"}} />
+        <!-- <FetchSelect
+            @wrapperClass="w-60"
+            @placeholder={{t "fleet-ops.component.avatar-picker.select-avatar"}}
+            @endpoint={{this.endpoint}}
+            @selected={{this.model.avatar_value}}
+            @optionValue="value"
+            @onChange={{this.selectAvatar}}
+            as |option|
+        >
+            {{titleize (humanize option.key)}}
+        </FetchSelect> -->
+        <select class="w-60 select_avatar_type block w-full mt-1 rounded-md border-gray-300 shadow-sm form-select focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" {{on "change" this.selectAvatar}}>
+            <option disabled selected>{{t "fleet-ops.component.avatar-picker.select-avatar"}}</option>
+
+            {{#each this.vehicleTypes as |vehicle|}}
+                <option value={{vehicle.value}}>{{vehicle.label}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="flex flex-row justify-end">
+        {{#if this.model.avatar_custom_url}}
+            <Image alt={{this.model.displayName}} src={{this.model.avatar_custom_url}} @fallbackSrc={{@defaultAvatar}} class="w-24 h-24 avartar_change" />
+        {{else}}
+            <Image alt={{this.model.displayName}} src={{this.model.avatar_url}} class="w-24 h-24 avartar_change" />
+        {{/if}}
+    </div>
+</div>
+
+<!-- <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-2">
+    <div class="input-group mb-2">
+        <InputLabel @labelText={{t "fleet-ops.component.avatar-picker.select-map-avatar"}} @helpText={{t "fleet-ops.component.avatar-picker.select-avatar-rendering"}} />
+        
+        <select class="w-60" {{on "change" this.selectAvatar}}>
+            <option disabled selected>{{t "fleet-ops.component.avatar-picker.select-avatar"}}</option>
+            
+            {{#each this.vehicleTypes as |vehicle|}}
+                <option value={{vehicle.value}}>{{vehicle.label}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="flex flex-row justify-end">
+        <Image 
+            alt={{this.model.displayName}} 
+            src={{this.selectedAvatar}} 
+            class="w-24 h-24"
+            @fallbackSrc={{@defaultAvatar}}
+        />
+    </div>
+</div> -->
+
+

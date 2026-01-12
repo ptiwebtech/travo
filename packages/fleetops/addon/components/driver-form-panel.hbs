@@ -1,0 +1,433 @@
+<Overlay
+    @onLoad={{this.setOverlayContext}}
+    @onOpen={{this.onOpen}}
+    @onClose={{this.onClose}}
+    @onToggle={{this.onToggle}}
+    @position="right"
+    @noBackdrop={{true}}
+    @fullHeight={{true}}
+    @isResizeble={{or this.isResizable @isResizable}}
+    @width={{or this.width @width "570px"}}
+>
+    <Overlay::Header @hideLeftSection={{true}} @actionsWrapperClass="flex-1 flex-col py-3" class="h-auto-i min-h-[127px]">
+        <div class="flex flex-row items-center justify-between w-full mb-4">
+            <div class="flex flex-1 space-x-2">
+                {{#if this.driver.id}}
+                    <Button @type="default" @icon="id-card" @helpText={{t "fleet-ops.component.driver-form-panel.driver-detail"}} @onClick={{this.onViewDetails}} @permission="fleet-ops view driver" />
+                {{/if}}
+            </div>
+            <div class="flex flex-1 justify-end">
+                <div class="mr-2">
+                    <Button
+                        @icon={{if this.driver.id "save" "check"}}
+                        @type="primary"
+                        @text={{if this.driver.id (t "fleet-ops.component.driver-form-panel.save-driver") (t "fleet-ops.component.driver-form-panel.create-driver")}}
+                        @onClick={{perform this.save}}
+                        @isLoading={{not this.save.isIdle}}
+                        @permission={{this.savePermission}}
+                    />
+                </div>
+                <Button
+                    @type="default"
+                    @icon="times"
+                    @helpText={{if this.driver.id (t "fleet-ops.component.driver-form-panel.cancel-edit-driver") (t "fleet-ops.component.driver-form-panel.cancel-new-driver")}}
+                    @onClick={{this.onPressCancel}}
+                />
+            </div>
+        </div>
+        <div class="flex flex-row justify-between w-full">
+            <div class="flex flex-col flex-1 w-3/4">
+                <div class="flex flex-row">
+                    <div class="w-14">
+                        <div class="upload-avatar-overlay w-12 h-12 flex items-center justify-start rounded-lg">
+                            <Image
+                                src={{this.driver.photo_url}}
+                                @fallbackSrc={{config "defaultValues.driverImage"}}
+                                alt={{this.driver.name}}
+                                height="48"
+                                width="48"
+                                class="h-12 w-12 rounded-lg shadow-sm"
+                            />
+                            <Attach::Tooltip @class="clean" @animation="scale" @placement="top">
+                                <InputInfo @text={{t "fleet-ops.component.driver-form-panel.upload-new-photo"}} />
+                            </Attach::Tooltip>
+                            <div class="upload-avatar-button-wrapper rounded-lg">
+                                <UploadButton
+                                    @name={{t "fleet-ops.common.photos"}}
+                                    @accept="image/*"
+                                    @onFileAdded={{this.onUploadNewPhoto}}
+                                    @icon="upload"
+                                    @hideButtonText={{true}}
+                                    @labelClass="upload-avatar-label-overlay"
+                                    @permission={{this.savePermission}}
+                                    class="w-12 btn-reset"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1 class="text-gray-900 dark:text-white text-2xl">
+                            {{#if this.driver.id}}
+                                {{this.driver.name}}
+                            {{else}}
+                                {{#if this.driver.name}}
+                                    {{this.driver.name}}
+                                {{else}}
+                                    <span>{{t "fleet-ops.component.driver-form-panel.new-driver"}}</span>
+                                {{/if}}
+                            {{/if}}
+                        </h1>
+                        <div class="-mt-1">
+                            {{#if this.driver.vehicle}}
+                                <div class="flex flex-row items-center">
+                                    <span class="text-sm dark:text-gray-500 text-gray-700 mr-3">{{this.driver.vehicle.displayName}}</span>
+                                </div>
+                            {{else}}
+                                <div class="flex flex-row items-center">
+                                    <span class="text-sm dark:text-gray-500 text-gray-700 mr-3">{{t "fleet-ops.component.driver-panel.no-vehicle-message"}}</span>
+                                </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end w-1/4">
+                <Badge @status={{if this.driver.online "online" "offline"}}>{{if this.driver.online "Online" "Offline"}}</Badge>
+            </div>
+        </div>
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="new-service-rate-overlay-body px-4 space-y-4 pt-4">
+        <div class="flex-1 space-y-4">
+            <ContentPanel
+                @title={{t "fleet-ops.component.driver-form-panel.user-account"}}
+                @open={{true}}
+                @pad={{true}}
+                @panelBodyClass="bg-white dark:bg-gray-800"
+                @actionButtons={{this.userAccountActionButtons}}
+            >
+                <div class="mb-4">
+                    <InputGroup @name={{t "fleet-ops.component.driver-form-panel.user-account"}} @helpText={{t "fleet-ops.component.driver-form-panel.user-account-help-text"}}>
+                        <ModelSelect
+                            @modelName="user"
+                            @selectedModel={{this.driver.user}}
+                            @placeholder="Select User"
+                            @query={{hash doesnt_have_driver=true}}
+                            @triggerClass="form-select form-input"
+                            @infiniteScroll={{false}}
+                            @renderInPlace={{true}}
+                            @onChange={{fn (mut this.driver.user)}}
+                            @permission="fleet-ops update-user-for driver"
+                            as |model|
+                        >
+                            <div class="flex flex-row">
+                                <div class="mr-2 w-6">
+                                    <Image src={{model.avatar_url}} @fallbackSrc={{config "defaultValues.userImage"}} alt={{this.user.name}} class="w-6 h-6 rounded-md" />
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="font-semibold">{{model.name}}</div>
+                                    <div class="text-xs">{{n-a model.phone}}</div>
+                                </div>
+                            </div>
+                        </ModelSelect>
+                    </InputGroup>
+                </div>
+                {{#if this.driver.user}}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 text-xs dark:text-gray-100">
+                        <InputGroup @name={{t "fleet-ops.common.name"}} @wrapperClass="col-span-2">
+                            <Input @value={{this.driver.user.name}} @type="text" class="w-full form-input" placeholder={{t "fleet-ops.common.name"}} disabled={{true}} />
+                        </InputGroup>
+
+                        <InputGroup @name={{t "fleet-ops.common.email"}} @wrapperClass="mb-0i">
+                            <Input @value={{this.driver.user.email}} @type="text" class="w-full form-input" placeholder={{t "fleet-ops.common.email"}} disabled={{true}} />
+                        </InputGroup>
+
+                        <InputGroup @name={{t "fleet-ops.common.phone"}} @wrapperClass="mb-0i">
+                            <PhoneInput @value={{this.driver.user.phone}} @onInput={{fn (mut this.driver.phone)}} class="form-input w-full" disabled={{true}} />
+                        </InputGroup>
+                    </div>
+                {{/if}}
+            </ContentPanel>
+
+            <ContentPanel @title={{t "fleet-ops.component.driver-form-panel.driver-details"}} @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 text-xs dark:text-gray-100">
+                    <InputGroup @name={{t "fleet-ops.common.internal-id"}}>
+                        <Input @value={{this.driver.internal_id}} @type="text" class="w-full form-input" placeholder={{t "fleet-ops.common.internal-id"}} disabled={{cannot this.savePermission}} />
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.common.driver-license"}}>
+                        <Input @value={{this.driver.drivers_license_number}} @type="text" class="w-full form-input" placeholder={{t "fleet-ops.common.driver-license"}} disabled={{cannot this.savePermission}} />
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.component.driver-form-panel.vendor"}}>
+                        <ModelSelect
+                            @modelName="vendor"
+                            @selectedModel={{this.driver.vendor}}
+                            @placeholder="Select Vendor"
+                            @triggerClass="form-select form-input"
+                            @infiniteScroll={{false}}
+                            @renderInPlace={{true}}
+                            @onChange={{fn (mut this.driver.vendor)}}
+                            @permission={{this.savePermission}}
+                            as |model|
+                        >
+                            {{model.name}}
+                        </ModelSelect>
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.common.vehicle"}}>
+                        <ModelSelect
+                            @modelName="vehicle"
+                            @selectedModel={{this.driver.vehicle}}
+                            @placeholder={{t "fleet-ops.component.driver-form-panel.select-vehicle"}}
+                            @triggerClass="form-select form-input"
+                            @infiniteScroll={{false}}
+                            @renderInPlace={{true}}
+                            @onChange={{fn (mut this.driver.vehicle)}}
+                            @permission="fleet-ops assign-vehicle-for driver"
+                            as |model|
+                        >
+                            {{model.display_name}}
+                        </ModelSelect>
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.common.city"}}>
+                        <!-- <Input @value={{this.driver.city}} @type="text" class="w-full form-input" placeholder={{t "fleet-ops.common.city"}} disabled={{cannot this.savePermission}} /> -->
+                        <div class="fleetbase-model-select fleetbase-power-select ember-model-select">
+                            <PowerSelect
+                                @options={{this.cityOptions}} 
+                                @selected={{this.driver.city}}
+                                @onChange={{fn (mut this.driver.city)}}
+                                @placeholder={{t "fleet-ops.common.city"}}
+                                @triggerClass="form-select form-input"
+                                @disabled={{cannot this.savePermission}}
+                                as |city|
+                            >
+                                {{city.name}}
+                            </PowerSelect>
+                        </div>
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.common.country"}}>
+                        <CountrySelect
+                            class="w-full form-input form-select form-datalist"
+                            @value={{this.driver.country}}
+                            @onChange={{this.onCountryChange}}
+                            placeholder={{t "fleet-ops.common.country"}}
+                            disabled={{cannot this.savePermission}}
+                        />
+                    </InputGroup>
+
+                    <InputGroup @name={{t "fleet-ops.common.status"}}>
+                        <div class="fleetbase-model-select fleetbase-power-select ember-model-select">
+                            <PowerSelect
+                                @options={{this.driverStatusOptions}}
+                                @selected={{this.driver.status}}
+                                @onChange={{fn (mut this.driver.status)}}
+                                @placeholder={{t "fleet-ops.common.status"}}
+                                @triggerClass="form-select form-input"
+                                @disabled={{cannot this.savePermission}}
+                                as |status|
+                            >
+                                {{smart-humanize status}}
+                            </PowerSelect>
+                        </div>
+                    </InputGroup>
+                    <InputGroup @name={{t "fleet-ops.common.coordinates"}} @wrapperClass="col-span-2">
+                        <CoordinatesInput
+                            @value={{this.driver.location}}
+                            @onChange={{this.onCoordinatesChanged}}
+                            @onGeocode={{this.onAutocomplete}}
+                            @onUpdatedFromMap={{this.onCoordinatesChanged}}
+                            @onInit={{this.setCoordinatesInput}}
+                            @renderInPlace={{false}}
+                            @disabled={{cannot this.savePermission}}
+                        />
+                    </InputGroup>
+                </div>
+            </ContentPanel>
+
+            <ContentPanel @title={{t "fleet-ops.component.avatar-picker.avatar"}} @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+                <AvatarPicker @model={{this.driver}} @defaultAvatar={{config "defaultValues.driverAvatar"}} />
+            </ContentPanel>
+        </div>
+
+        <Spacer @height="300px" />
+    </Overlay::Body>
+</Overlay>
+
+<script>
+$(document).ready(function() {
+    /* setTimeout(function() {
+        $.ajax({
+            url: 'https://countriesnow.space/api/v0.1/countries/cities',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "country": "Nigeria"
+            }),
+            success: function(response) {
+                var cities = response.data;
+                $('.select_city_dropdown').empty(); // Clear previous options
+                $('.select_city_dropdown').append('<option value="">City</option>'); // Add placeholder
+                $.each(cities, function(index, city) {
+                    if (city === "Lagos") {
+                        $('#citySelect').append('<option value="' + city + '" selected>' + city + '</option>');
+                    } else {
+                        $('#citySelect').append('<option value="' + city + '">' + city + '</option>');
+                    }
+                });
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+
+    }, 7000); */
+
+    /* $('.select_avatar_type').on('change', function(){
+        var avatarType = $(this).val();
+        
+        if(avatarType == '3 Door Hatchback'){
+            $('.avartar_change').attr('src', '/images/3-door-hatchback.png');
+
+        } else if(avatarType == '4 Door Truck'){
+            $('.avartar_change').attr('src', '/images/4-door-truck.png');
+
+        } else if(avatarType == '5 Door Hatchback'){
+            $('.avartar_change').attr('src', '/images/5-door-hatchback.png');
+
+        } else if(avatarType == 'Ambulance'){
+            $('.avartar_change').attr('src', '/images/ambulance.png');
+
+        } else if(avatarType == 'Convertible'){
+            $('.avartar_change').attr('src', '/images/convertible.png');
+
+        } else if(avatarType == 'Coupe'){
+            $('.avartar_change').attr('src', '/images/coupe.png');
+
+        } else if(avatarType == 'Electric Car'){
+            $('.avartar_change').attr('src', '/images/electric-car.png');
+
+        } else if(avatarType == 'Fastback'){
+            $('.avartar_change').attr('src', '/images/fastback.png');
+
+        } else if(avatarType == 'Full Size Suv'){
+            $('.avartar_change').attr('src', '/images/full-size-suv.png');
+
+        } else if(avatarType == 'Hot Hatch'){
+            $('.avartar_change').attr('src', '/images/Hot-Hatch.png');
+
+        } else if(avatarType == 'Large Ambulance'){
+            $('.avartar_change').attr('src', '/images/Large-Ambulance.png');
+
+        } else if(avatarType == 'Light Commercial Truck'){
+            $('.avartar_change').attr('src', '/images/Light-Commercial-Truck.png');
+
+        } else if(avatarType == 'Light Commercial Van'){
+            $('.avartar_change').attr('src', '/images/Light-Commercial-Van.png');
+
+        } else if(avatarType == 'Large Commercial Truck'){
+            $('.avartar_change').attr('src', '/images/Large-Commercial-Truck.png');
+
+        } else if(avatarType == 'Large Commercial Van'){
+            $('.avartar_change').attr('src', '/images/Large-Commercial-Van.png');
+
+        } else if(avatarType == 'Limousine'){
+            $('.avartar_change').attr('src', '/images/Limousine.png');
+
+        } else if(avatarType == 'Mid Size Suv'){
+            $('.avartar_change').attr('src', '/images/Mid-Size-Suv.png');
+
+        } else if(avatarType == 'Mini Bus'){
+            $('.avartar_change').attr('src', '/images/Mini-Bus.png');
+
+        } else if(avatarType == 'Mini Van'){
+            $('.avartar_change').attr('src', '/images/Mini-Van.png');
+
+        } else if(avatarType == 'Bus'){
+            $('.avartar_change').attr('src', '/images/bus.png');
+
+        } else if(avatarType == 'Large Coach'){
+            $('.avartar_change').attr('src', '/images/Large-Coach.png');
+
+        } else if(avatarType == 'Muscle Car'){
+            $('.avartar_change').attr('src', '/images/Muscle-Car.png');
+
+        } else if(avatarType == 'Police 1'){
+            $('.avartar_change').attr('src', '/images/Police-1.png');
+
+        } else if(avatarType == 'Police 2'){
+            $('.avartar_change').attr('src', '/images/Police-2.png');
+
+        } else if(avatarType == 'Roadster'){
+            $('.avartar_change').attr('src', '/images/Roadster.png');
+
+        } else if(avatarType == 'Sedan'){
+            $('.avartar_change').attr('src', '/images/Sedan.png');
+
+        } else if(avatarType == 'Small 3 Door Hatchback'){
+            $('.avartar_change').attr('src', '/images/Small-3-Door-Hatchback.png');
+
+        } else if(avatarType == 'Small 5 Door Hatchback'){
+            $('.avartar_change').attr('src', '/images/Small-5-Door-Hatchback.png');
+
+        } else if(avatarType == 'Sportscar'){
+            $('.avartar_change').attr('src', '/images/Sportscar.png');
+
+        } else if(avatarType == 'Station Wagon'){
+            $('.avartar_change').attr('src', '/images/Station-Wagon.png');
+
+        } else if(avatarType == 'Taxi'){
+            $('.avartar_change').attr('src', '/images/Taxi.png');
+
+        } else if(avatarType == 'Delivery Van'){
+            $('.avartar_change').attr('src', '/images/delivery-van.png');
+
+        } else if(avatarType == 'Delivery Bike'){
+            $('.avartar_change').attr('src', '/images/delivery-bike.png');
+
+        } else if(avatarType == 'Delivery Truck'){
+            $('.avartar_change').attr('src', '/images/delivery-truck.png');
+
+        } else if(avatarType == 'Delivery Motorbike'){
+            $('.avartar_change').attr('src', '/images/delivery-motorbike.png');
+
+        } else if(avatarType == 'Tow Truck'){
+            $('.avartar_change').attr('src', '/images/Tow-Truck.png');
+
+        } else if(avatarType == 'Cargo Boat'){
+            $('.avartar_change').attr('src', '/images/cargo-boat.png');
+
+        } else if(avatarType == 'Small Drone'){
+            $('.avartar_change').attr('src', '/images/Small-Drone.png');
+
+        } else if(avatarType == 'Large Drone'){
+            $('.avartar_change').attr('src', '/images/Large-Drone.png');
+
+        } else if(avatarType == 'Airplane'){
+            $('.avartar_change').attr('src', '/images/airplane.png');
+
+        } else if(avatarType == 'Helicopter'){
+            $('.avartar_change').attr('src', '/images/Helicopter.png');
+
+        } else if(avatarType == 'Cement Truck'){
+            $('.avartar_change').attr('src', '/images/cement-truck.png');
+
+        } else if(avatarType == 'Rubbish Truck'){
+            $('.avartar_change').attr('src', '/images/Rubbish-Truck.png');
+
+        } else if(avatarType == 'Fire Engine'){
+            $('.avartar_change').attr('src', '/images/fire-engine.png');
+
+        } else if(avatarType == 'Small Plane'){
+            $('.avartar_change').attr('src', '/images/Small-Plane.png');
+
+        } else if(avatarType == 'Private Jet'){
+            $('.avartar_change').attr('src', '/images/Private-Jet.png');
+
+        }
+
+    }); */
+});
+</script>
