@@ -8,9 +8,7 @@ export default class OperationsServiceRatesIndexEditController extends Operation
      * @void
      */
     @action async updateServiceRate() {
-        const { serviceRate, rateFees, perDropRateFees, parcelFees } = this;
-        const vendorSelectElement = document.getElementById('vendor-select');
-        const selectedVendorId = vendorSelectElement?.value;
+        const { serviceRate, rateFees, perDropRateFees, parcelFees, selectedVendor } = this;
 
         if (serviceRate.isFixedMeter) {
             serviceRate.setServiceRateFees(rateFees);
@@ -24,23 +22,16 @@ export default class OperationsServiceRatesIndexEditController extends Operation
             serviceRate.setServiceRateParcelFees(parcelFees);
         }
 
+        if (selectedVendor) {
+            serviceRate.set('vendor_uuid', selectedVendor.id);
+        }
+
         this.isUpdatingServiceRate = true;
         this.loader.showLoader('.overlay-inner-content', { loadingMessage: 'Updating service rate...' });
 
         try {
 
             const response = await serviceRate.save();
-            const apiData = {
-                service_rate_id: response.public_id,
-                vendor_id: selectedVendorId,
-            };
-            const vendordata = await fetch('https://african.land/travo_api/insert_service_vendor_api.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(apiData),
-            });
             this.isUpdatingServiceRate = false;
             this.loader.removeLoader();
             return this.transitionToRoute('operations.service-rates.index').then(() => {

@@ -11,6 +11,8 @@ export default class OperationsServiceRatesIndexNewController extends BaseContro
     @service loader;
     @service hostRouter;
 
+    @tracked selectedVendor;
+
     /**
      * Inject the `modalsManager` service
      *
@@ -331,6 +333,10 @@ export default class OperationsServiceRatesIndexNewController extends BaseContro
         }
     }
 
+    @action selectVendor(vendor) {
+        this.selectedVendor = vendor;
+    }
+
     /**
      * Adds a per drop-off rate fee
      */
@@ -345,13 +351,15 @@ export default class OperationsServiceRatesIndexNewController extends BaseContro
      */
     @action async createServiceRate() {
         const { serviceRate, rateFees, parcelFees } = this;
-        const vendorSelectElement = document.getElementById('vendor-select');
-        const selectedVendorId = vendorSelectElement?.value;
 
         serviceRate.setServiceRateFees(rateFees).setServiceRateParcelFees(parcelFees);
 
         if (serviceRate.isPerDrop) {
             serviceRate.clearServiceRateFees().setServiceRateFees(this.perDropRateFees);
+        }
+
+        if (this.selectedVendor) {
+            serviceRate.set('vendor_uuid', this.selectedVendor.id);
         }
 
         this.isCreatingServiceRate = true;
@@ -373,17 +381,6 @@ export default class OperationsServiceRatesIndexNewController extends BaseContro
                 await Promise.all(filePromises);
             }
             //end code
-            const apiData = {
-                service_rate_id: response.public_id,
-                vendor_id: selectedVendorId,
-            };
-            const vendordata = await fetch('https://african.land/travo_api/insert_service_vendor_api.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(apiData),
-            });
             this.isCreatingServiceRate = false;
             this.loader.removeLoader();
             return this.transitionToRoute('operations.service-rates.index').then(() => {

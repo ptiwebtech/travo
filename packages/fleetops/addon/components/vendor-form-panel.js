@@ -81,6 +81,10 @@ export default class VendorFormPanelComponent extends Component {
     @task *save() {
         contextComponentCallback(this, 'onBeforeSave', this.vendor);
 
+        if (this.vendor.meta) {
+            this.vendor.set('meta', this.vendor.meta);
+        }
+
         try {
             this.vendor = yield this.vendor.save();
         } catch (error) {

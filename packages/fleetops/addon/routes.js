@@ -25,10 +25,12 @@ export default buildRoutes(function () {
                 });
             });
         });
+        
         this.route('bus-routes', function () {
-            this.route('index', { path: '/' });
-            this.route('new');
-            this.route('edit', { path: '/edit/:id' });
+            this.route('index', { path: '/' }, function () {
+                this.route('new');
+                this.route('edit', { path: '/edit/:id' });
+            });
         });
 
         this.route('airport-meet-greet', function() {

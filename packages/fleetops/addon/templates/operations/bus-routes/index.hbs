@@ -1,0 +1,48 @@
+<Layout::Section::Header @title="Bus Routes" @searchQuery={{this.query}} @onSearch={{this.search}}>
+    <Button @icon="refresh" @onClick={{this.reload}} @helpText="Reload Data" class="mr-2" />
+    
+    <FiltersPicker
+        @columns={{this.columns}}
+        @onApply={{fn this.filters.apply this}}
+        @onClear={{fn this.filters.reset this}}
+        @onChange={{this.filters.set}}
+        @buttonWrapperClass="mr-2"
+    />
+
+    <VisibleColumnPicker @columns={{this.columns}} @onChange={{fn (mut this.columns)}} class="mr-2" />
+
+    <Button
+        @icon="plus"
+        @iconPrefix="fas"
+        @type="primary"
+        @text="New Bus Route"
+        class="mr-2"
+        @onClick={{this.createRoute}}
+    />
+</Layout::Section::Header>
+
+
+<Layout::Section::Body>
+    <Table 
+        @rows={{if @model @model (array)}} 
+        @columns={{this.columns}} 
+        @selectable={{true}} 
+        @canSelectAll={{true}} 
+        @onSetup={{fn (mut this.table)}} 
+        {{!-- Pagination logic with safety check --}}
+        @pagination={{true}}
+        @paginationMeta={{if @model.meta @model.meta (hash)}}
+        @page={{this.page}}
+        @onPageChange={{fn (mut this.page)}} 
+        @tfootVerticalOffset="0"
+    />
+
+    {{!-- Loading Indicator agar data fetch ho raha hai --}}
+    {{#if @model.isLoading}}
+        <div class="p-4 text-center">
+            <FaIcon @icon="spinner" @spin={{true}} class="text-blue-500" />
+            <span class="ml-2 text-gray-500">Loading routes...</span>
+        </div>
+    {{/if}}
+</Layout::Section::Body>
+{{outlet}}

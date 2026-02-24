@@ -80,4 +80,8 @@
     <div class="mt-3">
         <Button @text={{t "auth.login.form.create-account-button"}} @wrapperClass="btn-block" @disabled={{this.isLoading}} @onClick={{fn (transition-to "onboard")}} />
     </div>
+    
+    <div class="mt-3"> 
+        <Button @type="secondary" @text="Signup as a Vendor" @icon="store" @wrapperClass="btn-block"  @disabled={{this.isLoading}} @onClick={{fn (transition-to "vendor-signup")}} />
+    </div>
 </form>

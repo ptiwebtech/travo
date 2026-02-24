@@ -63,10 +63,14 @@ export default class VendorFormPanelCreateFormComponent extends Component {
      * @type {Object}
      */
     @tracked selectedIntegratedVendor;
+    @tracked notes = '';
 
     constructor() {
         super(...arguments);
         this.vendor = this.args.vendor;
+        if (this.vendor && this.vendor.meta) {
+            this.notes = this.vendor.meta.notes || '';
+        }
         this.fetchSupportedIntegratedVendors();
     }
 
@@ -158,6 +162,15 @@ export default class VendorFormPanelCreateFormComponent extends Component {
         return this.fetch.get('integrated-vendors/supported').then((supportedIntegratedVendors) => {
             this.supportedIntegratedVendors = supportedIntegratedVendors;
         });
+    }
+
+    @action onNotesInput(event) {
+        const value = event.target.value;
+        this.notes = value;
+        
+        let meta = this.vendor.meta || {};
+        meta.notes = value;
+        this.vendor.meta = meta; // Meta JSON mein save karne ke liye ready
     }
 
 }

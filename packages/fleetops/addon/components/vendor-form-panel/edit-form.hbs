@@ -239,6 +239,16 @@
                     <p class="text-xs text-gray-400 mt-2">JPEG, PNG only (Max 25MB)</p>
                 </div>
             </div>
+            <InputGroup @name="Notes">
+                <Textarea 
+                    @value={{this.notes}} 
+                    {{on "input" this.onNotesInput}}
+                    class="form-input w-full" 
+                    placeholder="Add any internal notes..." 
+                    rows={{4}} 
+                    disabled={{unauthorized}}
+                />
+            </InputGroup>
         {{/if}}
     </div>
 {{/let}}

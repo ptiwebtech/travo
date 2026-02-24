@@ -117,10 +117,19 @@
                 </div> 
 
                 <div class="input-group col-span-2">
-                    <InputLabel @labelText="Vendor"/>
-                    <select id="vendor-select" class="form-select form-input w-full my-vendor-select">
-                        <option selected disabled>Select vendor to assign service rate to</option>
-                    </select>
+                    <InputLabel @labelText="Select Vendor" @helpText="select vendor to assign service rate to" />
+                    <ModelSelect
+                        @modelName="vendor"
+                        @selectedModel={{this.selectedVendor}}
+                        @placeholder="Type to search vendor..."
+                        @triggerClass="form-select form-input w-full"
+                        @infiniteScroll={{true}}
+                        @renderInPlace={{true}}
+                        @onChange={{this.selectVendor}}
+                        as |model|
+                    >
+                        {{model.name}} <span class="text-gray-400 text-xs ml-2">({{model.public_id}})</span>
+                    </ModelSelect>
                 </div>
             </div>
         </div>
@@ -830,31 +839,6 @@
     }, 5000);
 
     $(document).ready(function() {
-        $.ajax({
-            url: 'https://app.travo.ng/v1/vendors',
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer flb_live_3TWrpgeE2iTkvJG0myIk', 
-            },
-            success: function(response) {
-                var vendors = response;
-                if (Array.isArray(vendors) && vendors.length > 0) {
-                    console.log(vendors);
-                    $('#vendor-select').empty();
-                    $('#vendor-select').append('<option selected disabled>Select vendor to assign service rate to</option>');
-                    vendors.forEach(function(vendor) {
-                        console.log(vendor);
-                        $('#vendor-select').append(`<option value="${vendor.id}">${vendor.name}</option>`);
-                    });
-                } else {
-                    console.error('No vendors found.');
-                }
-            },
-            error: function(error) {
-                console.error('Error fetching vendors:', error);
-            }
-        });
 
         // Fetch and render places
         $.ajax({
@@ -911,42 +895,4 @@
             }
         });
     });
-
-    var urlPartsService = window.location.href.split('/');
-    var serviceId = urlPartsService[urlPartsService.length - 1];
-
-    if (serviceId && serviceId.startsWith('service_')) {
-        fetch(`https://african.land/travo_api/get_vendor_by_service_api.php?service_id=${serviceId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.vendor) {
-                    var vendorSelect = document.getElementById('vendor-select');
-                    let optionExists = false;
-                    Array.from(vendorSelect.options).forEach(option => {
-                        if (option.value === data.vendor.vendor_id) {
-                            option.selected = true;
-                            optionExists = true;
-                        }
-                    });
-                    if (!optionExists) {
-                        var option = document.createElement('option');
-                        option.value = data.vendor.vendor_id;
-                        option.textContent = `Vendor: ${data.vendor.vendor_id}`;
-                        option.selected = true;
-                        vendorSelect.appendChild(option);
-                    }
-                } else {
-                    console.error('No vendor found for this service ID.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching vendor details:', error);
-            });
-    }
-
-
-
-
-
-
 </script>

@@ -1,5 +1,5 @@
 export default function getVendorTypeOptions() {
-    return [
+    const types =  [
         'carrier-trucking-company',
         'carrier-shipping-line',
         'carrier-air-cargo',
@@ -47,5 +47,15 @@ export default function getVendorTypeOptions() {
         'caterer',
         'fuel-distribution-company',
         'water-distribution-company',
+        'independent-vehicle-owner',
+        'independent-dispatch-rider-bike',
+        'tank-farm (Oil & Gas)',
+        'dispatch-rider',
+        'individual-car-owner',
+        'trucking-company',
+        'fuel-transport-and-logistics', 
+        'cold-storage',
+        'cold-transport'
     ];
+    return types.sort((a, b) => a.localeCompare(b));
 }

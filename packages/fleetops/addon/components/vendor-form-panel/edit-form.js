@@ -15,6 +15,9 @@ export default class VendorFormPanelEditFormComponent extends Component {
         super(...arguments);
         this.vendor = this.args.vendor;
         this.isIntegratedVendor = this.vendor && this.vendor.type === 'integrated-vendor';
+        if (this.vendor && this.vendor.meta) {
+            this.notes = this.vendor.meta.notes || '';
+        }
     }
 
     @action toggleCredentialsReset() {
@@ -53,6 +56,15 @@ export default class VendorFormPanelEditFormComponent extends Component {
                 this.contextPanel.clear();
             },
         });
+    }
+
+    @action onNotesInput(event) {
+        const value = event.target.value;
+        this.notes = value;
+        
+        let meta = this.vendor.meta || {};
+        meta.notes = value;
+        this.vendor.meta = meta;
     }
 
 }

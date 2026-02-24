@@ -71,6 +71,14 @@
                     <div class="field-name">{{t "fleet-ops.common.address"}}</div>
                     <div class="field-value">{{n-a this.vendor.address}}</div>
                 </div>
+
+                {{#if this.vendor.meta.notes}}
+                    <div class="field-info-container col-span-2 mt-2">
+                        <div class="field-name">Notes</div>
+                        <div class="field-value whitespace-pre-wrap">{{this.vendor.meta.notes}}</div>
+                    </div>
+                {{/if}}
+
             </div>
         {{/if}}
     </ContentPanel>

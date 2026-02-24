@@ -45,6 +45,18 @@ export default class OperationsServiceRatesIndexEditRoute extends Route {
             controller.parcelFees = model.parcel_fees;
         }
 
+        if (model.vendor_uuid) {
+            try {
+                
+                const vendor = await this.store.findRecord('vendor', model.vendor_uuid);
+                controller.selectedVendor = vendor;
+            } catch (e) {
+                controller.selectedVendor = null;
+            }
+        } else {
+            controller.selectedVendor = null;
+        }
+
         controller.orderConfigs = await this.store.findAll('order-config');
         controller.serviceAreas = await this.store.findAll('service-area');
     }

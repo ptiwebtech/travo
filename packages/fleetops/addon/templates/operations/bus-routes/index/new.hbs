@@ -1,0 +1,90 @@
+<Overlay @position="right" @noBackdrop={{true}} @isResizable={{true}} @fullHeight={{true}} @width="570px">
+    <Overlay::Header
+        @title="Create New Bus Route"
+        @onPressCancel={{transition-to "operations.bus-routes.index"}}
+    >
+        {{!-- Top Save Button --}}
+        <Button @icon="check" @type="primary" @text="Create Bus Route" @onClick={{this.saveRoute}} />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="px-4 space-y-4 pt-4">
+        <div class="grid grid-cols-1 gap-4 pb-20">
+            
+            {{!-- Country Selection (Africa Only) --}}
+            <div class="input-group">
+                <InputLabel @labelText="Select Country (Africa)" @required={{true}} />
+                <Select 
+                    @options={{this.africaCountries}} 
+                    @value={{this.model.country}} 
+                    @onSelect={{fn (mut this.model.country)}} 
+                    @placeholder="Choose Country"
+                    class="w-full" 
+                />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                {{!-- Departure City --}}
+                <div class="input-group">
+                    <InputLabel @labelText="Departure City" @required={{true}} />
+                    <Select @options={{this.cities}} @value={{this.model.departure_city}} @onSelect={{fn (mut this.model.departure_city)}} @placeholder="Select Departure" class="w-full" />
+                </div>
+
+                {{!-- Arrival City --}}
+                <div class="input-group">
+                    <InputLabel @labelText="Arrival City" @required={{true}} />
+                    <Select @options={{this.cities}} @value={{this.model.arrival_city}} @onSelect={{fn (mut this.model.arrival_city)}} @placeholder="Select Arrival" class="w-full" />
+                </div>
+            </div>
+
+            {{!-- Vendor Assignment --}}
+            <div class="input-group">
+                <InputLabel @labelText="Assign Vendor (Intercity Operator)" @required={{true}} />
+                <Select 
+                    @options={{this.vendors}} 
+                    @value={{this.model.vendor}} 
+                    @optionLabel="name" 
+                    @onSelect={{fn (mut this.model.vendor)}} 
+                    @placeholder="Select Vendor"
+                    class="w-full" 
+                />
+            </div>
+
+            {{!-- Bus Park Locations --}}
+            <div class="input-group">
+                <InputLabel @labelText="Bus Park Departure Location" @helpText="Enter the full address or landmark" @required={{true}} />
+                <Input @value={{this.model.departure_address}} class="form-input w-full" placeholder="e.g. Ojota Motor Park, Lagos" />
+            </div>
+
+            <div class="input-group">
+                <InputLabel @labelText="Bus Park Arrival Location" @helpText="Enter the full address or landmark" @required={{true}} />
+                <Input @value={{this.model.arrival_address}} class="form-input w-full" placeholder="e.g. Utako Market Park, Abuja" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                {{!-- Price --}}
+                <div class="input-group">
+                    <InputLabel @labelText="Route Ticket Price" @required={{true}} />
+                    <Input @type="number" @value={{this.model.price}} class="form-input w-full" placeholder="0.00" />
+                </div>
+
+                {{!-- Route Class --}}
+                <div class="input-group">
+                    <InputLabel @labelText="Route Class" />
+                    <Select @options={{this.routeClasses}} @value={{this.model.route_class}} @onSelect={{fn (mut this.model.route_class)}} class="w-full" />
+                </div>
+            </div>
+        </div>
+    </Overlay::Body>
+
+    {{!-- Footer Save Button --}}
+    <Overlay::Footer class="flex items-center justify-end px-4 py-3 bg-gray-50 border-t border-gray-200">
+        <Button 
+            @icon="check" 
+            @type="primary" 
+            @size="lg" 
+            @text="Save Bus Route" 
+            @onClick={{this.saveRoute}} 
+            class="w-full md:w-auto"
+        />
+    </Overlay::Footer>
+</Overlay>

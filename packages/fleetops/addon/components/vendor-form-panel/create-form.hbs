@@ -167,6 +167,7 @@
                                 @onChange={{fn (mut this.vendor.type)}}
                                 @placeholder={{t "fleet-ops.component.vendor-form-panel.create-form.select-vendor-type"}}
                                 @triggerClass="form-select form-input"
+                                @searchEnabled={{true}}
                                 @disabled={{unauthorized}}
                                 as |type|
                             >
@@ -256,6 +257,17 @@
                             <p class="text-xs text-gray-400 mt-2">JPEG, PNG only (Max 25MB)</p>
                         </div>
                     </div>
+
+                    <InputGroup @name="Notes">
+                        <Textarea 
+                            @value={{this.notes}} 
+                            class="form-input w-full" 
+                            {{on "input" this.onNotesInput}}
+                            placeholder="Add any internal notes or business details here..." 
+                            rows={{4}} 
+                            disabled={{unauthorized}}
+                        />
+                    </InputGroup>
                 </ContentPanel>
             {{/if}}
         {{/if}}

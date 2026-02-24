@@ -59,4 +59,5 @@ Router.map(function () {
         });
     });
     this.route('install');
+    this.route('vendor-signup', { path: '/vendor-signup' });
 });

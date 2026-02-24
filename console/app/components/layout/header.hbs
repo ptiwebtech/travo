@@ -33,8 +33,47 @@
             .next-view-header .next-view-header-left {
                 z-index: 999;
             }
+
+            /* Logo ke upar dot ki position set karne ke liye */
+            .navbar-logo .relative {
+                display: inline-block;
+            }
+
+            .inline-block.relative {
+                position: relative;
+            }
+
+            span.tooltip-open {
+                position: absolute;
+                bottom: 0 !important;!i;!;
+                top: auto;
+                right: 37px;
+                background-color: #22c55e;
+
+            }
+
+            span.tooltip-open:hover p.hover-text {
+                opacity: 1;
+            }
+
+            p.hover-text {
+                position: absolute;
+                width: max-content;
+                background: #fff;
+                color: black;
+                left: 14px;
+                top: 0;
+                opacity: 0;
+                padding: 4px 7px;
+            }
+            
+            @media screen and (max-width: 580px){
+                span.tooltip-open {
+                    right: 28px;
+                }
+            }
         </style>
-        <LinkToExternal @route="console" class="logo navbar-logo mr-4">
+        {{!-- <LinkToExternal @route="console" class="logo navbar-logo mr-4">
             <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" style="width: 70% !important; height: auto !important;" />
             <div class="beta_text_hover">
                 <span class="beta text-xs">BETA 
@@ -42,7 +81,19 @@
                     </p>
                </span>
             </div>
+        </LinkToExternal> --}}
+        
+        <LinkToExternal @route="console" class="logo navbar-logo mr-4 relative"> {{!-- group class add ki hai hover ke liye --}}
+            <div class="inline-block relative">
+                <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" style="width: 70% !important; height: auto !important;" />
+                
+                {{!-- Green Dot Indicator --}}
+                <span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full border-2 border-white dark:border-gray-800 tooltip-open">
+                    <p class="hover-text">Open for Business</p>
+                </span>
+            </div>
         </LinkToExternal>
+
         {{#if @showSidebarToggle}}
             <Layout::Header::SidebarToggle class="mr-2" @onToggle={{@onSidebarToggle}} @disabled={{not @sidebarToggleEnabled}} />
         {{/if}}

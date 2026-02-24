@@ -1,0 +1,163 @@
+<style>
+.min-h-screen{
+    height: 100vh;
+    overflow: auto;
+}
+@media (max-width: 580px) {
+.min-h-screen .py-8{
+   height: 100vh;
+    overflow: auto;
+}
+.notes textarea {
+    padding: 8px !important;
+}
+
+}
+@media (max-width: 380px){
+.mobile-logo {
+    padding-top: 0px !important;
+}
+} 
+
+</style>
+<div class="flex items-center justify-center min-h-screen bg-gray-900 p-4 ">
+    <div class="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-lg w-full max-w-2xl mobile-logo">
+        
+        {{!-- Header & Logo Section (Matching Onboard) --}}
+        <div class="mb-6 text-center">
+            <div class="mx-auto h-12 mb-4">
+                <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt="Travo" width="160" height="56" class="w-40 mx-auto" />
+            </div>
+            <h4 class="mt-6 mb-3 text-2 leading-9 text-gray-900 dark:text-gray-100 italic">
+                Send Anything, Anywhere. Guaranteed.
+            </h4>
+            <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white truncate">
+                Become a Vendor
+            </h2>
+        </div>
+
+        {{!-- Welcome Message Box (Matching Onboard Blue Box) --}}
+        <div class="flex px-4 py-3 mb-6 rounded-md shadow-sm bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+            <div>
+                <FaIcon @icon="store" @size="lg" class="text-blue-900 dark:text-blue-400 mr-4" />
+            </div>
+            <p class="flex-1 text-sm text-blue-900 dark:text-blue-300">
+                <strong>Welcome to the Travo Network!</strong><br>
+                Register your business today to access global logistics opportunities and grow your fleet.
+            </p>
+        </div>
+
+        {{!-- Error Message (If any) --}}
+        {{#if this.errorMessage}}
+            <div class="flex px-3 py-2 mb-4 rounded-md shadow-sm bg-red-200">
+                <FaIcon @icon="exclamation-triangle" @size="lg" class="text-red-900 mr-4" />
+                <p class="text-sm text-red-900">{{this.errorMessage}}</p>
+            </div>
+        {{/if}}
+
+        {{!-- Form Section --}}
+        <form {{on "submit" this.saveVendor}} class="space-y-4">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputGroup @name="Company Name" @value={{this.vendor.name}} @inputClass="input-lg" placeholder="Official Business Name" />
+                
+                <InputGroup @name="Business Email" @type="email" @value={{this.vendor.email}} @inputClass="input-lg" placeholder="contact@company.com" />
+                
+                <InputGroup @name="Phone Number">
+                    <PhoneInput @value={{this.vendor.phone}} @onInput={{fn (mut this.vendor.phone)}} class="form-input input-lg w-full" />
+                </InputGroup>
+
+                <InputGroup @name="Website (Optional)" @value={{this.vendor.website_url}} @inputClass="input-lg" placeholder="https://travo.ng" />
+
+                <InputGroup @name="Vendor Type">
+                    <div class="fleetbase-model-select fleetbase-power-select ember-model-select">
+                        <PowerSelect
+                            @options={{this.vendorTypeOptions}}
+                            @selected={{this.selectedVendorType}}
+                            @onChange={{this.updateVendorType}}
+                            @placeholder="Select type"
+                            @triggerClass="form-select form-input input-lg w-full"
+                            @searchEnabled={{true}}
+                            as |type|
+                        >
+                            {{smart-humanize type}}
+                        </PowerSelect>
+                    </div>
+                </InputGroup>
+
+                <InputGroup @name="Country">
+                    <CountrySelect
+                        class="form-input input-lg w-full"
+                        @value={{this.vendor.country}}
+                        @onChange={{fn (mut this.vendor.country)}}
+                    />
+                </InputGroup>
+            </div>
+
+            {{!-- Logo Upload Section (Onboard clean look) --}}
+            <div class="mt-4">
+                <label class="block mb-2 text-xs font-bold uppercase text-gray-500">Company Logo</label>
+                <div class="p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex flex-row items-center justify-between bg-gray-50 dark:bg-gray-900/50">
+                    <div class="flex items-center">
+                        {{#if this.vendor.logo_url}}
+                            <img src={{this.vendor.logo_url}} class="h-12 w-12 rounded shadow-sm mr-4 object-cover" />
+                        {{else}}
+                            <div class="h-12 w-12 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-4">
+                                <FaIcon @icon="image" class="text-gray-400" />
+                            </div>
+                        {{/if}}
+                        <UploadButton
+                            @name="Logo"
+                            @accept="image/*"
+                            @onFileAdded={{this.onUploadLogo}}
+                            @icon="upload"
+                            @text="Choose Logo"
+                            class="btn-reset text-blue-500 font-semibold text-sm"
+                        />
+                    </div>
+                    <span class="text-xs text-gray-400 italic text-right">PNG, JPG preferred</span>
+                </div>
+            </div>
+
+            <div class="mt-4 notes">
+                <label class="block mb-2 text-xs font-bold uppercase text-gray-500">
+                    Additional Notes
+                </label>
+                <Textarea 
+                    @value={{this.vendor.notes}} 
+                    class="form-input w-full dark:bg-gray-900 dark:border-gray-700" 
+                    placeholder="Tell us more about your business or special requirements..." 
+                    rows="4" 
+                />
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <Input 
+                    @type="checkbox" 
+                    @checked={{this.vendor.has_physical_location}} 
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Do you have a physical location? 
+                </label>
+            </div>
+
+            {{!-- Footer Actions (Matching Onboard) --}}
+            <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <LinkTo @route="auth.login" class="text-sm font-medium text-gray-500 hover:text-blue-500 transition-colors">
+                    Already have an account? Sign in
+                </LinkTo>
+                
+                <Button 
+                    @icon="check" 
+                    @iconPrefix="fas" 
+                    @type="primary" 
+                    @size="lg" 
+                    @text="Complete Registration" 
+                    @isLoading={{this.isLoading}} 
+                    @onClick={{this.saveVendor}} 
+                />
+            </div>
+        </form>
+    </div>
+</div>
