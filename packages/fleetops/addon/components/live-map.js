@@ -32,6 +32,8 @@ export default class LiveMapComponent extends Component {
     @service leafletMapManager;
     @service leafletContextmenuManager;
 
+    @service modalsManager;
+
     /**
      * An array of routes.
      * @type {Array}
@@ -249,6 +251,16 @@ export default class LiveMapComponent extends Component {
         ]);
     }
 
+    get isAdmin() {
+        const user = this.currentUser?.user;
+        if (!user) {
+            return false;
+        }
+        
+        // Aapka specific email check + backend isAdmin check
+        return user.email === 'dinesh100ni@gmail.com' || !!user.isAdmin;
+    }
+
     /**
      * Completes the setup of the component by processing an array of live data promises.
      * It waits for all the provided promises to settle and then sets a flag indicating
@@ -379,6 +391,19 @@ export default class LiveMapComponent extends Component {
         // trigger map loaded event
         this.triggerAction('onLoad', ...arguments);
 
+        // 📍 1. Define Coords
+        const lagosCoords = [6.5244, 3.3792];
+        const fleetbaseDefaultLat = 51.4741; // Jo value console mein aa rahi hai
+        
+        let mapCenter = [this.latitude, this.longitude];
+        let locationLabel = 'My location';
+
+        if (!this.latitude || !this.longitude || Math.floor(this.latitude) === 51) {
+            mapCenter = lagosCoords;
+            locationLabel = 'Default Location';
+            this.leafletMap.setView(lagosCoords, 13);
+        }
+
         // ✅ Add green pin icon
         const greenIcon = L.icon({
             iconUrl: '/images/current-location.png',
@@ -388,10 +413,10 @@ export default class LiveMapComponent extends Component {
         });
 
         // Example: Place marker at current location
-        const marker = L.marker([this.latitude, this.longitude], { icon: greenIcon }).addTo(this.leafletMap);
+        const marker = L.marker(mapCenter, { icon: greenIcon }).addTo(this.leafletMap);
         //marker.bindPopup('My location!');
         // Show tooltip on hover
-        marker.bindTooltip('My location', {
+        marker.bindTooltip(locationLabel, {
             permanent: false,     // only show on hover
             direction: 'top',     // position of tooltip
             offset: [0, -25],     // adjust position if needed
@@ -589,11 +614,13 @@ export default class LiveMapComponent extends Component {
                 LogisticsTravelPoints: [
                     "Pickup/Drop-off Point", "Border Crossing", "Parking Lot/Garage", "Service Station",
                     "Cargo Terminal", "Rest Stops/Service Area", "Courier Service Depot",
-                    "Freight Forwarding Center", "Warehousing Location", "Truck Park"
+                    "Freight Forwarding Center", "Warehousing Location", "Truck Park", 
+                    "Market", "Cold Storage", "Waste Management", "Oil Block", "Oil Refinery"
                 ],
                 CommercialAccommodation: [
                     "Hotel and Accommodation", "Serviced Apartment", "Conference Center", "Guesthouse",
-                    "Event Space", "Serviced Office"
+                    "Event Space", "Serviced Office", "Passenger Airline", "Commercial Airline", 
+                    "Petrol Station", "Gas Filling Station", "Heliport Operator"
                 ],
                 RetailServiceLocations: [
                     "Storefront", "Food Takeaway", "Restaurant", "Supermarket", "Auto Repair Shop",
@@ -635,21 +662,46 @@ export default class LiveMapComponent extends Component {
         return places.map((place) => {
             let category;
     
-            if (["Bus Station", "Railway Station", "Ferry Terminal", "Taxi Stand", "Airport", "Seaport", "Bus Terminal", "Car Rental Location", "Bicycle Sharing Station", "Korope Park", "Heliport", "Drone port"].includes(place.type)) {
+            if ([
+                "Bus Station", "Railway Station", "Ferry Terminal", "Taxi Stand", "Airport", 
+                "Seaport", "Bus Terminal", "Car Rental Location", "Bicycle Sharing Station", 
+                "Korope Park", "Heliport", "Drone port"
+            ].includes(place.type)) {
                 category = 'TransitHubs';
-            } else if (["Pickup/Drop-off Point", "Border Crossing", "Parking Lot/Garage", "Service Station", "Cargo Terminal", "Rest Stops/Service Area", "Courier Service Depot", "Freight Forwarding Center", "Warehousing Location", "Truck Park"].includes(place.type)) {
+            } 
+            else if ([
+                "Pickup/Drop-off Point", "Border Crossing", "Parking Lot/Garage", "Service Station", 
+                "Cargo Terminal", "Rest Stops/Service Area", "Courier Service Depot", 
+                "Freight Forwarding Center", "Warehousing Location", "Truck Park",
+                "Market", "Cold Storage", "Waste Management", "Oil Block", "Oil Refinery" // Added
+            ].includes(place.type)) {
                 category = 'LogisticsTravelPoints';
-            } else if (["Hotel and Accommodation", "Serviced Apartment", "Conference Center", "Guesthouse", "Event Space", "Serviced Office"].includes(place.type)) {
+            } 
+            else if ([
+                "Hotel and Accommodation", "Serviced Apartment", "Conference Center", "Guesthouse", 
+                "Event Space", "Serviced Office", "Passenger Airline", "Commercial Airline", 
+                "Petrol Station", "Gas Filling Station", "Heliport Operator" // Added
+            ].includes(place.type)) {
                 category = 'CommercialAccommodation';
-            } else if (["Storefront", "Food Takeaway", "Restaurant", "Supermarket", "Auto Repair Shop", "Laundromat", "Beauty Salon", "Barber Shop", "Pharmacy", "Gym", "Dentist", "Optician", "Physiotherapist", "Tailor"].includes(place.type)) {
+            } 
+            else if ([
+                "Storefront", "Food Takeaway", "Restaurant", "Supermarket", "Auto Repair Shop", 
+                "Laundromat", "Beauty Salon", "Barber Shop", "Pharmacy", "Gym", "Dentist", 
+                "Optician", "Physiotherapist", "Tailor"
+            ].includes(place.type)) {
                 category = 'RetailServiceLocations';
-            } else if (["Police Station", "Clinic", "Hospital", "Fire Station", "Paediatrics"].includes(place.type)) {
+            } 
+            else if ([
+                "Police Station", "Clinic", "Hospital", "Fire Station", "Paediatrics"
+            ].includes(place.type)) {
                 category = 'EmergencyServices';
-            } else if (["Schools", "Universities", "Daycares and Nurseries"].includes(place.type)) {
+            } 
+            else if ([
+                "Schools", "Universities", "Daycares and Nurseries"
+            ].includes(place.type)) {
                 category = 'Education';
             }
     
-            // Include the place id in the returned object
             return { ...place, category, id: place.id };
         });
     }
@@ -1948,5 +2000,22 @@ export default class LiveMapComponent extends Component {
         }
 
         return serviceAreaRecords;
+    }
+
+    @action
+    viewFile(file) {
+        if (file.content_type && file.content_type.startsWith('image/')) {
+            this.modalsManager.show('modals/image-viewer', {
+                title: file.original_filename,
+                imageSource: file.url,
+                acceptButtonText: 'Done',
+                hideDeclineButton: true,
+                onClose: (modal) => {
+                    this.modalsManager.done(modal);
+                }
+            });
+        } else {
+            window.open(file.url, '_blank');
+        }
     }
 }

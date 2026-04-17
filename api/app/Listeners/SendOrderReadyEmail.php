@@ -25,6 +25,9 @@ class SendOrderReadyEmail
     public function handle(OrderReady $event): void
     {
         try {
+            $loggedInUser = Auth::user();
+            $clientName  = $loggedInUser?->name ?? 'N/A';
+            $clientPhone = $loggedInUser?->phone ?? $loggedInUser?->mobile ?? 'N/A';
             // Get the actual order model instance
             $order = $event->getModelRecord();
             if (!$order) {
@@ -73,7 +76,7 @@ class SendOrderReadyEmail
             $isDriver = str_contains(strtoupper($orderType), 'DRIVER');
             $emoji = $isDriver ? "🚗" : "📦";
 
-            $subject = "{$emoji} {$name} shared this transport quote with you from Travo";
+            $subject = "{$emoji} {$name}, almost booked… your transport quote from Travo is ready";
 
             // $subject = "📦 {$name} shared this transport quote with you from Travo";
 
@@ -81,7 +84,7 @@ class SendOrderReadyEmail
             //$email = 'subham.k@ptiwebtech.com';
 
             // Send the email
-            Mail::send('emails.order_ready', ['order_data' => $order->toArray()], function ($message) use ($recipients, $order, $subject) {
+            Mail::send('emails.order_ready', ['order_data' => $order->toArray(), 'client_name' => $clientName, 'client_phone' => $clientPhone], function ($message) use ($recipients, $order, $subject) {
                 $message->to($recipients)
                         ->subject($subject);
             });

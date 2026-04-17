@@ -1,8 +1,11 @@
 import BaseController from '@fleetbase/fleetops-engine/controllers/base-controller';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 
 export default class ManagementPlacesIndexDetailsController extends BaseController {
+
+     
     /**
      * The currently active view tab ('details' by default).
      *
@@ -26,6 +29,7 @@ export default class ManagementPlacesIndexDetailsController extends BaseControll
      * @action
      * @returns {Transition} The transition object representing the route change.
      */
+
     @action transitionBack() {
         return this.transitionToRoute('management.places.index');
     }
@@ -52,4 +56,5 @@ export default class ManagementPlacesIndexDetailsController extends BaseControll
     @action onTabChanged(tab) {
         this.view = tab;
     }
+
 }

@@ -12,6 +12,7 @@ export default class ServiceRate extends Model {
     @attr('string') service_area_uuid;
     @attr('string') zone_uuid;
     @attr('string') order_config_uuid;
+    @attr('string') vendor_uuid;
 
     /** @relationships */
     @hasMany('service-rate-fee') rate_fees;
@@ -19,6 +20,7 @@ export default class ServiceRate extends Model {
     @hasMany('file') files;
     @belongsTo('service-area') service_area;
     @belongsTo('zone') zone;
+    @belongsTo('vendor') vendor;
 
     /** @attributes */
     @attr('string') service_area_name;

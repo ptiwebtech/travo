@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
-import { action } from '@ember/object';
+import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class VendorSignupController extends Controller {
@@ -80,13 +80,16 @@ export default class VendorSignupController extends Controller {
         website_url: '',
         type: 'general-vendor',
         country: 'NG',
+        logo_url: null,
         notes: '',
+        has_physical_location: false,
         status: 'Prospective' 
     };
 
     @action
     updateVendorType(type) {
-        this.selectedVendorType = type; // UI turant update hoga
+        this.selectedVendorType = type;
+        this.vendor.type = type; // Ye zaroori hai backend ke liye
         console.log('Selected:', type);
     }
 
@@ -96,10 +99,20 @@ export default class VendorSignupController extends Controller {
             event.preventDefault();
         }
 
-        if (!this.vendor.name || !this.vendor.email) {
-            return this.notifications.error('Please fill in the required fields (Name and Email).');
-        }
+        const { name, email, phone, type } = this.vendor;
 
+        if (!name || name.length < 3) {
+            return this.notifications.error('Please enter a valid Business Name.');
+        }
+    
+        if (!email || !email.includes('@')) {
+            return this.notifications.error('Please enter a valid Business Email.');
+        }
+    
+        if (!phone) {
+            return this.notifications.error('Phone number is required for verification.');
+        }
+    
         this.isLoading = true;
 
         try {
@@ -111,7 +124,8 @@ export default class VendorSignupController extends Controller {
             this.notifications.success('Thank you for registering as a vendor and offering your services to our community. Your application is currently under review, and we will contact you should we require any additional information.');
             this.router.transitionTo('auth.login');
         } catch (e) {
-            this.notifications.error('Registration failed: ' + (e.message || 'Server Error'));
+            const errorMsg = e.error || e.message || 'Registration failed.';
+            this.notifications.error(errorMsg);
         } finally {
             this.isLoading = false;
         }
@@ -119,8 +133,26 @@ export default class VendorSignupController extends Controller {
 
     @action
     onUploadLogo(file) {
-        // Local preview for the logo
-        this.vendor.logo_url = URL.createObjectURL(file.file);
-        this.notifications.info('Logo selected successfully.');
+        // 1. Loading state ko turant khatam karne ke liye
+        if (file.queue) {
+            file.queue.remove(file);
+        }
+    
+        // 2. Image ko Base64 string mein convert karo
+        const reader = new FileReader();
+        reader.readAsDataURL(file.file);
+        reader.onload = () => {
+            const base64Data = reader.result;
+
+            // 2. Reactivity trigger karne ke liye 'set' use karein
+            // Isse Ember ko pata chalega ki 'logo_url' badal gaya hai aur UI update hoga
+            set(this.vendor, 'logo_url', base64Data);
+            set(this.vendor, 'logo_data', base64Data);
+            this.notifications.info('Logo selected successfully.');
+        };
+    }
+    @action
+    onLocationToggle(value) {
+        this.vendor.has_physical_location = value;
     }
 }

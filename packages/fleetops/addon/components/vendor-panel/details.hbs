@@ -40,17 +40,44 @@
 
                 <div class="field-info-container space-y-2">
                     <div class="field-name">{{t "fleet-ops.common.email"}}</div>
-                    <div class="field-value">{{n-a this.vendor.email}}</div>
+                     <div class="field-value">
+                        {{#if this.vendor.email}}
+                            <ClickToCopy @value="{{this.vendor.email}}" class="field-value">
+                                {{this.vendor.email}}
+                                <img src="/images/copy-icon.png" alt="Copy" class="icon" />
+                            </ClickToCopy>
+                        {{else}}
+                            {{n-a null}}
+                        {{/if}}
+                     </div>
                 </div>
 
                 <div class="field-info-container space-y-2">
                     <div class="field-name">{{t "fleet-ops.common.phone"}}</div>
-                    <div class="field-value">{{n-a this.vendor.phone}}</div>
+                    <div class="field-value">
+                        {{#if this.vendor.phone}}
+                            <ClickToCopy @value="{{this.vendor.phone}}" class="field-value">
+                                {{this.vendor.phone}}
+                                <img src="/images/copy-icon.png" alt="Copy" class="icon" />
+                            </ClickToCopy>
+                        {{else}}
+                            {{n-a null}}
+                        {{/if}}
+                    </div>
                 </div>
 
                 <div class="field-info-container space-y-2">
                     <div class="field-name">{{t "fleet-ops.common.website-url"}}</div>
-                    <div class="field-value">{{n-a this.vendor.website_url}}</div>
+                    <div class="field-value">
+                        {{#if this.vendor.website_url}}
+                            <ClickToCopy @value="{{this.vendor.website_url}}" class="field-value">
+                                {{this.vendor.website_url}}
+                                <img src="/images/copy-icon.png" alt="Copy" class="icon" />
+                            </ClickToCopy>
+                        {{else}}
+                            {{n-a null}}
+                        {{/if}}
+                    </div>
                 </div>
 
                 <div class="field-info-container space-y-2">
@@ -83,3 +110,13 @@
         {{/if}}
     </ContentPanel>
 </div>
+<style>
+    span.click-to-copy--value {
+        display: flex;
+        align-items: center;
+    }
+    span.click-to-copy--value img.icon {
+        width: 23px;
+        margin-left: 10px;
+    }
+</style>

@@ -20,6 +20,7 @@ export default class ManagementPlacesIndexDetailsRoute extends Route {
     };
 
     model({ public_id }) {
-        return this.store.findRecord('place', public_id);
+        //return this.store.findRecord('place', public_id);
+        return this.store.findRecord('place', { public_id, with: ['files'] });
     }
 }

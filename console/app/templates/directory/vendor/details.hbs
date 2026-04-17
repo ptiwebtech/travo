@@ -1,0 +1,184 @@
+<style>
+    body, html { 
+        overflow: visible !important; 
+    }
+    .page-container { padding-top: 1.5rem; }
+    .leaflet-control-zoom {
+        border: none !important;
+        margin-right: 15px !important;
+        margin-top: 15px !important;
+    }
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+        background-color: white !important;
+        color: #0284c7 !important;
+        border-radius: 8px !important;
+        margin-bottom: 5px !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    .leaflet-marker-icon {
+        filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1));
+    }
+    @media (max-width: 640px) {
+        .page-container { padding-top: 1rem; }
+        .directory-content-wrapper { margin-top: 1rem; }
+    }
+</style>
+
+<div class="p-6 max-w-5xl mx-auto min-h-screen page-container relative">
+
+    <div class="flex items-center justify-between mb-10">
+        <LinkTo @route="console.home" class="block group">
+            <img src="/images/Travo-logo.png" alt="Travo" class="w-28 md:w-32 transition-transform group-hover:scale-105">
+        </LinkTo>
+
+        <LinkTo @route="auth.login" class="px-6 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95">
+            Login
+        </LinkTo>
+    </div>
+
+    <div class="directory-content-wrapper">
+        {{#if this.isLoading}}
+            <div class="flex flex-col items-center justify-center py-24">
+                <FaIcon @icon="spinner" @spin={{true}} class="text-4xl text-sky-500 mb-4" />
+                <p class="text-gray-500 animate-pulse font-medium">Loading vendor profile...</p>
+            </div>
+        {{else}}
+            {{#if this.vendor}}
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    
+                    {{!-- Banner Area --}}
+                    <div class="relative h-48 md:h-64 w-full bg-gradient-to-r from-sky-400 to-sky-600">
+                        {{#if (and this.vendor.files (gt this.vendor.files.length 0))}}
+                            <img src={{get (object-at 0 this.vendor.files) "url"}} class="w-full h-full object-cover opacity-50" alt="banner">
+                        {{/if}}
+                        
+                        <LinkTo @route="directory.vendor.index" @model={{this.vendor.type}} class="absolute top-4 left-4 p-2 px-4 bg-white/90 backdrop-blur shadow-md rounded-xl text-xs font-bold text-gray-700 hover:bg-white transition z-20">
+                            <FaIcon @icon="arrow-left" class="mr-1" /> Back
+                        </LinkTo>
+                    </div>
+
+                    <div class="px-8 pb-8">
+                        {{!-- Profile Header --}}
+                        <div class="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-16 relative z-10">
+                            <div class="w-32 h-32 rounded-3xl border-4 border-white dark:border-gray-800 bg-white p-2 shadow-2xl overflow-hidden">
+                                <img src={{or this.vendor.logo_url "/images/no-avatar.png"}} alt={{this.vendor.name}} class="w-full h-full object-contain">
+                            </div>
+                            <div class="text-center md:text-left md:mb-2">
+                                <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase vendor-name">{{this.vendor.name}}</h1>
+                                <div class="mt-2 flex flex-wrap gap-2 justify-center md:justify-start">
+                                    <span class="px-3 py-1 bg-sky-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider vendor-type">{{humanize (dasherize this.vendor.type)}}</span>
+                                    <span class="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg text-[10px] font-bold uppercase">{{this.vendor.status}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
+                            {{!-- Column 1: Contact & Map --}}
+                            <div class="space-y-6">
+                                <div class="p-6 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Business Contact</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-600 flex-shrink-0">
+                                                <FaIcon @icon="map-marker-alt" />
+                                            </div>
+                                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                                                {{or this.vendor.place.address this.vendor.address}}
+                                            </p>
+                                        </div>
+                                        
+                                        {{#if this.vendor.phone}}
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 flex-shrink-0">
+                                                    <FaIcon @icon="phone" />
+                                                </div>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm font-bold">{{this.vendor.phone}}</p>
+                                            </div>
+                                        {{/if}}
+
+                                        {{#if this.vendor.email}}
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                                    <FaIcon @icon="envelope" />
+                                                </div>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{this.vendor.email}}</p>
+                                            </div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+
+                               {{#if this.vendor.place.location.coordinates}}
+                                    <div class="mt-8">
+                                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Vendor Location</h3>
+                                        <div class="w-full h-80 rounded-[2.5rem] overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl relative">
+                                            <LeafletMap 
+                                                class="w-full h-full" 
+                                                @lat={{object-at 1 this.vendor.place.location.coordinates}} 
+                                                @lng={{object-at 0 this.vendor.place.location.coordinates}} 
+                                                @zoom={{15}} 
+                                                @zoomControl={{true}}
+                                                as |layers|
+                                            >
+                                                {{!-- Voyager Tiles --}}
+                                                <layers.tile @url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                                                
+                                                <layers.marker
+                                                    @location={{array (object-at 1 this.vendor.place.location.coordinates) (object-at 0 this.vendor.place.location.coordinates)}}
+                                                    {{!-- Yahan humne dynamic icon add kar diya hai --}}
+                                                    @icon={{icon iconUrl=(get-icon-for-place this.vendor.place.type) iconSize=(array 45 45) iconAnchor=(array 22 45)}}
+                                                    as |marker|
+                                                >
+                                                    <marker.popup>
+                                                        <div class="p-2 text-center">
+                                                            <p class="font-black text-gray-900 uppercase text-[12px] mb-1">{{this.vendor.name}}</p>
+                                                            <p class="text-[10px] text-sky-600 font-bold uppercase">{{humanize (dasherize this.vendor.type)}}</p>
+                                                        </div>
+                                                    </marker.popup>
+                                                </layers.marker>
+                                            </LeafletMap>
+
+                                            {{!-- Coordinate Badge (Optional: consistency ke liye add kar diya) --}}
+                                            <div class="absolute bottom-4 right-4 z-[1000] bg-white/90 dark:bg-gray-900/90 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700 shadow-sm text-[9px] font-mono text-gray-400">
+                                                {{object-at 1 this.vendor.place.location.coordinates}}, {{object-at 0 this.vendor.place.location.coordinates}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/if}}
+                            </div>
+
+                            {{!-- Column 2: Stats & Info --}}
+                            <div class="space-y-6">
+                                <div class="p-6 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Registration Info</h3>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
+                                            <p class="text-[10px] text-gray-400 uppercase font-black mb-1">Internal ID</p>
+                                            <p class="text-sm font-bold text-sky-600">{{this.vendor.internal_id}}</p>
+                                        </div>
+                                        <div class="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700">
+                                            <p class="text-[10px] text-gray-400 uppercase font-black mb-1">Member Since</p>
+                                            <p class="text-sm font-bold text-gray-700 dark:text-gray-200">{{this.formattedCreatedAt}}</p>
+                                        </div>
+                                        {{#if this.vendor.website_url}}
+                                            <a href="https://{{this.vendor.website_url}}" target="_blank" class="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-2xl flex items-center justify-between group">
+                                                <span class="text-sm font-bold text-sky-700 dark:text-sky-400">Visit Website</span>
+                                                <FaIcon @icon="external-link-alt" class="text-sky-400 group-hover:translate-x-1 transition-transform" />
+                                            </a>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <DirectoryServiceNavbar />
+                </div>
+            {{else}}
+                <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl border shadow-sm">
+                    <FaIcon @icon="exclamation-circle" class="text-5xl text-gray-200 mb-4" />
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Vendor profile not found</h3>
+                </div>
+            {{/if}}
+        {{/if}}
+    </div>
+</div>

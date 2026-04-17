@@ -143,17 +143,20 @@
                     class="internal_id_change"
                 />
                 {{/if}}
-                <InputGroup>
-                    <InputLabel @labelText={{t "fleet-ops.operations.orders.index.new.schedule"}} @helpText={{t "fleet-ops.operations.orders.index.new.schedule-help-text"}} />
-                    <DateTimeInput
-                        class="form-input"
-                        @value={{this.order.scheduled_at}}
-                        @minDate={{format-date (now) "yyyy-MM-dd"}}
-                        @minTime={{format-date (now) "HH:mm"}}
-                        @onUpdate={{this.scheduleOrder}}
-                        @disabled={{or this.order.dispatched (cannot "fleet-ops create order")}}
-                    />
-                </InputGroup>
+
+                {{#if (or (not this.isRubbishCollection) this.isAdmin)}}
+                    <InputGroup>
+                        <InputLabel @labelText={{t "fleet-ops.operations.orders.index.new.schedule"}} @helpText={{t "fleet-ops.operations.orders.index.new.schedule-help-text"}} />
+                        <DateTimeInput
+                            class="form-input"
+                            @value={{this.order.scheduled_at}}
+                            @minDate={{format-date (now) "yyyy-MM-dd"}}
+                            @minTime={{format-date (now) "HH:mm"}}
+                            @onUpdate={{this.scheduleOrder}}
+                            @disabled={{or this.order.dispatched (cannot "fleet-ops create order")}}
+                        />
+                    </InputGroup>
+                {{/if}}
 
                 {{#if this.isAdmin}}
                 <InputGroup @name={{t "fleet-ops.operations.orders.index.new.customer"}} @helpText={{t "fleet-ops.operations.orders.index.new.customer-help-text"}}>
@@ -567,9 +570,11 @@
 
         <ContentPanel @title={{t "fleet-ops.operations.orders.index.new.route"}} @titleContainerClass="pl-2" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
             <div class="flex flex-row justify-between mb-4">
-                <div class="flex">
+                {{#if this.isAdmin}}
+                <div class="flex multiple-dropoff-select-container">
                     <Toggle @isToggled={{this.isMultipleDropoffOrder}} @onToggle={{this.toggleMultiDropOrder}} @label={{t "fleet-ops.operations.orders.index.new.route-label"}} />
                 </div>
+                {{/if}}
                 <div class="flex flex-1 justify-end space-x-2">
                     {{#if this.isMultipleDropoffOrder}}
                         <Button
@@ -722,21 +727,21 @@
                         {{/if}}
                     </InputGroup>
 
-                    <InputGroup>
+                    {{!-- <InputGroup>
                         <div class="flex items-center justify-between">
                             <label>{{t "fleet-ops.operations.orders.index.new.dropoff"}}</label>
 
                             <div class="flex-row space-x-2 pr-0.5">
                                 {{!-- {{#if this.payload.dropoff}} --}}
-                                {{#if (and this.payload.dropoff (not this.isMeetAndGreet))}}
+                                {{!-- {{#if (and this.payload.dropoff (not this.isMeetAndGreet))}}
                                     <a href="javascript:;" {{on "click" (fn this.editPlace this.payload.dropoff)}} disabled={{cannot "fleet-ops update place"}}>
                                         <FaIcon @icon="edit" />
                                     </a>
                                     <a href="javascript:;" {{on "click" (fn this.setPayloadPlace "dropoff" null)}}>
                                         <FaIcon @icon="trash" />
                                     </a>
-                                {{/if}}
-                            </div>
+                                {{/if}} --}}
+                            {{!-- </div>
                         </div>
                         <div class="{{if this.isMeetAndGreet 'pointer-events-none opacity-60 cursor-not-allowed'}}">
                             <ModelSelect
@@ -744,21 +749,21 @@
                                 @selectedModel={{this.payload.dropoff}}
                                 @placeholder={{t "fleet-ops.operations.orders.index.new.select-dropoff"}}
                                 @triggerClass="form-select form-input {{if this.isMeetAndGreet 'bg-gray-100'}}"
-                                @infiniteScroll={{false}}
+                                @infiniteScroll={{false}} --}}
                                 {{!-- @customSearchEndpoint="places/search" --}}
-                                @customSearchEndpoint="places/lookup"
+                                {{!-- @customSearchEndpoint="places/lookup" --}}
                                 {{!-- @query={{hash geo=true latitude=this.userLatitude longitude=this.userLongitude}} --}}
-                                @renderInPlace={{true}}
+                                {{!-- @renderInPlace={{true}}
                                 @onChange={{fn this.setPayloadPlace "dropoff"}}
                                 @permission="fleet-ops create order"
                                 as |model|
                             >
                                 {{model.address}}
                             </ModelSelect>
-                        </div>
+                        </div> --}}
 
 
-                        {{#if (and this.isUsingIntegratedVendor (is-not-facilitator-supported-place this.order.facilitator this.payload.dropoff))}}
+                        {{!-- {{#if (and this.isUsingIntegratedVendor (is-not-facilitator-supported-place this.order.facilitator this.payload.dropoff))}}
                             <InfoBlock
                                 class="my-2 px-4 py-1.5 danger"
                                 @blockClass="flex flex-row items-center"
@@ -772,7 +777,64 @@
                                 {{t "fleet-ops.operations.orders.index.new.invalid-coordinates"}}
                             </div>
                         {{/if}}
-                    </InputGroup>
+                    </InputGroup> --}}
+
+                    {{!-- 1. Meet and Greet hai toh pura hide kar do --}}
+                    {{#unless this.isMeetAndGreet}}
+                        <InputGroup>
+                            <div class="flex items-center justify-between">
+                                <label>{{t "fleet-ops.operations.orders.index.new.dropoff"}}</label>
+
+                                <div class="flex-row space-x-2 pr-0.5">
+                                    {{!-- 2. Rubbish Collection mein Edit/Trash buttons hide rakho --}}
+                                    {{#if (and this.payload.dropoff (not this.isRubbishCollection))}}
+                                        <a href="javascript:;" {{on "click" (fn this.editPlace this.payload.dropoff)}} disabled={{cannot "fleet-ops update place"}}>
+                                            <FaIcon @icon="edit" />
+                                        </a>
+                                        <a href="javascript:;" {{on "click" (fn this.setPayloadPlace "dropoff" null)}}>
+                                            <FaIcon @icon="trash" />
+                                        </a>
+                                    {{/if}}
+                                </div>
+                            </div>
+
+                            {{!-- 3. Rubbish Collection hai toh click disable kar do aur background grey kar do --}}
+                            <div class="{{if this.isRubbishCollection 'pointer-events-none opacity-60 cursor-not-allowed'}}">
+                                <ModelSelect
+                                    @modelName="place"
+                                    @selectedModel={{this.payload.dropoff}}
+                                    @placeholder={{t "fleet-ops.operations.orders.index.new.select-dropoff"}}
+                                    @triggerClass="form-select form-input {{if this.isRubbishCollection 'bg-gray-100 dark:bg-gray-800'}}"
+                                    @infiniteScroll={{false}}
+                                    @customSearchEndpoint="places/lookup"
+                                    @renderInPlace={{true}}
+                                    @onChange={{fn this.setPayloadPlace "dropoff"}}
+                                    @permission="fleet-ops create order"
+                                    as |model|
+                                >
+                                    {{model.address}}
+                                </ModelSelect>
+                            </div>
+
+                            {{!-- Integrated Vendor Warning --}}
+                            {{#if (and this.isUsingIntegratedVendor (is-not-facilitator-supported-place this.order.facilitator this.payload.dropoff))}}
+                                <InfoBlock
+                                    class="my-2 px-4 py-1.5 danger"
+                                    @blockClass="flex flex-row items-center"
+                                    @text={{concat this.order.facilitator.name (t "fleet-ops.operations.orders.index.new.infoblock-text")}}
+                                />
+                            {{/if}}
+
+                            {{!-- Invalid Coordinates Warning --}}
+                            {{#if this.payload.dropoff.hasInvalidCoordinates}}
+                                <div class="leading-5 text-sm text-red-400 mt-2">
+                                    <FaIcon @icon="exclamation-triangle" class="mr-1" />
+                                    {{t "fleet-ops.operations.orders.index.new.invalid-coordinates"}}
+                                </div>
+                            {{/if}}
+                        </InputGroup>
+                    {{/unless}}
+                    
                     <p {{on "click" this.toggleReturnInput}} class="cursor-pointer text-blue-600 underline text-sm {{if this.isAirportPickup 'hidden' ''}}">
                     Add Return Address or Another Stop
                     </p>
@@ -1249,11 +1311,51 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        setTimeout(function() {
-            var defaultVal = '96f3909e-081c-4609-a240-9c139a012771';
-            $('.my-select-id').val(defaultVal).trigger('change');
-        }, 1000); // small delay to let Ember finish rendering
 
+
+        setTimeout(function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var orderType = urlParams.get('orderType') ?? window.location.href;
+
+            var defaultVal = '96f3909e-081c-4609-a240-9c139a012771'; // default sendparcel
+
+            if (orderType.includes('sendparcel') || orderType.includes('parcel')) {
+                defaultVal = '96f3909e-081c-4609-a240-9c139a012771';
+            } else if (orderType.includes('driver')) {
+                defaultVal = 'ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf';
+            } else if (orderType.includes('haulage')) {
+                defaultVal = '40146ff3-6980-4711-b33c-308110eb6b4f';
+            } else if (orderType.includes('travel')) {
+                defaultVal = '8283f663-9320-482f-94d8-1136a8b1d08e';
+            } else if (orderType.includes('storefront')) {
+                defaultVal = '011dc44b-ecca-4826-8fd0-51d576da2738';
+            } else if (orderType.includes('export')) {
+                defaultVal = '03015011-25a8-4ba8-aad9-a208aa8a3aa2';
+            } else if (orderType.includes('utilities')) {
+                defaultVal = 'c476c21a-42b6-4801-a44b-a541a91430b7';
+            } else if (orderType.includes('food')) {
+                defaultVal = '82d4b159-0c14-4bc3-9ab2-1476550291b2';
+            } else if (orderType.includes('breakdown')) {
+                defaultVal = 'ed00c80b-b279-4258-8ba0-95c614c3a20d';
+            } else if (orderType.includes('rubbish')) {
+                defaultVal = '4405acd5-2d4a-49d4-ae54-8c995a13f244';
+            } else if (orderType.includes('airport')) {
+                defaultVal = '1d9af4c6-979f-4cd9-8583-a8b7ae2c7281';
+            } else if (orderType.includes('emergency')) {
+                defaultVal = 'bbf73bcc-f13b-44e1-8c2e-c324a1139eb8';
+            } else if (orderType.includes('cardeliver')) {
+                defaultVal = '4c877ed2-e4ca-4c43-936c-77d8d516c480';
+            } else if (orderType.includes('laundrette')) {
+                defaultVal = '84948f0b-8c44-4cbd-a7d0-f6bc662e75b0';
+            } else if (orderType.includes('handyman')) {
+                defaultVal = 'b1240c8b-dba0-4b0c-b6c5-fdedbddc5251';
+            } else if (orderType.includes('marketpickup')) {
+                defaultVal = 'ec956d3e-396a-46d1-a5e2-5b6ea303efd4';
+            } 
+
+            $('.my-select-id').val(defaultVal).trigger('change');
+        }, 1000);
+        
 
         $('.my-select-id').on('change', function(){
             var selectedVal = $(this).val();
@@ -1265,30 +1367,27 @@
             $('.road-settlement').removeClass('hidden');
             $('.airport-only').addClass('hidden');
             $('.all-order-type').removeClass('hidden');
+            $('.multiple-dropoff-select-container').removeClass('hidden');
             if(selectedVal == '96f3909e-081c-4609-a240-9c139a012771') {
                 var html = '<option value="Parcel size 25 to 50kg">Parcel size 25 to 50kg</option><option value="Parcel size 10 to 25kg">Parcel size 10 to 25kg</option><option value="Parcel size up to 10kg">Parcel size up to 10kg</option>';
                 $('.parcel_send_val').html(html);
-                $('.service_rate_hide').show();
                 $('.internal_id_change').val('SEND001001');
                 $('.addhoc-visibility').addClass('hidden');
                 $('.road-settlement').addClass('hidden');
             } else if(selectedVal == 'ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf') {
                 var html = '<option value="DRIVER - COACH (60 passengers)">DRIVER - COACH (60 passengers)</option><option value="DRIVER - MINI BUS (14 passengers)">DRIVER - MINI BUS (14 passengers)</option><option value="DRIVER - LARGE CAR (5 passengers)">DRIVER - LARGE CAR (5 passengers)</option><option value="DRIVER - SMALL CAR (3 passengers)">DRIVER - SMALL CAR (3 passengers)</option>';
                 $('.parcel_send_val').html(html);
-                $('.service_rate_hide').show();
                 $('.internal_id_change').val('DRIV001001');
                 $('.all-order-type').addClass('hidden');
             } else if(selectedVal == '40146ff3-6980-4711-b33c-308110eb6b4f') {
                 var html = '<option value="HAULAGE - LARGE TRUCK">HAULAGE - LARGE TRUCK</option><option value="HAULAGE - SMALL TRUCK">HAULAGE - SMALL TRUCK</option><option value="HAULAGE - LARGE VAN">HAULAGE - LARGE VAN</option><option value="HAULAGE - SMALL VAN">HAULAGE - SMALL VAN</option>';
                 $('.parcel_send_val').html(html);
-                $('.service_rate_hide').show();
                 $('.internal_id_change').val('HAUL001001');
                 $('.addhoc-visibility').addClass('hidden');
                 $('.dispatch').addClass('hidden');
                 $('.package-require').addClass('hidden');
             } else if(selectedVal == '8283f663-9320-482f-94d8-1136a8b1d08e') {
                 $('.internal_id_change').val('TRAV001001');
-                $('.service_rate_hide').hide();
                 $('.addhoc-visibility').addClass('hidden');
                 $('.dispatch').addClass('hidden');
                 $('.require-proof').addClass('hidden');
@@ -1297,36 +1396,37 @@
                 $('.road-settlement').addClass('hidden');
             } else if(selectedVal == '011dc44b-ecca-4826-8fd0-51d576da2738') {
                 $('.internal_id_change').val('STOR001001');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == '03015011-25a8-4ba8-aad9-a208aa8a3aa2') {
                 $('.internal_id_change').val('EXPO001001');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == '48a9fea4-1b80-45fb-9b2a-1ffc838ae2aa') {
                 $('.internal_id_change').val('');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == 'edde8b08-6053-44b3-bd75-5aed0abb9a4d') {
                 $('.internal_id_change').val('');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == 'c476c21a-42b6-4801-a44b-a541a91430b7') {
                 $('.internal_id_change').val('UTIL001001');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == '82d4b159-0c14-4bc3-9ab2-1476550291b2') {
                 $('.internal_id_change').val('FOOD001001');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == 'ed00c80b-b279-4258-8ba0-95c614c3a20d') {
                 $('.internal_id_change').val('BREA001001');
-                $('.service_rate_hide').hide();
             } else if(selectedVal == '4405acd5-2d4a-49d4-ae54-8c995a13f244') {
                 $('.internal_id_change').val('RUBB001001');
-                $('.service_rate_hide').hide();
+                $('.all-order-type').addClass('hidden');
+                $('.multiple-dropoff-select-container').addClass('hidden');
             } else if(selectedVal == '1d9af4c6-979f-4cd9-8583-a8b7ae2c7281') {
                 $('.internal_id_change').val('AIRP001001');
-                $('.service_rate_hide').hide();
                 $('.airport-only').removeClass('hidden');
                 $('.all-order-type').addClass('hidden');
             } else if(selectedVal == 'bbf73bcc-f13b-44e1-8c2e-c324a1139eb8') {
                 $('.internal_id_change').val('EMER001001');
-                $('.service_rate_hide').hide();
+                $('.multiple-dropoff-select-container').removeClass('hidden');
+            } else if(selectedVal == '4c877ed2-e4ca-4c43-936c-77d8d516c480') {
+                $('.internal_id_change').val('CAR001001');
+            } else if(selectedVal == '84948f0b-8c44-4cbd-a7d0-f6bc662e75b0') {
+                $('.internal_id_change').val('LAUN001001');
+            } else if(selectedVal == 'b1240c8b-dba0-4b0c-b6c5-fdedbddc5251') {
+                $('.internal_id_change').val('HAND001001');
+            } else if(selectedVal == 'ec956d3e-396a-46d1-a5e2-5b6ea303efd4') {
+                $('.internal_id_change').val('MARK001001');
             }
         });
 

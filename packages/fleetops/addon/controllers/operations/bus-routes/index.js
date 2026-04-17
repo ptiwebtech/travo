@@ -5,22 +5,21 @@ import { action } from '@ember/object';
 
 export default class OperationsBusRoutesIndexController extends BaseController {
     @service notifications;
-    @service modalsManager;
-    @service intl;
-    @service store;
     @service hostRouter;
 
-    /** @tracked properties for table */
+    // Default pagination and sorting values
     @tracked page = 1;
-    @tracked limit;
+    @tracked limit = 20; 
     @tracked sort = '-created_at';
     @tracked query;
 
-    /** Columns for the table */
+    @tracked rows = [];
+
+    /** Table Column Definitions */
     @tracked columns = [
         { label: 'Departure City', valuePath: 'departure_city', resizable: true, sortable: true },
         { label: 'Arrival City', valuePath: 'arrival_city', resizable: true, sortable: true },
-        { label: 'Vendor', valuePath: 'vendor.name', resizable: true },
+        { label: 'Vendor', valuePath: 'vendor.name', resizable: true }, // Accessing nested relationship name
         { label: 'Price', valuePath: 'price', resizable: true, sortable: true },
         { label: 'Class', valuePath: 'route_class', resizable: true },
         { label: 'Country', valuePath: 'country', resizable: true },
@@ -29,19 +28,36 @@ export default class OperationsBusRoutesIndexController extends BaseController {
             cellComponent: 'table/cell/dropdown',
             ddButtonIcon: 'ellipsis-h',
             actions: [
-                { label: 'Edit Route', fn: () => {} },
-                { label: 'Delete Route', fn: () => {} },
+                { label: 'Edit Route', fn: this.editRoute },
+                { label: 'Delete Route', fn: this.deleteRoute },
             ],
             width: '10%'
         }
     ];
 
-    @action createRoute() {
-        // Vendor pattern: transition to the 'new' sub-route
+    @action 
+    createRoute() {
+        // Navigate to the creation form
         return this.transitionToRoute('operations.bus-routes.index.new');
     }
 
-    @action reload() {
+    @action 
+    reload() {
+        // Force a data refresh from the server
         return this.hostRouter.refresh();
+    }
+
+    @action
+    editRoute(model) {
+        // Placeholder for edit logic
+        console.log('Editing:', model.id);
+    }
+
+    @action
+    deleteRoute(model) {
+        // Placeholder for delete logic
+        if (confirm('Are you sure you want to delete this route?')) {
+            model.destroyRecord();
+        }
     }
 }

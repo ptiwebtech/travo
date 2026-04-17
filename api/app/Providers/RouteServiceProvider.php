@@ -14,6 +14,7 @@ use App\Http\Controllers\CustomLookupController;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\CustomOrderConfigController;
 use App\Http\Controllers\CustomOrderController;
+use App\Http\Controllers\BusRouteController;
 
 
 class RouteServiceProvider extends ServiceProvider
@@ -62,8 +63,22 @@ class RouteServiceProvider extends ServiceProvider
                     [CustomAuthController::class, 'createPasswordReset']
                 );
 
+                Route::post(
+                    'int/v1/auth/vendor-signup',
+                    [CustomAuthController::class, 'vendorSignup']
+                );
+
                 Route::prefix('int/v1')->middleware(['auth:sanctum'])->group(function () {
                     Route::get('order-configs', [CustomOrderConfigController::class, 'index']);
+                    
+                    // Bus Routes API (Standard CRUD)
+                    Route::prefix('bus-routes')->group(function () {
+                        Route::get('/', [BusRouteController::class, 'query']);
+                        Route::post('/', [BusRouteController::class, 'create']);
+                        Route::get('/{id}', [BusRouteController::class, 'find']);
+                        Route::put('/{id}', [BusRouteController::class, 'update']);
+                        Route::delete('/{id}', [BusRouteController::class, 'delete']);
+                    });
                 });
 
                 // Route::prefix('int/v1')->middleware(['auth:sanctum'])->group(function () {

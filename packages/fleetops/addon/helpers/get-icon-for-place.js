@@ -44,11 +44,31 @@ const placeImages = {
   "Clinic": "/images/Clinic.png",
   "Hospital": "/images/Hospital.png",
   "Fire Station": "/images/Fire_Station.png",
+  "Dentist": "/images/Dentist.png",
+  "Optician": "/images/Optician.png",
+  "Physiotherapist": "/images/Physiotherapist.png", 
+  "Tailor": "/images/Tailor.png",
+  "Paediatrics": "/images/Paediatrics.png", 
+  "Schools": "/images/Schools.png",
+  "Universities": "/images/Universities.png",
+  "Daycares and Nurseries": "/images/Daycares-and-Nurseries.png",
+  "Commercial Airline": "/images/Commercial_Airline.png",
+  "Petrol Station": "/images/Petrol_Station.png",
+  "Gas Filling Station": "/images/Gas_Filling_Station.png",
+  "Heliport Operator": "/images/Heliport_Operator.png",
+  "Passenger Airline": "/images/Passenger_Airline.png",
+  "Cold Storage": "/images/Cold_Storage.png",
+  "Waste Management": "/images/Waste_Management.png",
+  "Oil Block": "/images/Oil_Block.png",
+  "Oil Refinery": "/images/Oil_Refinery.png",
 };
 
-export default helper(function getIconForPlace([placeType]) {
-  const iconUrl = placeImages[placeType] || '/engines-dist/images/building-marker.png';
 
+export default helper(function getIconForPlace([placeType, returnUrlOnly = false]) {
+  const iconUrl = placeImages[placeType] || '/engines-dist/images/building-marker.png';
+  if (returnUrlOnly === true) {
+      return iconUrl;
+  }
   return leafletIcon({
     iconUrl,
     iconSize: [16, 16],

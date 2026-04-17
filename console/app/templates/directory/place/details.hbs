@@ -1,0 +1,218 @@
+<style>
+    body, html { 
+        overflow: visible !important; 
+    }
+    .page-container { padding-top: 1.5rem; }
+    .leaflet-control-zoom {
+        border: none !important;
+        margin-right: 15px !important;
+        margin-top: 15px !important;
+    }
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+        background-color: white !important;
+        color: #0284c7 !important; /* Sky-600 */
+        border-radius: 8px !important;
+        margin-bottom: 5px !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    /* Marker Icon Layer fix */
+    .leaflet-marker-icon {
+        filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1));
+    }
+    @media (max-width: 640px) {
+        .page-container { padding-top: 1rem; }
+        .directory-content-wrapper { margin-top: 1rem; }
+    }
+</style>
+
+<div class="p-6 max-w-5xl mx-auto min-h-screen page-container relative">
+
+    <div class="flex items-center justify-between mb-10">
+        {{!-- Travo Logo --}}
+        <LinkTo @route="console.home" class="block group">
+            <img src="/images/Travo-logo.png" alt="Travo" class="w-28 md:w-32 transition-transform group-hover:scale-105">
+        </LinkTo>
+
+        {{!-- Login Button --}}
+        <LinkTo @route="auth.login" class="px-6 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95">
+            Login
+        </LinkTo>
+    </div>
+    <div class="directory-content-wrapper">
+        {{#if this.isLoading}}
+            <div class="flex flex-col items-center justify-center py-24">
+                <FaIcon @icon="spinner" @spin={{true}} class="text-4xl text-sky-500 mb-4" />
+                <p class="text-gray-500 animate-pulse font-medium">Loading details...</p>
+            </div>
+        {{else}}
+            {{#if this.place}}
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    
+                    {{!-- Hero Image Banner (Blog Style) --}}
+                    <div class="relative h-64 md:h-80 w-full bg-gray-200">
+                        {{#if this.place.files.length}}
+                            {{#each this.place.files as |file index|}}
+                                {{#if (eq index 0)}}
+                                    <img src={{file.url}} class="w-full h-full object-cover" alt="hero">
+                                {{/if}}
+                            {{/each}}
+                        {{else}}
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-sky-50 to-sky-100 dark:from-gray-700 dark:to-gray-600 text-sky-200">
+                                <FaIcon @icon="image" class="text-6xl mb-2" />
+                                <span class="text-sm font-bold uppercase tracking-tighter text-sky-400">No Cover Image</span>
+                            </div>
+                        {{/if}}
+                        
+                        <LinkTo @route="directory.place.index" class="absolute top-4 left-4 p-2 px-4 bg-white/90 backdrop-blur shadow-md rounded-xl text-xs font-bold text-gray-700 hover:bg-white transition">
+                            <FaIcon @icon="arrow-left" class="mr-1" /> Back
+                        </LinkTo>
+                    </div>
+
+                    <div class="px-8 pb-8">
+                        {{!-- Profile Header Overlap --}}
+                        <div class="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-12 relative z-10">
+                            <img src={{get-icon-for-place this.place.type}} alt={{this.place.name}} class="w-32 h-32 rounded-3xl border-4 border-white dark:border-gray-800 bg-white p-2 shadow-2xl">
+                            <div class="text-center md:text-left md:mb-2">
+                                <h1 class="text-4xl font-black text-gray-900 dark:text-white tracking-tight uppercase place-name">{{this.place.name}}</h1>
+                                <div class="mt-2 flex flex-wrap gap-2 justify-center md:justify-start">
+                                    <span class="px-3 py-1 bg-sky-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider">{{this.place.type}}</span>
+                                    {{!-- <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-[10px] font-mono">{{this.place.id}}</span> --}}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Image Gallery --}}
+                        {{#if (and this.place.files (gt this.place.files.length 1))}}
+                            <div class="mt-10">
+                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Gallery</h3>
+                                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                                    {{#each this.place.files as |file index|}}
+                                        {{!-- Pehli image ko skip karne ke liye (agar aapka logic wahi hai) --}}
+                                        {{#unless (eq index 0)}}
+                                            <button type="button" {{on "click" (fn this.viewFile file)}} class="focus:outline-none flex-shrink-0 transition hover:scale-105">
+                                                <img src={{file.url}} 
+                                                    class="w-32 h-32 rounded-2xl object-cover border-2 border-gray-50 shadow-sm" 
+                                                    alt="gallery">
+                                            </button>
+                                        {{/unless}}
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/if}}
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
+                            {{!-- Column 1: Address & Contact --}}
+                            <div class="space-y-6">
+                                <div class="p-6 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Contact & Location</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-8 h-8 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center text-sky-600 flex-shrink-0">
+                                                <FaIcon @icon="map-marker-alt" />
+                                            </div>
+                                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed place-address">{{this.place.address}}</p>
+                                        </div>
+                                        {{#if this.place.phone}}
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 flex-shrink-0">
+                                                    <FaIcon @icon="phone" />
+                                                </div>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{this.place.phone}}</p>
+                                            </div>
+                                        {{/if}}
+                                        {{#if this.place.meta.email}}
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                                    <FaIcon @icon="envelope" />
+                                                </div>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm font-medium">{{this.place.meta.email}}</p>
+                                            </div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+
+                                {{#if this.place.location.coordinates}}
+                                    <div class="mt-8">
+                                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Location Map</h3>
+                                        
+                                        <div class="w-full h-96 rounded-[2.5rem] overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl relative">
+                                            <LeafletMap 
+                                                class="w-full h-full" 
+                                                @lat={{object-at 1 this.place.location.coordinates}} 
+                                                @lng={{object-at 0 this.place.location.coordinates}} 
+                                                @zoom={{16}} 
+                                                @zoomControl={{true}} 
+                                                as |layers|
+                                            >
+                                                {{!-- Voyager Tiles (Google Maps Style) --}}
+                                                <layers.tile @url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                                                
+                                                <layers.marker
+                                                    @location={{array (object-at 1 this.place.location.coordinates) (object-at 0 this.place.location.coordinates)}}
+                                                    @icon={{icon iconUrl=(get-icon-for-place this.place.type) iconSize=(array 45 45) iconAnchor=(array 22 45)}}
+                                                    as |marker|
+                                                >
+                                                    <marker.popup>
+                                                        <div class="p-2 text-center">
+                                                            <p class="font-black text-gray-900 uppercase text-[13px]">{{this.place.name}}</p>
+                                                            <p class="text-[10px] text-gray-500 mt-1">{{this.place.type}}</p>
+                                                        </div>
+                                                    </marker.popup>
+                                                </layers.marker>
+                                            </LeafletMap>
+
+                                            {{!-- Coordinate Badge (Chota sa side mein) --}}
+                                            <div class="absolute bottom-4 right-4 z-[1000] bg-white/90 dark:bg-gray-900/90 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-700 shadow-sm text-[9px] font-mono text-gray-400">
+                                                {{object-at 1 this.place.location.coordinates}}, {{object-at 0 this.place.location.coordinates}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {{/if}}
+                            </div>
+
+                            {{!-- Column 2: Notes & Timestamps --}}
+                            <div class="space-y-6">
+                                {{#if this.place.meta.notes}}
+                                    <div class="p-6 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 rounded-3xl">
+                                        <h3 class="text-xs font-bold text-amber-600 uppercase tracking-widest mb-3">Notes</h3>
+                                        <p class="text-amber-900 dark:text-amber-200 text-sm italic leading-relaxed">
+                                            "{{this.place.meta.notes}}"
+                                        </p>
+                                    </div>
+                                {{/if}}
+
+                                <div class="p-6 bg-gray-50 dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Time</h3>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm">
+                                            <p class="text-[12px] text-gray-400 uppercase font-bold mb-1">Created</p>
+                                            <p class="text-[13px] font-bold text-gray-700 dark:text-gray-200">
+                                                {{this.formattedCreatedAt}}
+                                            </p>
+                                        </div>
+                                        {{!-- <div class="p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm">
+                                            <p class="text-[12px] text-gray-400 uppercase font-bold mb-1">Updated</p>
+                                            <p class="text-[13px] font-bold text-gray-700 dark:text-gray-200">
+                                                {{if this.place.updated_at this.place.updated_at "N/A"}}
+                                            </p>
+                                        </div> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <DirectoryServiceNavbar />
+                </div>
+            {{else}}
+                <div class="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl border shadow-sm">
+                    <FaIcon @icon="exclamation-circle" class="text-5xl text-gray-200 mb-4" />
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Record not found</h3>
+                    <LinkTo @route="directory.place.index" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold">Back to list</LinkTo>
+                </div>
+            {{/if}}
+        {{/if}}
+    </div>
+</div>

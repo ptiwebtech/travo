@@ -29,7 +29,7 @@
 <!-- <script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/145046781.js"></script> -->
 <!-- End of HubSpot Embed Code -->
 <script src="https://analytics.ahrefs.com/analytics.js" data-key="TyEvUZwwrV6I7PsJw7QoNA" async></script>
-
+<script src="https://my.hellobar.com/6aa966f59d94ff89722d95ee5ad9954c22b76555.js" type="text/javascript" charset="utf-8" async="async"> </script>
 <style type="text/css">
   /* .ember-cli-notifications-notification__container.ember-cli-notifications-notification__container--top {
     display: none;
@@ -66,6 +66,150 @@
     const url = `https://api.whatsapp.com/send?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(message)}`;
     whatsappButton.href = url;
   });
+</script>
+
+<script>
+  function setPageMeta() {
+    const path = window.location.pathname;
+    const segments = path.split('/').filter(Boolean);
+
+    // --- Robots Tag Fix (Indexable) ---
+    let robots = document.querySelector('meta[name="robots"]');
+    if (!robots) {
+      robots = document.createElement('meta');
+      robots.name = "robots";
+      document.head.appendChild(robots);
+    }
+    robots.setAttribute('content', 'index, follow');
+
+    if (segments.length >= 4 && segments[1] === 'vendor') {
+      const vendorNameEl = document.querySelector('.vendor-name');
+      const vendorTypeEl = document.querySelector('.vendor-type');
+
+      if (vendorNameEl && vendorNameEl.innerText.trim() !== "") {
+        let vName = vendorNameEl.innerText.trim();
+        let vType = vendorTypeEl ? vendorTypeEl.innerText.trim() : "Logistics Company";
+
+        // Title: Contact {vendor name}, a {vendor type} in Nigeria
+        document.title = `Contact ${vName}, a ${vType} in Nigeria | Travo.ng`;
+        
+        let desc = document.querySelector('meta[name="description"]');
+        if (desc) {
+          // Description: Find contact details for {vendor name}, a {vendor type} in Nigeria
+          desc.setAttribute('content', `Find contact details for ${vName}, a ${vType} in Nigeria. Book now and connect with verified logistics on Travo.ng.`);
+        }
+        updateCanonical(`https://travo.ng${path}`);
+        return; // Next checks skip karein
+      }
+    }
+
+    if (path.includes('/directory/vendor/') && segments.length === 3) {
+      let typeRaw = path.split('/directory/vendor/')[1] || "";
+      typeRaw = typeRaw.split('/')[0]; 
+      let type = decodeURIComponent(typeRaw).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      
+      if (type) {
+        // Meta title formula: Find a {vendor type} online in Nigeria with Travo.ng
+        document.title = `Find a ${type} online in Nigeria with Travo.ng`;
+        
+        let desc = document.querySelector('meta[name="description"]');
+        if (desc) {
+          // Meta description formula: Book a {vendor type} quickly and easily online in Nigeria
+          desc.setAttribute('content', `Book a ${type} quickly and easily online in Nigeria.`);
+        }
+        updateCanonical(`https://travo.ng${path}`);
+      }
+    }
+
+    // 1. PLACE DETAILS PAGE
+    if (segments.length >= 4 && segments[1] === 'place') {
+      const nameEl = document.querySelector('.place-name');
+      const addrEl = document.querySelector('.place-address');
+
+      if (nameEl && nameEl.innerText.trim() !== "") {
+        let placeName = nameEl.innerText.trim();
+        let placeAddress = addrEl ? addrEl.innerText.trim() : "Nigeria";
+        let placeTypeRaw = segments[2] || "Logistics";
+        let placeType = decodeURIComponent(placeTypeRaw).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+        document.title = `Find ${placeName}, ${placeType} in Nigeria | Travo.ng`;
+        let desc = document.querySelector('meta[name="description"]');
+        if (desc) {
+          // Aapka bataya hua exact formula
+          desc.setAttribute('content', `Contact ${placeName} a ${placeType} in Nigeria - ${placeAddress} - Book Now on Travo.ng`);
+        }
+        updateCanonical(`https://travo.ng${path}`);
+      }
+    }
+
+    // 2. CATEGORY LIST PAGE
+    else if (path.includes('/directory/place/')) {
+      let typeRaw = path.split('/directory/place/')[1] || "";
+      typeRaw = typeRaw.split('/')[0]; 
+      let type = decodeURIComponent(typeRaw).replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      if (type) {
+        document.title = `Search our directory of ${type} locations in Nigeria on Travo.ng`;
+        let desc = document.querySelector('meta[name="description"]');
+        if (desc) {
+          // Aapka bataya hua exact formula
+          desc.setAttribute('content', `Browse a full Directory of ${type} locations in Nigeria, Ghana, Kenya and Africa with Travo.ng - Book your transport today`);
+        }
+        updateCanonical(`https://travo.ng${path}`);
+      }
+    }
+
+    // 3. MAIN DIRECTORY PAGE
+    else if (path === '/directory' || path === '/directory/') {
+      document.title = 'Nigeria Logistics & Transport Directory | Verified Haulage & Delivery Services – Travo.ng';
+      let desc = document.querySelector('meta[name="description"]');
+      if (desc) {
+        // Aapka bataya hua exact content
+        desc.setAttribute('content', 'Find verified logistics, transport, haulage, and delivery companies across Nigeria on Travo.ng. Search by city or category to connect with trusted, human-verified service providers.');
+      }
+      updateCanonical('https://travo.ng/directory');
+    }
+
+    // 4. VENDOR SIGNUP PAGE
+    else if (path === '/vendor-signup') {
+      document.title = 'Register Your Delivery Business | Find Logistics Jobs – travo.ng';
+      let desc = document.querySelector('meta[name="description"]');
+      if (desc) {
+        desc.setAttribute('content', 'Sign up your transport or delivery business on travo.ng...');
+      }
+      updateCanonical('https://travo.ng/vendor-signup');
+    }
+  }
+
+  function updateCanonical(url) {
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = url;
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    setPageMeta();
+    // Body load hone ke baad hi observer start hoga (Error fix)
+    if (document.body) {
+      const observer = new MutationObserver(() => {
+        setPageMeta();
+      });
+      observer.observe(document.body, { subtree: true, childList: true, characterData: true });
+    }
+
+    setTimeout(setPageMeta, 1500);
+    setTimeout(setPageMeta, 3000);
+  });
+
+  let lastPath = window.location.pathname;
+  setInterval(() => {
+    if (window.location.pathname !== lastPath) {
+      lastPath = window.location.pathname;
+      setTimeout(setPageMeta, 500);
+    }
+  }, 500);
 </script>
     
   </head>

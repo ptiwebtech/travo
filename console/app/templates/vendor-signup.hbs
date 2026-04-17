@@ -111,7 +111,7 @@
                             @accept="image/*"
                             @onFileAdded={{this.onUploadLogo}}
                             @icon="upload"
-                            @text="Choose Logo"
+                            @text={{if this.vendor.logo_url "Change Logo" "Choose Logo"}}
                             class="btn-reset text-blue-500 font-semibold text-sm"
                         />
                     </div>
@@ -126,7 +126,7 @@
                 <Textarea 
                     @value={{this.vendor.notes}} 
                     class="form-input w-full dark:bg-gray-900 dark:border-gray-700" 
-                    placeholder="Tell us more about your business or special requirements..." 
+                    placeholder="Tell us more about your business and the services you offer, such as type of vehicles and areas you cover..." 
                     rows="4" 
                 />
             </div>

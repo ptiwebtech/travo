@@ -1,0 +1,162 @@
+<style>
+    body, html { 
+        overflow: visible !important; 
+    }
+</style>
+
+<div class="p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 relative" {{did-insert (perform this.fetchVendorsTask)}}>
+
+   <div class="flex items-center justify-between mb-10">
+        {{!-- Travo Logo --}}
+        <LinkTo @route="console.home" class="block group">
+            <img src="/images/Travo-logo.png" alt="Travo" class="w-28 md:w-32 transition-transform group-hover:scale-105">
+        </LinkTo>
+
+        {{!-- Login Button --}}
+        <LinkTo @route="auth.login" class="px-6 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95">
+            Login
+        </LinkTo>
+    </div>
+
+    <div class="directory-content-wrapper">
+        {{!-- Header --}}
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                {{!-- Category Icon --}}
+                <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 dark:border-gray-700 p-2 overflow-hidden">
+                    <FaIcon @icon="truck" class="text-2xl text-sky-500" />
+                </div>
+                
+                <div>
+                    <h2 class="text-3xl font-extrabold capitalize text-gray-900 dark:text-white tracking-tight">
+                        {{humanize (dasherize @model.type)}}
+                    </h2>
+                    {{!-- <p class="text-gray-500 text-sm mt-1">
+                        Showing <b>{{this.vendors.length}}</b> of <b>{{this.totalRecords}}</b> records in this category
+                    </p> --}}
+                </div>
+            </div>
+            <LinkTo @route="directory" class="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border rounded-xl text-sm font-medium text-sky-600 hover:bg-gray-50 transition self-start">
+                &larr; Back to Directory
+            </LinkTo>
+        </div>
+
+        {{!-- Search & Filter Bar --}}
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="relative md:col-span-2">
+                <FaIcon @icon="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input 
+                    type="text" 
+                    placeholder="Search by vendor name..." 
+                    class="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-sky-500 transition"
+                    {{on "input" (perform this.search)}}
+                >
+                {{#if this.search.isRunning}}
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2">
+                        <FaIcon @icon="spinner" @spin={{true}} class="text-sky-500" />
+                    </div>
+                {{/if}}
+            </div>
+
+            <div class="relative">
+                <select 
+                    class="w-full pl-4 pr-10 py-3 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-sky-500 appearance-none transition cursor-pointer"
+                    {{on "change" this.updateCountry}}
+                >
+                    {{#each this.countries as |country|}}
+                        <option value={{country.code}} selected={{eq this.country country.code}}>
+                            {{country.name}}
+                        </option>
+                    {{/each}}
+                </select>
+                <FaIcon @icon="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
+        </div>
+
+        {{#if this.fetchVendorsTask.isRunning}}
+            <div class="flex flex-col items-center justify-center py-32">
+                <FaIcon @icon="spinner" @spin={{true}} class="text-5xl text-sky-500 mb-4" />
+                <p class="text-gray-500 animate-pulse font-medium">Updating list...</p>
+            </div>
+        {{else}}
+            {{!-- Vendor Grid --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {{#each this.vendors as |vendor|}}
+                    <div class="vendor-card bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300">
+                        {{!-- Vendor Logo/Image Area --}}
+                        <div class="relative h-52 w-full overflow-hidden bg-gray-100 flex items-center justify-center p-6">
+                            {{#if (and vendor.logo_url (not-eq vendor.logo_url "https://s3.ap-southeast-1.amazonaws.com/flb-assets/static/no-avatar.png"))}}
+                                <img src={{vendor.logo_url}} class="w-full h-full object-contain transition-transform duration-500 hover:scale-105" alt={{vendor.name}}>
+                            {{else}}
+                                <div class="w-full h-full flex flex-col items-center justify-center bg-sky-50 dark:bg-gray-700 text-sky-300">
+                                    <FaIcon @icon="truck" class="text-5xl mb-2" />
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-sky-400">Verified Vendor</span>
+                                </div>
+                            {{/if}}
+                            
+                            {{!-- Status Badge --}}
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur shadow-sm rounded-lg text-[10px] font-black uppercase tracking-tighter text-green-600">
+                                    {{or vendor.status "Active"}}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{!-- Content --}}
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white line-clamp-1 mb-1">{{vendor.name}}</h3>
+                            <div class="flex items-center gap-2 mb-4">
+                                <FaIcon @icon="map-marker-alt" class="text-sky-500 text-xs" />
+                                <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{{or vendor.place.address vendor.address "Location Verified"}}</p>
+                            </div>
+                            
+                            <div class="mt-auto">
+                               <LinkTo 
+                                    @route="directory.vendor.details" 
+                                    @models={{array this.model.type vendor.id}} 
+                                    class="w-full block py-3.5 bg-sky-50 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400 text-center rounded-2xl font-bold hover:bg-sky-600 hover:text-white transition duration-300"
+                                >
+                                    View Full details
+                                </LinkTo>
+                            </div>
+                        </div>
+                    </div>
+                {{else}}
+                    <div class="col-span-full text-center py-20 bg-white dark:bg-gray-800 rounded-3xl border border-dashed border-gray-300">
+                        <FaIcon @icon="folder-open" class="text-4xl text-gray-300 mb-2" />
+                        <p class="text-gray-500 dark:text-gray-400">No vendors found for your filters.</p>
+                    </div>
+                {{/each}}
+            </div>
+
+            {{!-- Pagination --}}
+            {{#if (or (gt this.page 1) (gte this.vendors.length this.limit))}}
+                <div class="mt-12 flex items-center justify-center gap-6">
+                    <button 
+                        type="button" 
+                        class="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 border rounded-xl shadow-sm disabled:opacity-30" 
+                        disabled={{eq this.page 1}} 
+                        {{on "click" (fn this.changePage "prev")}}
+                    >
+                        <FaIcon @icon="arrow-left" class="text-sky-600" />
+                    </button>
+
+                    <div class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold shadow-md">
+                        Page {{this.page}}
+                    </div>
+
+                    <button 
+                        type="button" 
+                        class="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 border rounded-xl shadow-sm disabled:opacity-30" 
+                        disabled={{lt this.vendors.length this.limit}}
+                        {{on "click" (fn this.changePage "next")}}
+                    >
+                        <FaIcon @icon="arrow-right" class="text-sky-600" />
+                    </button>
+                </div>
+            {{/if}}
+        {{/if}}
+    </div>
+
+    <DirectoryServiceNavbar />
+</div>

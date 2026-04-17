@@ -44,6 +44,32 @@ export default class PlaceFormPanelComponent extends Component {
 
     @tracked cityOptions = [];
 
+    @tracked uploadQueue = [];
+
+    @tracked notes = '';
+
+    acceptedFileTypes = [
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/msword',
+        'application/pdf',
+        'application/x-pdf',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'video/mp4',
+        'video/quicktime',
+        'video/x-msvideo',
+        'video/x-flv',
+        'video/x-ms-wmv',
+        'audio/mpeg',
+        'video/x-msvideo',
+        'application/zip',
+        'application/x-tar',
+    ];
+
  @tracked place = {
     name: '',
     street1: '',
@@ -60,6 +86,10 @@ export default class PlaceFormPanelComponent extends Component {
     constructor(owner, { place = null }) {
         super(...arguments);
         this.place = place;
+
+        if (this.place && this.place.meta) {
+            this.notes = this.place.meta.notes || '';
+        }
         this.savePermission = place && place.isNew ? 'fleet-ops create place' : 'fleet-ops update place';
         applyContextComponentArguments(this);
         if(place && place.isNew) {
@@ -87,11 +117,16 @@ export default class PlaceFormPanelComponent extends Component {
      * @memberof PlaceFormPanelComponent
      */
     @task *save() {
+        console.log('Saving place...');
         contextComponentCallback(this, 'onBeforeSave', this.place);
         try {
             const latitude = parseFloat($('.coordinates-input .ember-text-field:nth-child(1)').val());
             const longitude = parseFloat($('.coordinates-input .ember-text-field:nth-child(2)').val());
             const location = new Point(longitude, latitude);
+
+            // 1. BAS YE LINE ADD KARO (Email uthane ke liye)
+            const emailValue = $('.place-email').val() || '';
+
             this.place.setProperties({
                 location: location,
                 city: $('.city_section_select .ember-power-select-selected-item').text().trim() || this.place.city || '',
@@ -105,7 +140,29 @@ export default class PlaceFormPanelComponent extends Component {
                 country_name: $('.country_section_select .ember-power-select-selected-item span:nth-child(2)').text().trim() || this.place.country_name || '',
                 type: $('#place-type').val() || this.place.type || '',
             });
-            this.place = yield this.place.save();
+
+            this.place.set('meta', {
+                ...(this.place.meta || {}), 
+                email: emailValue 
+            });
+            
+            yield this.place.save();
+            // --- FILE LINKING CODE START ---
+            const filesToLink = this.place.files?.toArray() || [];
+            if (filesToLink.length > 0) {
+                const filePromises = filesToLink.map((file) => {
+                    if (file.id && !file.subject_uuid) { 
+                        file.setProperties({
+                            subject_uuid: this.place.id,
+                            subject_type: 'Fleetbase\\FleetOps\\Models\\Place'
+                        });
+                        return file.save();
+                    }
+                    return null; 
+                });
+                yield Promise.all(filePromises.filter(Boolean));
+            }
+            // --- FILE LINKING CODE END ---
             this.saveEmail(this.place.public_id);
         } catch (error) {
             this.notifications.serverError(error);
@@ -113,6 +170,49 @@ export default class PlaceFormPanelComponent extends Component {
         }
         this.notifications.success(this.intl.t('fleet-ops.component.place-form-panel.success-message', { placeAddress: this.place.address }));
         contextComponentCallback(this, 'onAfterSave', this.place);
+    }
+
+    @action 
+    queueFile(file) {
+        if (['queued', 'failed', 'timed_out', 'aborted'].indexOf(file.state) === -1) {
+            return;
+        }
+
+        this.uploadQueue.pushObject(file);
+
+        this.fetch.uploadFile.perform(
+            file,
+            {
+                path: 'uploads/place-files',
+                type: 'place_file',
+            },
+            async (uploadedFile) => {
+                // Service-style linking logic
+                const fileRecord = this.store.push(this.store.normalize('file', uploadedFile));
+                // Model relationship mein add karein
+                if (this.place.files) {
+                    this.place.files.pushObject(fileRecord);
+                }
+
+                // Edit mode handling: Agar ID hai toh turant link karein
+                if (this.place.id) {
+                    fileRecord.setProperties({
+                        subject_uuid: this.place.id,
+                        subject_type: 'Fleetbase\\FleetOps\\Models\\Place'
+                    });
+                    await fileRecord.save();
+                }
+
+                this.uploadQueue.removeObject(file);
+            },
+            () => {
+                this.uploadQueue.removeObject(file);
+            }
+        );
+    }
+
+    @action removeFile(file) {
+        return file.destroyRecord();
     }
 
     saveEmail(placeId) {
@@ -357,8 +457,8 @@ export default class PlaceFormPanelComponent extends Component {
 
 
 
-  @action
-  async onInputChange(value) {
+@action
+async onInputChange(value) {
     // Ensure you have jQuery loaded before running this code
     const searchAddress = value.trim();
     console.log(searchAddress);
@@ -428,7 +528,18 @@ export default class PlaceFormPanelComponent extends Component {
     }
 }
 
-
-
+@action 
+onNotesInput(event) {
+    const { value } = event.target;
+    this.notes = value;
+    let meta = this.place.meta;
+    
+    if (!meta || Array.isArray(meta)) {
+        meta = {}; 
+    }
+    meta.notes = value;
+    this.place.meta = meta; 
+    this.place.set('meta', meta);
+}
 
 }

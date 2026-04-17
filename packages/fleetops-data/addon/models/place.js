@@ -1,4 +1,4 @@
-import Model, { attr } from '@ember-data/model';
+import Model, { attr, hasMany } from '@ember-data/model';
 import { tracked } from '@glimmer/tracking';
 import { computed, get } from '@ember/object';
 import { not } from '@ember/object/computed';
@@ -38,6 +38,9 @@ export default class PlaceModel extends Model {
     @attr('string') _import_id;
     @attr('point') location;
     @attr('raw') meta;
+
+    // Attachments (Files) relationship
+    @hasMany('file') files;
 
     /** @dates */
     @attr('date') deleted_at;

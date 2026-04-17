@@ -33,6 +33,6 @@ export default class ManagementPlacesIndexRoute extends Route {
     }
 
     model(params) {
-        return this.store.query('place', { ...params });
+        return this.store.query('place', { ...params, with: ['files'] });
     }
 }

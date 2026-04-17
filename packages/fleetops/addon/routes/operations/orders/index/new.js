@@ -29,7 +29,11 @@ export default class OperationsOrdersIndexNewRoute extends Route {
         rubbishcollection: "4405acd5-2d4a-49d4-ae54-8c995a13f244",
         breakdownsresponse: "ed00c80b-b279-4258-8ba0-95c614c3a20d",
         foodcatering: "82d4b159-0c14-4bc3-9ab2-1476550291b2",
-        utilities: "c476c21a-42b6-4801-a44b-a541a91430b7"
+        utilities: "c476c21a-42b6-4801-a44b-a541a91430b7",
+        cardeliver: "4c877ed2-e4ca-4c43-936c-77d8d516c480",
+        laundrette: "84948f0b-8c44-4cbd-a7d0-f6bc662e75b0",
+        handyman: "b1240c8b-dba0-4b0c-b6c5-fdedbddc5251",
+        marketpickup: "ec956d3e-396a-46d1-a5e2-5b6ea303efd4",
     };
 
     @action willTransition() {
@@ -65,11 +69,21 @@ export default class OperationsOrdersIndexNewRoute extends Route {
         controller.orderConfigs = await this.store.findAll('order-config');
         controller.set('servicable', true);
 
-        controller.setConfig({ target: { value: '96f3909e-081c-4609-a240-9c139a012771' } });
+        //controller.setConfig({ target: { value: '96f3909e-081c-4609-a240-9c139a012771' } });
 
 
         // Get the queryParams directly from the route
         const { orderType } = this.paramsFor(this.routeName);
+
+        // ✅ orderType hai toh uska config use karo, nahi toh default
+        const defaultConfigId = '96f3909e-081c-4609-a240-9c139a012771';
+        const orderConfigId = orderType 
+            ? (this.orderTypeMapping[orderType] ?? defaultConfigId)
+            : defaultConfigId;
+
+        // ✅ Sirf ek baar setConfig call karo - sahi value ke saath
+        controller.setConfig({ target: { value: orderConfigId } });
+        
         if (orderType) {
             // Find the corresponding orderConfig ID based on the orderType
             const orderConfigId = this.orderTypeMapping[orderType];

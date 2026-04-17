@@ -60,4 +60,18 @@ Router.map(function () {
     });
     this.route('install');
     this.route('vendor-signup', { path: '/vendor-signup' });
+    
+    this.route('directory', function() {
+        // Places: /directory/place/airport
+        this.route('place', { path: '/place/:slug' }, function() {
+            // Details: /directory/place/airport/air_123
+            this.route('details', { path: '/:place_id' });
+        });
+
+        // Vendors: /directory/vendor/broker
+        this.route('vendor', { path: '/vendor/:slug' }, function() {
+            // Details: /directory/vendor/broker/ven_123
+            this.route('details', { path: '/:vendor_id' });
+        });
+    });
 });

@@ -78,15 +78,24 @@
                           <option value="Warehousing Location">Warehousing Location</option>
                           <option value="Truck Park">Truck Park</option>
                           <option value="Market">Market</option>
+                          <option value="Cold Storage">Cold Storage</option>
+                          <option value="Waste Management">Waste Management</option>
+                          <option value="Oil Block">Oil Block</option>
+                          <option value="Oil Refinery">Oil Refinery</option>
                         </optgroup>
 
                         <optgroup label="Commercial & Accommodation">
-                          <option value="Hotel and Accommodation">Hotel and Accommodation</option>
-                          <option value="Serviced Apartment">Serviced Apartment</option>
-                          <option value="Conference Center">Conference Center</option>
-                          <option value="Guesthouse">Guesthouse</option>
-                          <option value="Event Space">Event Space</option>
-                          <option value="Serviced Office">Serviced Office</option>
+                            <option value="Hotel and Accommodation">Hotel and Accommodation</option>
+                            <option value="Serviced Apartment">Serviced Apartment</option>
+                            <option value="Conference Center">Conference Center</option>
+                            <option value="Guesthouse">Guesthouse</option>
+                            <option value="Event Space">Event Space</option>
+                            <option value="Serviced Office">Serviced Office</option>
+                            <option value="Passenger Airline">Passenger Airline</option>
+                            <option value="Commercial Airline">Commercial Airline</option>
+                            <option value="Petrol Station">Petrol Station</option>
+                            <option value="Gas Filling Station">Gas Filling Station</option>
+                            <option value="Heliport Operator">Heliport Operator</option>
                         </optgroup>
 
                         <optgroup label="Retail & Service Locations">
@@ -243,13 +252,100 @@
                     <InputGroup @name={{t "fleet-ops.common.phone"}}>
                         <PhoneInput @value={{this.place.phone}} @autocomplete="nope" @onInput={{this.phone}} disabled={{unauthorized}} class="form-input w-full placeNumber" />
                     </InputGroup>
-                    <InputGroup @name={{t "fleet-ops.common.email"}} @wrapperClass="col-span-2">
-                        <Input @type="email" class="w-full form-input place-email" placeholder={{t "fleet-ops.common.email"}} disabled={{unauthorized}} />
+                     <InputGroup @name={{t "fleet-ops.common.email"}} @wrapperClass="col-span-2">
+                        <Input @type="email" @value={{this.place.meta.email}}  class="w-full form-input place-email" placeholder={{t "fleet-ops.common.email"}} disabled={{unauthorized}} />
                     </InputGroup>
                 </div>
 
                 <ContentPanel @title={{t "fleet-ops.component.avatar-picker.avatar"}} @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800 avatar_image_changes">
                 <AvatarPicker @model={{this.place}} @defaultAvatar={{config "defaultValues.placeAvatar"}} @disabled={{unauthorized}} />
+                </ContentPanel>
+
+                <ContentPanel @title="Internal Notes" @open={{false}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+                    <InputGroup @name="Notes" @helpText="Add any internal notes or business details here...">
+                        <Textarea 
+                            @value={{this.notes}} 
+                            class="form-input w-full" 
+                            {{on "input" this.onNotesInput}}
+                            placeholder="Add any internal notes" 
+                            rows={{4}} 
+                            disabled={{unauthorized}}
+                        />
+                    </InputGroup>
+                </ContentPanel>
+
+                <ContentPanel @title="Location Photos & Documents" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+                    <div class="space-y-4">
+                        {{#if this.isUploading}}
+                            <div class="dropzone w-full rounded-lg px-4 py-8 bg-gray-50 dark:bg-gray-900 bg-opacity-25 text-gray-900 dark:text-white text-center flex flex-col items-center justify-center border-2 border-dashed border-gray-200 dark:border-indigo-500">
+                                <div class="flex items-center justify-center py-5">
+                                    <Spinner class="text-sm dar:text-gray-100" @loadingMessage={{t "fleet-ops.common.uploading"}} />
+                                </div>
+                            </div>
+                        {{else}}
+                            {{!-- Note: name="place_files" matches your queue name if specified --}}
+                            {{#let (file-queue name="place_files" onFileAdded=this.queueFile accept=(join "," this.acceptedFileTypes)) as |queue|}}
+                                <FileDropzone @queue={{queue}} class="dropzone file-dropzone" @disabled={{cannot this.savePermission}} as |dropzone|>
+                                    {{#if dropzone.active}}
+                                        {{#if dropzone.valid}}
+                                            {{t "component.dropzone.drop-to-upload"}}
+                                        {{else}}
+                                            {{t "component.dropzone.invalid"}}
+                                        {{/if}}
+                                    {{else if queue.files.length}}
+                                        <div class="my-2">
+                                            <FaIcon @icon="folder-open" class="text-indigo-500 mr-2" />
+                                            {{t "component.dropzone.files-ready-for-upload" numOfFiles=(pluralize queue.files.length (t "component.dropzone.file"))}}
+                                        </div>
+                                        <div class="my-2">({{queue.progress}}%)</div>
+                                    {{else}}
+                                        <h4 class="font-semibold text-gray-800 dark:text-gray-200">
+                                            <FaIcon @icon="camera" @size="lg" class="text-indigo-500 mr-2" />
+                                            Upload Location Photos/Files
+                                        </h4>
+                                        <div>
+                                            {{#if dropzone.supported}}
+                                                <p class="text-sm my-5 text-gray-500">{{t "component.dropzone.dropzone-supported-files"}}</p>
+                                            {{/if}}
+                                            <FileUpload @name="place_files" @for="place_files" @accept={{join "," this.acceptedFileTypes}} @multiple={{true}} @onFileAdded={{this.queueFile}} @disabled={{cannot this.savePermission}}>
+                                                <a tabindex={{0}} class="btn btn-magic cursor-pointer ml-1">{{t "component.dropzone.or-select-button-text"}}</a>
+                                            </FileUpload>
+                                        </div>
+                                    {{/if}}
+                                </FileDropzone>
+                            {{/let}}
+
+                            {{!-- Upload Queue Progress --}}
+                            {{#if this.uploadQueue}}
+                                <div class="mx-4 mt-4">
+                                    <div class="flex items-center justify-between mb-4 text-sm font-semibold">
+                                        <span class="leading-6 dark:text-gray-100 italic">{{t "component.dropzone.upload-queue"}}</span>
+                                    </div>
+                                    <div class="space-y-2 mb-4">
+                                        {{#each this.uploadQueue as |file|}}
+                                            <div class="flex items-center justify-between bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 py-1.5 shadow-sm rounded-lg px-4">
+                                                <div class="text-xs text-blue-900 dark:text-blue-200 truncate">{{truncate-filename file.name 50}}</div>
+                                                <div class="flex items-center text-sm">
+                                                    <Spinner class="text-blue-500 mr-2" />
+                                                    <span class="font-bold text-blue-600 dark:text-blue-400">{{round file.progress}}%</span>
+                                                </div>
+                                            </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            {{/if}}
+
+                            {{!-- Files Preview Grid --}}
+                            <div class="mt-4">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+                                    {{#each this.place.files as |file|}}
+                                        {{!-- Using the standard Fleetbase File component --}}
+                                        <File @file={{file}} @onDelete={{fn this.removeFile file}} @onView={{this.viewFile}} />
+                                    {{/each}}
+                                </div>
+                            </div>
+                        {{/if}}
+                    </div>
                 </ContentPanel>
             </div>
         {{/let}}
@@ -422,6 +518,15 @@ $(document).ready(function() {
         "Schools": "/images/Schools.png",
         "Universities": "/images/Universities.png",
         "Daycares and Nurseries": "/images/Daycares-and-Nurseries.png",
+        "Commercial Airline": "/images/Commercial_Airline.png",
+        "Petrol Station": "/images/Petrol_Station.png",
+        "Gas Filling Station": "/images/Gas_Filling_Station.png",
+        "Heliport Operator": "/images/Heliport_Operator.png",
+        "Passenger Airline": "/images/Passenger_Airline.png",
+        "Cold Storage": "/images/Cold_Storage.png",
+        "Waste Management": "/images/Waste_Management.png",
+        "Oil Block": "/images/Oil_Block.png",
+        "Oil Refinery": "/images/Oil_Refinery.png",
     };
     let selectedPlace = $("input[name='selelcted-place']").val() || "Bus Station";
     $("#place-type").val(selectedPlace);
@@ -440,29 +545,6 @@ $(document).ready(function() {
     var city = $('input[name="place-city"]').val()
     if (city && city.trim() !== '') {
         $('.city_section_select .ember-power-select-selected-item').text(city);
-    }
-
-    let urlParts = window.location.href.split('/');
-    let placeId = urlParts[urlParts.length - 1];
-    if (placeId.includes('?')) {
-        placeId = placeId.split('?')[0];
-    } else if (placeId.includes('#')) {
-        placeId = placeId.split('#')[0]; 
-    }
-    console.log(placeId);
-    if (placeId && placeId.startsWith('place_')) {
-        fetch(`https://african.land/travo_api/get_place_api.php?place_id=${placeId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.data && data.data.email) {
-                    $('.place-email').val(data.data.email);
-                } else {
-                    console.error('No email found for this place.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching place details:', error);
-            });
     }
 
 });

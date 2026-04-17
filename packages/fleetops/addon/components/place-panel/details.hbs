@@ -86,9 +86,40 @@
                     {{point-coordinates @place.location}}
                 </div>
             </div>
+            {{!-- Notes included inside Details Panel --}}
+            {{#if @place.meta.notes}}
+                <div class="field-info-container col-span-3 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                    <div class="field-name">Internal Notes</div>
+                    <div class="field-value whitespace-pre-line normal-case font-normal mt-1">{{@place.meta.notes}}</div>
+                </div>
+            {{/if}}
         </div>
     </ContentPanel>
+    {{!-- Photos & Documents Section --}}
+    {{#if @place.files.length}}
+        <ContentPanel @title="Photos & Documents" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 hide-file-actions">
+                {{#each @place.files as |file|}}
+                    <File 
+                        @file={{file}} 
+                        @onView={{fn this.viewFile file}} 
+                        class="border dark:border-gray-500 rounded-lg overflow-hidden shadow-sm" 
+                    />
+                {{/each}}
+            </div>
+        </ContentPanel>
+    {{/if}}
 </div>
+
+<style>
+    .hide-file-actions .x-fleetbase-file-actions {
+        display: none !important;
+    }
+        
+    .hide-file-actions .x-fleetbase-file-wrapper {
+        padding-top: 0.5rem;
+    }
+</style>
 
 <script>
     $(document).ready(function() {

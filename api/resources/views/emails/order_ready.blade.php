@@ -79,14 +79,13 @@
                 @endif
 
                 {{-- CUSTOMER DETAILS --}}
-                @if(!empty($order_data['customer_name']) || !empty($order_data['customer_phone']))
-                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-                    <h3 style="font-size: 17px; font-weight: 600; color: #222;">👤 Customer Details</h3>
-                    <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
-                        <li><strong>Name:</strong> {{ $order_data['customer_name'] ?? 'N/A' }}</li>
-                        <li><strong>Phone:</strong> {{ $order_data['customer_phone'] ?? 'N/A' }}</li>
-                    </ul>
-                @endif
+                {{-- CUSTOMER DETAILS --}}
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                <h3 style="font-size: 17px; font-weight: 600; color: #222;">👤 Client Details</h3>
+                <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
+                    <li><strong>Client Name:</strong> {{ $client_name ?? 'N/A' }}</li>
+                    <li><strong>Client Phone Number:</strong> {{ $client_phone ?? 'N/A' }}</li>
+                </ul>
 
                 {{-- Additional Services (Extras) --}}
                 @if(count($enabledExtras) > 0)

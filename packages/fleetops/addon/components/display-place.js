@@ -3,6 +3,8 @@ import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 
 export default class DisplayPlaceComponent extends Component {
+
+
     @tracked ref;
 
     @action setupComponent(element) {
@@ -33,4 +35,5 @@ export default class DisplayPlaceComponent extends Component {
         if (!this.fullAddress) return null;
         return `https://www.google.com/maps/search/${encodeURIComponent(this.fullAddress)}`;
     }
+
 }

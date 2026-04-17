@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 import { later } from '@ember/runloop';
 import getWithDefault from '@fleetbase/ember-core/utils/get-with-default';
 
@@ -9,6 +10,11 @@ import getWithDefault from '@fleetbase/ember-core/utils/get-with-default';
  * open, close, toggle, and resize capabilities.
  */
 export default class DrawerComponent extends Component {
+
+    @service currentUser;
+
+    @tracked isAdmin = false;
+
     /** Node of the drawer element. */
     @tracked drawerNode;
 
@@ -47,6 +53,22 @@ export default class DrawerComponent extends Component {
 
     /** Indicates if the drawer has been rendered. */
     @tracked _rendered = false;
+
+    constructor() {
+        super(...arguments);
+        
+        const user = this.currentUser; 
+        
+        if (user) {
+            if (user.email === 'dinesh100ni@gmail.com' || user.is_admin === true || user.isAdmin === true) {
+                this.isAdmin = true;
+            } else {
+                this.isAdmin = false;
+            }
+        }
+        
+        console.log('Is Admin Check in Constructor:', this.isAdmin);
+    }
 
     /** Context object providing drawer control functions and state. */
     context = {

@@ -216,6 +216,7 @@ export default class OperationsOrdersIndexNewController extends BaseController {
     @tracked selectedOrderConfigId = null; 
     @tracked showReturnInput = false;
     @tracked isAdmin = false;
+    @tracked isRubbishCollection = false;
 
     parcelSizes = {
         "Parcel size up to 10kg": {
@@ -282,14 +283,17 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         super(...arguments);
         this.setOrderConfigBasedOnUrl();
         setTimeout(async () => {
-            await this.store.findAll('order-config'); // preload configs
-            let defaultId = '96f3909e-081c-4609-a240-9c139a012771';
-            this.selectedOrderConfigId = defaultId;
+            await this.store.findAll('order-config');
+            // ✅ Default sirf tab set karo jab already set na ho
+            if (!this.selectedOrderConfigId) {
+                this.selectedOrderConfigId = '96f3909e-081c-4609-a240-9c139a012771';
+            }
             this.setDefaultCustomer();
             this.checkServiceRates(true);
         }, 1000);
         this.updateIsAdmin();
     }
+    
     updatePayloadCoordinates() {
         let waypoints = [];
         let coordinates = [];
@@ -320,34 +324,40 @@ export default class OperationsOrdersIndexNewController extends BaseController {
     }    
 
     setOrderConfigBasedOnUrl() {
-        const currentUrl = window.location.href;
+        // URL hash se orderType lo (Ember SPA mein hash routing hoti hai)
+        const fullUrl = window.location.href;
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderType = urlParams.get('orderType') ?? fullUrl;
+    
         let orderConfigId = null;
-        if (currentUrl.includes("parcel")) {
+        if (orderType.includes("parcel") || orderType.includes("sendparcel")) {
             orderConfigId = "96f3909e-081c-4609-a240-9c139a012771";
-        } else if (currentUrl.includes("travel")) {
-          orderConfigId = "8283f663-9320-482f-94d8-1136a8b1d08e";
-        } else if (currentUrl.includes("haulage")) {
-          orderConfigId = "40146ff3-6980-4711-b33c-308110eb6b4f";
-        } else if (currentUrl.includes("driver")) {
-          orderConfigId = "ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf";
-        } else if (currentUrl.includes("storefront")) {
-          orderConfigId = "011dc44b-ecca-4826-8fd0-51d576da2738";
-        } else if (currentUrl.includes("export")) {
-          orderConfigId = "03015011-25a8-4ba8-aad9-a208aa8a3aa2";
-        } else if (currentUrl.includes("utilities")) {
-          orderConfigId = "c476c21a-42b6-4801-a44b-a541a91430b7";
-        } else if (currentUrl.includes("food")) {
-          orderConfigId = "82d4b159-0c14-4bc3-9ab2-1476550291b2";
-        } else if (currentUrl.includes("breakdown")) {
-          orderConfigId = "ed00c80b-b279-4258-8ba0-95c614c3a20d";
-        } else if (currentUrl.includes("rubbish")) {
-          orderConfigId = "4405acd5-2d4a-49d4-ae54-8c995a13f244";
-        } else if (currentUrl.includes("airport")) {
-          orderConfigId = "1d9af4c6-979f-4cd9-8583-a8b7ae2c7281";
-        } else if (currentUrl.includes("emergency")) {
-          orderConfigId = "bbf73bcc-f13b-44e1-8c2e-c324a1139eb8";
+        } else if (orderType.includes("travel")) {
+            orderConfigId = "8283f663-9320-482f-94d8-1136a8b1d08e";
+        } else if (orderType.includes("haulage")) {
+            orderConfigId = "40146ff3-6980-4711-b33c-308110eb6b4f";
+        } else if (orderType.includes("driver")) {
+            orderConfigId = "ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf";
+        } else if (orderType.includes("storefront")) {
+            orderConfigId = "011dc44b-ecca-4826-8fd0-51d576da2738";
+        } else if (orderType.includes("export")) {
+            orderConfigId = "03015011-25a8-4ba8-aad9-a208aa8a3aa2";
+        } else if (orderType.includes("utilities")) {
+            orderConfigId = "c476c21a-42b6-4801-a44b-a541a91430b7";
+        } else if (orderType.includes("food")) {
+            orderConfigId = "82d4b159-0c14-4bc3-9ab2-1476550291b2";
+        } else if (orderType.includes("breakdown")) {
+            orderConfigId = "ed00c80b-b279-4258-8ba0-95c614c3a20d";
+        } else if (orderType.includes("rubbish")) {
+            orderConfigId = "4405acd5-2d4a-49d4-ae54-8c995a13f244";
+        } else if (orderType.includes("airport")) {
+            orderConfigId = "1d9af4c6-979f-4cd9-8583-a8b7ae2c7281";
+        } else if (orderType.includes("emergency")) {
+            orderConfigId = "bbf73bcc-f13b-44e1-8c2e-c324a1139eb8";
         }
-        this.selectedOrderConfigId = orderConfigId;
+    
+        // ✅ Agar koi match nahi toh default sendparcel
+        this.selectedOrderConfigId = orderConfigId ?? '96f3909e-081c-4609-a240-9c139a012771';
     }
 
     @computed('payloadCoordinates.length', 'waypoints.[]') get isServicable() {
@@ -1401,6 +1411,13 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         } else {
             this.isAirportPickup = false;
         }
+
+        if (orderConfigId === '4405acd5-2d4a-49d4-ae54-8c995a13f244') {
+            this.isRubbishCollection = true;
+        } else {
+            this.isRubbishCollection = false;
+        }
+
         const orderConfig = this.store.peekRecord('order-config', orderConfigId);
         this.orderConfig = orderConfig;
         this.order.set('order_config_uuid', orderConfig.id);
@@ -1665,7 +1682,7 @@ export default class OperationsOrdersIndexNewController extends BaseController {
     @action async setPayloadPlace(prop, place) {
         if (!place) {
             this.payload[prop] = place;
-            if (this.isMeetAndGreet && prop === 'pickup') {
+            if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
                 this.payload['dropoff'] = null;
             }
         } 
@@ -1674,7 +1691,7 @@ export default class OperationsOrdersIndexNewController extends BaseController {
             if ((placeObj.latitude && placeObj.longitude) || (placeObj.location?.coordinates?.length === 2)
             ) {
                 this.payload[prop] = place;
-                if (this.isMeetAndGreet && prop === 'pickup') {
+                if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
                     this.payload['dropoff'] = place;
                 }
             }
@@ -1707,9 +1724,15 @@ export default class OperationsOrdersIndexNewController extends BaseController {
 
                         this.payload[prop] = placeRecord;
 
-                        if (this.isMeetAndGreet && prop === 'pickup') {
+                        // if (this.isMeetAndGreet && prop === 'pickup') {
+                        //     this.payload['dropoff'] = placeRecord;
+                        //     this.hasDefaultBeenSet = true; // Taaki loop na bane
+                        // }
+                        if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
                             this.payload['dropoff'] = placeRecord;
-                            this.hasDefaultBeenSet = true; // Taaki loop na bane
+                            if (this.isMeetAndGreet) {
+                                this.hasDefaultBeenSet = true;
+                            }
                         }
                     } else {
                         console.error('❌ Failed to fetch place details:', data?.message || data);

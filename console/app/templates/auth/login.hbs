@@ -85,3 +85,9 @@
         <Button @type="secondary" @text="Signup as a Vendor" @icon="store" @wrapperClass="btn-block"  @disabled={{this.isLoading}} @onClick={{fn (transition-to "vendor-signup")}} />
     </div>
 </form>
+<div class="mt-6 text-left">
+    {{!-- Yahan '#' ki jagah exact route name likhna zaroori hai --}}
+    <LinkTo @route="directory" class="text-sm font-medium transition duration-150 ease-in-out text-sky-600 hover:text-sky-500 focus:outline-none focus:underline">
+        Browse Directory
+    </LinkTo>
+</div>

@@ -14,14 +14,6 @@ export default class PlacePanelComponent extends Component {
      * @type {Service}
      */
     @service fetch;
-
-    /**
-     * Service for managing modals.
-     *
-     * @type {Service}
-     */
-    @service modalsManager;
-
     /**
      * Universe service for managing global data and settings.
      *

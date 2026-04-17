@@ -1,0 +1,50 @@
+<div class="px-6 py-4">
+    <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6 mt-[1rem] text-center uppercase tracking-wide">
+        Send Anything, Anywhere with Travo.ng - Select a Service Below
+    </h4>
+    <div class="grid grid-cols-2 lg:grid-cols-12 gap-4 sendparcel_all_button">
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="sendparcel"}} style="cursor: pointer !important;">
+                    SEND PARCEL
+                </LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Ship a Parcel or Package Quickly and Securely</p>
+        </div>
+
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="haulage"}} style="cursor: pointer !important;">HAULAGE</LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Reserve a Van or Truck for Heavy-Duty Transport</p>
+        </div>
+
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="driver"}} style="cursor: pointer !important;">DRIVER</LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Book a Car with a Driver for Convenient Travel</p>
+        </div>
+
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="travel"}} style="cursor: pointer !important;">TRAVEL</LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Book Your Bus or Train Ticket for Easy Commutes</p>
+        </div>
+
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="airportpickup"}} style="cursor: pointer !important;">AIRPORT PICKUP</LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Meet-and-Greet Airport Pickup for Your Arrival</p>
+        </div>
+
+        <div class="widget-count lg:col-span-2 h-full text-center p-3 bg-gray-800/50 rounded-xl border border-gray-700">
+            <h1 class="text-sm font-bold dark:text-gray-100 text-black border-b border-gray-700 pb-2">
+                <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="rubbishcollection"}} style="cursor: pointer !important;">RUBBISH COLLECTION</LinkToExternal>
+            </h1>
+            <p class="text-[13px] pt-2 text-gray-400 leading-tight">Skip Hire and Waste Collection Made Easy</p>
+        </div>
+    </div>
+</div>

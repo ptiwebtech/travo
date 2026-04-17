@@ -71,12 +71,76 @@
                         @onClick={{fn this.triggerAction "onPlaceClicked" place}}
                         as |marker|
                     >
-                        <marker.popup>
+                        {{!-- <marker.popup>
                             <div>{{place.address}}</div>
                             <div>{{format-point place.location}}</div>
                             <a href="https://www.google.com/maps?q={{format-point place.location}}" target="_blank" style="cursor: pointer !important;">
                                 Open in Google Maps
                             </a>
+                        </marker.popup> --}}
+
+                        <marker.popup>
+                            <div class="flex flex-col space-y-2 text-xs min-w-[220px] p-1">
+                                {{!-- 1. Icon and Place Type --}}
+                                <div class="flex items-center border-b border-gray-100 pb-2 mb-1">
+                                    <img src={{get-icon-for-place place.type true}} class="w-5 h-5 mr-2" alt={{place.type}} />
+                                    <span class="font-bold uppercase">{{place.type}}</span>
+                                </div>
+
+                                {{!-- 2. Place Name & Address --}}
+                                <div class="space-y-1">
+                                    <div class="font-bold text-sm text-blue-600">{{place.name}}</div>
+                                    <div class="text-gray-600 leading-tight">{{place.address}}</div>
+                                    <div class="text-[10px] text-gray-400 italic">
+                                        {{format-point place.location}}
+                                    </div>
+                                </div>
+
+                                {{!-- 3. Admin Only Details (Email, Phone & Edit Link) --}}
+                                {{!-- Note: 'this.user.isAdmin' check tabhi chalega agar aapke component mein user service injected hai --}}
+                                 {{#if this.isAdmin}}
+                                <div class="mt-2 py-2 border-t border-gray-100 space-y-1 bg-gray-50 rounded px-1">
+                                    {{#if place.meta.email}}
+                                        <div class="flex items-center truncate text-black">
+                                            <span class="font-semibold mr-1">Email:</span> {{place.meta.email}}
+                                        </div>
+                                    {{/if}}
+
+                                    {{#if place.phone}}
+                                        <div class="flex items-center truncate text-black">
+                                            <span class="font-semibold mr-1">Phone:</span> {{place.phone}}
+                                        </div>
+                                    {{/if}}
+                                    {{!-- Edit Link --}}
+                                    <div class="mt-1">
+                                        <LinkTo @route="management.places.index.edit" @model={{place}} class="text-blue-500 hover:underline font-bold flex items-center">
+                                            <FaIcon @icon="edit" class="mr-1" /> Edit Place
+                                        </LinkTo>
+                                    </div>
+                                </div>
+                                {{/if}}
+
+                                {{!-- 4. Images Thumbnails --}}
+                                {{#if place.files.length}}
+                                    <div class="mt-2 pt-2 border-t border-gray-100">
+                                        <div class="font-semibold mb-1 text-gray-500 text-[10px]">PHOTOS</div>
+                                        <div class="flex flex-wrap gap-1">
+                                            {{#each place.files as |file|}}
+                                                <button type="button" {{on "click" (fn this.viewFile file)}} class="focus:outline-none transition-transform hover:scale-105">
+                                                    <img src={{file.url}} class="w-10 h-10 object-cover rounded border border-gray-200 shadow-sm" title={{file.original_filename}} />
+                                                </button>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/if}}
+
+                                {{!-- 5. External Link --}}
+                                <div class="pt-2">
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{format-point place.location}}" target="_blank" class="text-blue-500 hover:underline block font-medium">
+                                        Open in Google Maps
+                                    </a>
+                                </div>
+                            </div>
                         </marker.popup>
                         <marker.tooltip @permanent={{false}} @sticky={{true}} @direction="bottom">
                             {{place.name}}
