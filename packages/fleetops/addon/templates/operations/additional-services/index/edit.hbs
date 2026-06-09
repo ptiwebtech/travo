@@ -1,0 +1,110 @@
+<Overlay @position="right" @noBackdrop={{true}} @isResizable={{true}} @width="570px" @fullHeight={{true}} as |overlay|>
+    <Overlay::Header @overlay={{overlay}} @title="Edit Additional Service" @onPressCancel={{this.transitionBack}}>
+        <Button
+            @icon="check"
+            @type="primary"
+            @text="Update Service"
+            @onClick={{this.saveService}}
+            @isLoading={{this.isSaving}}
+            @disabled={{not this.isValid}}
+        />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="edit-additional-service-overlay-body">
+
+        <ContentPanel @title="Service Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-3">
+
+                <div class="lg:col-span-2">
+                    <div class="input-group">
+                        <InputLabel @labelText="Order Type" @helpText="The order type this additional service applies to." @required={{true}} />
+                        <Select
+                            @options={{this.orderConfigs}}
+                            @optionValue="id"
+                            @optionLabel="name"
+                            @value={{this.order_type}}
+                            @onChange={{this.setOrderType}}
+                            @placeholder="Select Order Type"
+                            class="w-full"
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Service Name" @required={{true}} />
+                    <Input
+                        @value={{this.name}}
+                        @type="text"
+                        class="form-input w-full"
+                        placeholder="e.g. Packaging Service"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Price (₦)" @required={{true}} />
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm pointer-events-none">₦</span>
+                        <Input
+                            @value={{this.price}}
+                            @type="number"
+                            min="0"
+                            step="0.01"
+                            class="form-input w-full pl-7"
+                            placeholder="0.00"
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Status" />
+                    <Select
+                        @options={{this.statusOptions}}
+                        @optionValue="value"
+                        @optionLabel="label"
+                        @value={{this.status}}
+                        @onChange={{this.setStatus}}
+                        @placeholder="Select Status"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="flex items-center pt-5">
+                    <InputGroup @wrapperClass="pt-1">
+                        <Toggle
+                            @label="Add to Price Quote"
+                            @wrapperClass="justify-start-i"
+                            @isToggled={{this.addToQuote}}
+                            @onToggle={{this.toggleAddToQuote}}
+                            @helpText="When enabled, selecting this service automatically adds its price to the order quote."
+                        />
+                    </InputGroup>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <InputGroup @name="Description" @helpText="Optional description shown to users in the order form.">
+                        <Textarea
+                            @value={{this.description}}
+                            class="form-input w-full"
+                            placeholder="Describe what this service includes..."
+                            rows={{3}}
+                        />
+                    </InputGroup>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <InputGroup @name="Info Tooltip Text" @helpText="Text shown in the info button popup next to this service in the order form.">
+                        <Textarea
+                            @value={{this.infoText}}
+                            class="form-input w-full"
+                            placeholder="e.g. Secure packaging included."
+                            rows={{3}}
+                        />
+                    </InputGroup>
+                </div>
+
+            </div>
+        </ContentPanel>
+
+    </Overlay::Body>
+</Overlay>

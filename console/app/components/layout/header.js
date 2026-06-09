@@ -20,6 +20,7 @@ export default class LayoutHeaderComponent extends Component {
     @service currentUser;
     @service abilities;
     @service fetch;
+    @service modalsManager;
     @tracked company;
     @tracked menuItems = [];
     @tracked organizationMenuItems = [];
@@ -112,6 +113,21 @@ export default class LayoutHeaderComponent extends Component {
                 text: 'Home',
                 icon: 'house',
             },
+
+            {
+                id: 'directory-link',
+                href: 'https://travo.ng/directory',
+                text: 'Directory',
+                icon: 'list',
+            },
+
+            {
+                id: 'vendor-signup',
+                href: 'https://travo.ng/vendor-signup',
+                text: 'Vendor Signup',
+                icon: 'person',
+            },
+
             {
                 id: 'organization-settings',
                 route: 'console.settings.index',
@@ -139,17 +155,31 @@ export default class LayoutHeaderComponent extends Component {
             }
        }
        
-       if(this.currentUser.isAdmin){
+        if(this.currentUser.isAdmin){
         // Push static items
-        menuItems.pushObjects(staticMenuItems);
-     } else {
+            menuItems.pushObjects(staticMenuItems);
+        } else {
 
-          menuItems.pushObject({
+        menuItems.pushObjects([
+            {
                id: 'console-home',
                route: 'console.home',
                text: 'Home',
                icon: 'house',
-          });
+            },
+            {
+                id: 'directory-link',
+                href: 'https://travo.ng/directory',
+                text: 'Directory',
+                icon: 'list',
+            },
+            {
+                id: 'vendor-signup',
+                href: 'https://travo.ng/vendor-signup',
+                text: 'Vendor Signup',
+                icon: 'person',
+            },
+        ]);
      }
 
         // Merge provided menu items
@@ -291,19 +321,51 @@ export default class LayoutHeaderComponent extends Component {
         menuItems.pushObjects(userMenuItems);
 
         // Create immutable static menu items
-        menuItems.pushObjects([
+        // menuItems.pushObjects([
+        //     {
+        //         component: 'layout/header/dark-mode-toggle',
+        //     },
+        //     {
+        //         seperator: true,
+        //     },
+        //     {
+        //         href: 'javascript:;',
+        //         text: 'Logout',
+        //         action: 'invalidateSession',
+        //     },
+        // ]);
+
+        const finalItems = [
             {
                 component: 'layout/header/dark-mode-toggle',
             },
             {
                 seperator: true,
             },
-            {
-                href: 'javascript:;',
-                text: 'Logout',
-                action: 'invalidateSession',
-            },
-        ]);
+        ];
+        
+        // ✅ Sirf normal user ko dikhao
+        if (!this.currentUser.isAdmin) {
+            
+            finalItems.pushObject({
+                id: 'delete-account-user-nav-item',
+                href: '#',
+                text: 'Delete Account',
+                icon: 'trash',
+                action: 'deleteAccount', // console.js handle karega
+            });
+            finalItems.pushObject({ seperator: true });
+        }
+        
+        finalItems.pushObject({
+            href: 'javascript:;',
+            text: 'Logout',
+            action: 'invalidateSession',
+        });
+        
+        menuItems.pushObjects(finalItems);
+
+        
 
         // Callback to allow mutation of menu items
         if (typeof this.args.mutateUserMenuItems === 'function') {
@@ -312,6 +374,7 @@ export default class LayoutHeaderComponent extends Component {
 
         return menuItems;
     }
+
 
     @action routeTo(route) {
         const router = this.router ?? this.hostRouter;

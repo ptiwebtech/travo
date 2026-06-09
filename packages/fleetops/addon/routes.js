@@ -29,12 +29,30 @@ export default buildRoutes(function () {
         this.route('bus-routes', function () {
             this.route('index', { path: '/' }, function () {
                 this.route('new');
-                this.route('edit', { path: '/edit/:id' });
+                this.route('edit', { path: '/edit/:public_id' });
+                // Details ke liye :id segment add kiya
+                this.route('details', { path: '/details/:public_id' });
             });
         });
 
-        this.route('airport-meet-greet', function() {
-            this.route('index', { path: '/' });
+        // this.route('airport-meet-greet', function() {
+        //     this.route('index', { path: '/' });
+        // });
+        
+        this.route('additional-services', function() {
+            this.route('index', { path: '/' }, function() {
+                this.route('new');
+                this.route('edit', { path: '/edit/:public_id' });
+                this.route('details', { path: '/details/:public_id' });
+            });
+        });
+
+        this.route('exchange-rates', function() {
+            this.route('index', { path: '/' }, function() {
+                this.route('new');
+                this.route('edit', { path: '/edit/:public_id' });
+                this.route('details', { path: '/details/:public_id' });
+            });
         });
         
     });

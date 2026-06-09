@@ -1134,4 +1134,77 @@ export default class OperationsOrdersIndexViewController extends BaseController 
             this.isSharing = false;
         });
     }
+
+    // Midpoint between pickup and dropoff for initial map center
+    get routeMapCenter() {
+        const pickup  = this.model?.payload?.pickup;
+        const dropoff = this.model?.payload?.dropoff;
+    
+        if (pickup?.get('latitude') && dropoff?.get('latitude')) {
+            return {
+                lat: (pickup.get('latitude') + dropoff.get('latitude')) / 2,
+                lng: (pickup.get('longitude') + dropoff.get('longitude')) / 2,
+            };
+        }
+    
+        return {
+            lat: pickup?.get('latitude') ?? 6.5,
+            lng: pickup?.get('longitude') ?? 3.3,
+        };
+    }
+    
+    get routePolylineCoords() {
+        const pickup  = this.model?.payload?.pickup;
+        const dropoff = this.model?.payload?.dropoff;
+    
+        if (!pickup || !dropoff) return [];
+    
+        return [
+            { lat: pickup.get('latitude'),  lng: pickup.get('longitude') },
+            { lat: dropoff.get('latitude'), lng: dropoff.get('longitude') },
+        ];
+    }
+
+    get routeMapBounds() {
+        const pickup  = this.model?.payload?.pickup;
+        const dropoff = this.model?.payload?.dropoff;
+    
+        if (!pickup || !dropoff) return null;
+    
+        const pLat = pickup.get('latitude');
+        const pLng = pickup.get('longitude');
+        const dLat = dropoff.get('latitude');
+        const dLng = dropoff.get('longitude');
+    
+        if (!pLat || !pLng || !dLat || !dLng) return null;
+    
+        // Same 0.3 padding calculation jo newOrder wale mein perfectly kaam kar rahi hai
+        const latPad = Math.abs(pLat - dLat) * 0.3 || 0.05;
+        const lngPad = Math.abs(pLng - dLng) * 0.3 || 0.05;
+    
+        return [
+            [Math.min(pLat, dLat) - latPad, Math.min(pLng, dLng) - lngPad],
+            [Math.max(pLat, dLat) + latPad, Math.max(pLng, dLng) + lngPad],
+        ];
+    }
+    
+    get viewPickupMarkerIcon() {
+        return L.icon({
+            iconUrl: '/assets/images/marker-icon.png',
+            iconRetinaUrl: '/assets/images/marker-icon-2x.png',
+            shadowUrl: '/assets/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
+    }
+    
+    get viewDropoffMarkerIcon() {
+        return L.icon({
+            iconUrl: '/assets/images/marker-icon.png',
+            iconRetinaUrl: '/assets/images/marker-icon-2x.png',
+            shadowUrl: '/assets/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
+    }
 }

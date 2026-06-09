@@ -1,0 +1,42 @@
+<Layout::Section::Header @title="Additional Services" @searchQuery={{this.query}} @onSearch={{perform this.search}}>
+    <Button @icon="refresh" @onClick={{this.reload}} @helpText="Reload Data" class="mr-2" />
+    <FiltersPicker
+        @columns={{this.columns}}
+        @onApply={{fn this.filters.apply this}}
+        @onClear={{fn this.filters.reset this}}
+        @onFilterClear={{this.filters.clear}}
+        @onChange={{this.filters.set}}
+        @buttonWrapperClass="mr-2"
+    />
+    <VisibleColumnPicker @columns={{this.columns}} @onChange={{fn (mut this.columns)}} class="mr-2" />
+    {{#if (safe-has this.table "selectedRows")}}
+        <DropdownButton @icon="layer-group" @type="magic" @text="Bulk Action" @size="sm" @buttonWrapperClass="mr-2" as |dd|>
+            <div class="next-dd-menu mt-2 mx-0">
+                <div class="px-1">
+                    <a href="javascript:;" class="text-red-500 next-dd-item" {{on "click" (dropdown-fn dd this.bulkDeleteServices)}}>
+                        Delete Services
+                    </a>
+                </div>
+            </div>
+        </DropdownButton>
+    {{/if}}
+    <Button @type="primary" @icon="plus" @iconPrefix="fas" @text="New Service" @wrapperClass="mr-2" @onClick={{this.createService}} />
+</Layout::Section::Header>
+
+<Layout::Section::Body>
+    <Table
+        @rows={{@model}}
+        @columns={{this.columns}}
+        @selectable={{true}}
+        @canSelectAll={{true}}
+        @onSetup={{fn (mut this.table)}}
+        @pagination={{true}}
+        @paginationMeta={{@model.meta}}
+        @page={{this.page}}
+        @onPageChange={{fn (mut this.page)}}
+        @tfootVerticalOffset="7"
+        @tfootVerticalOffsetElements="#next-view-section-subheader,.next-table-wrapper > table > thead"
+    />
+</Layout::Section::Body>
+
+{{outlet}}

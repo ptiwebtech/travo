@@ -15,21 +15,12 @@ export default class OperationsBusRoutesIndexRoute extends Route {
     };
 
     model(params) {
-        // Use the same pattern as ServiceRates
-        // The 'with' array is critical if your backend expects eager loading
-        return this.store.query('bus-route', {
-            ...params,
-            with: ['vendor'], // Add actual relationship names here
-        }).catch((e) => {
-            console.error('--- Bus Route Query Failed ---', e);
-            this.notifications.error('Failed to load bus routes.');
-            return [];
-        });
+        return this.store.query('bus-route', params)
+            .catch(() => []);
     }
 
     setupController(controller, model) {
         super.setupController(...arguments);
-        // Fleetbase usually expects 'rows' for its data tables
-        controller.rows = model;
+        controller.rows = model || [];
     }
 }

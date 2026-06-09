@@ -18,6 +18,14 @@
         </LinkTo>
     </div>
 
+    <div class="travo-top-horizontal-banner w-full overflow-hidden mb-6">
+        <a href="https://travo.ng/" target="_blank" class="block w-full">
+            <img src="https://travo.ng/images/travo-app-banner.png" 
+                alt="Travo - One App. Multiple Services." 
+                class="w-full h-auto block rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+        </a>
+    </div>
+
     <div class="directory-content-wrapper">
         {{!-- Header --}}
         <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -41,9 +49,9 @@
                         {{humanize (dasherize @model.categoryName)}}
                     </h2>
                     
-                    {{!-- <p class="text-gray-500 text-sm mt-1">
+                    <p class="text-gray-500 text-sm mt-1">
                         Showing <b>{{this.items.length}}</b> of <b>{{this.totalRecords}}</b> records in this category
-                    </p> --}}
+                    </p>
                 </div>
             </div>
             <LinkTo @route="directory" class="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border rounded-xl text-sm font-medium text-sky-600 hover:bg-gray-50 transition self-start">
@@ -83,6 +91,14 @@
                 </select>
                 <FaIcon @icon="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             </div>
+        </div>
+
+        <div class="flex flex-col mb-8 px-3">
+            {{!-- Single Primary Button --}}
+            <a href="https://travo.ng/onboard" style="width: max-content;padding: 10px 60px;margin: auto;"
+            class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white text-center rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95 uppercase tracking-wider block">
+                BOOK NOW
+            </a>
         </div>
 
         {{#if this.fetchPlacesTask.isRunning}}

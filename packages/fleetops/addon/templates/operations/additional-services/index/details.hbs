@@ -1,0 +1,85 @@
+<Overlay
+    @position="right"
+    @noBackdrop={{true}}
+    @isResizable={{true}}
+    @fullHeight={{true}}
+    @width="570px"
+>
+    <Overlay::Header
+        @title={{this.additionalService.name}}
+        @status={{this.additionalService.public_id}}
+        @hideStatusDot={{true}}
+        @onPressCancel={{this.onClose}}
+    >
+        <Button
+            @icon="pencil"
+            @type="default"
+            @text="Edit"
+            @onClick={{this.editService}}
+            class="mr-2"
+        />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="p-4 space-y-4">
+
+        {{!-- SERVICE DETAILS --}}
+        <ContentPanel @title="Service Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 text-xs dark:text-gray-100">
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Service Name</div>
+                    <div class="field-value">{{n-a this.additionalService.name}}</div>
+                </div>
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Order Type</div>
+                    <div class="field-value">{{n-a this.additionalService.order_type_name}}</div>
+                </div>
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Price</div>
+                    <div class="field-value">{{this.additionalService.formattedPrice}}</div>
+                </div>
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Add to Quote</div>
+                    <div class="field-value">
+                        {{if this.additionalService.add_to_quote "Yes" "No"}}
+                    </div>
+                </div>
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Status</div>
+                    <div class="field-value">
+                        <Badge @status={{this.additionalService.status}} />
+                    </div>
+                </div>
+
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Created At</div>
+                    <div class="field-value">{{this.additionalService.createdAtDisplay}}</div>
+                </div>
+
+            </div>
+        </ContentPanel>
+
+        {{!-- DESCRIPTION --}}
+        {{#if this.additionalService.description}}
+        <ContentPanel @title="Description" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <p class="text-xs text-gray-600 dark:text-gray-300">
+                {{this.additionalService.description}}
+            </p>
+        </ContentPanel>
+        {{/if}}
+
+        {{!-- INFO TOOLTIP --}}
+        {{#if this.additionalService.info_text}}
+        <ContentPanel @title="Info Tooltip Text" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <p class="text-xs text-gray-600 dark:text-gray-300">
+                {{this.additionalService.info_text}}
+            </p>
+        </ContentPanel>
+        {{/if}}
+
+    </Overlay::Body>
+</Overlay>

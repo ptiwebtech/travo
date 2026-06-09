@@ -3,7 +3,7 @@
         @title="Create New Bus Route"
         @onPressCancel={{transition-to "operations.bus-routes.index"}}
     >
-        <Button @icon="check" @type="primary" @text="Create Bus Route" @onClick={{this.saveRoute}} />
+        <Button @icon="check" @type="primary" @text="Create Bus Route" @onClick={{this.saveRoute}}  @isLoading={{this.isSubmitting}} @disabled={{this.isSubmitting}} />
     </Overlay::Header>
 
     <Overlay::Body @wrapperClass="new-service-rate-overlay-body px-4 space-y-4 pt-4">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <div class="input-group">
+                {{!-- <div class="input-group">
                     <InputLabel @labelText="Assign Vendor (Intercity Operator)" @required={{true}} />
                     <Select 
                         @options={{this.vendors}} 
@@ -60,6 +60,25 @@
                         @placeholder="Select Vendor"
                         class="w-full" 
                     />
+                </div> --}}
+
+                <div class="input-group">
+                    <InputLabel @labelText="Assign Vendor (Intercity Operator)" @required={{true}} />
+                    <ModelSelect
+                        @modelName="vendor"
+                        @selectedModel={{this.model.vendor}}
+                        @placeholder="Search or Select Vendor"
+                        @triggerClass="form-select form-input w-full"
+                        @infiniteScroll={{true}}
+                        @renderInPlace={{true}}
+                        @onChange={{this.handleVendorSelection}}
+                        @query={{hash type="intercity-bus-operator"}}
+                        as |vendor|
+                    >
+                        <div class="flex items-center">
+                            <div class="truncate font-semibold">{{vendor.name}}</div>
+                        </div>
+                    </ModelSelect>
                 </div>
 
                 {{!-- <div class="input-group">

@@ -24,5 +24,21 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        config(['app.name' => 'Travo']);
+        $this->app->booted(function () {
+            \Config::set('mail.mailers.smtp', [
+                'transport'  => 'smtp',
+                'host'       => 'smtp.ionos.co.uk',
+                'port'       => 587,
+                'encryption' => 'tls',
+                'username'   => 'hello@travoservices.com',
+                'password'   => 'Lagos247@',
+            ]);
+
+            \Config::set('mail.from', [
+                'address' => 'hello@travoservices.com',
+                'name'    => 'Travo Services',
+            ]);
+        });
     }
 }

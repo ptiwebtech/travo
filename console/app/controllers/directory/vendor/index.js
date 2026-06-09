@@ -50,7 +50,7 @@ export default class DirectoryVendorIndexController extends Controller {
             // Fleetbase vendors array 'data' key mein bhejta hai
             this.vendors = result.data ? result.data : (Array.isArray(result) ? result : []);
 
-            //this.totalRecords = result.meta?.total || this.items.length;
+            this.totalRecords = result.meta?.total || this.items.length;
 
             
             if (typeof window !== 'undefined') {

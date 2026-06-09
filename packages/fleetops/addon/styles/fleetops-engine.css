@@ -481,6 +481,10 @@ div[class*="service-"][class*="-status-badge"] > span {
     color: #166534 !important;           /* Dark Green Text */
 }
 
+.light-theme select.w-full.my-select-id.form-select.has--selection {
+    color: black !important;
+}
+
 @media(max-width: 1199px){
     header.next-view-header a.navbar-logo {
         width: 120px !important;
@@ -554,4 +558,65 @@ div[class*="service-"][class*="-status-badge"] > span {
         overflow-x: auto;
     }
 
+    .design-added{
+        display: none;
     }
+
+    .order-type {
+        width:310px !important;
+    }
+
+    .ember-cli-notifications-notification__container {
+        position: absolute !important;
+    }
+
+    .ember-attacher {
+        transform: translate3d(11px, 228px, 0px) !important;
+        width: 96% !important;
+    }
+    
+    .next-content-panel.next-content-panel-is-open .grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .next-view-header-left-inner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .next-content-overlay-panel-header {
+        margin-top: 10px;
+    }
+    .bus-route-schedule {
+        width: 100%;
+    }
+    
+    .input-group {
+        width: 100%;
+    }
+
+    }
+
+    @media (max-width: 1440px) {
+    
+        .next-content-panel-wrapper .next-content-panel-container .next-content-panel>.next-content-panel-header .next-content-panel-header-left {
+            flex: auto !important;
+        }
+    
+        .panel-title.flex-shrink-0 {
+            width: 100%;
+        }
+    }
+
+
+
+
+    @media (max-width: 375px) {
+        .leading-none {
+            font-size: 18px !important;
+        }
+    }
+
+

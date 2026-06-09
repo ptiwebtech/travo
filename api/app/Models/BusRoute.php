@@ -23,7 +23,7 @@ class BusRoute extends Model
         'company_uuid', 'vendor_uuid', 'country', 'travel_type',
         'departure_city', 'arrival_city', 'departure_location_uuid',
         'arrival_location_uuid', 'price', 'route_class',
-        'departure_time', 'operating_days', 'custom_schedule', 'status'
+        'departure_time', 'operating_days', 'custom_schedule', 'status','departure_address','arrival_address',
     ];
 
     protected $casts = [

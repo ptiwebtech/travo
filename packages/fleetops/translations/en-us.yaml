@@ -572,10 +572,10 @@ fleet-ops:
         select-waypoint: Select Waypoint 
         pickup: Pickup
         edit-address: Edit Address
-        select-pickup: Select Pickup
+        select-pickup: Enter Pickup Address
         invalid: Invalid coordinates!
         dropoff: Dropoff
-        select-dropoff: Select Dropoff
+        select-dropoff: Enter Dropoff Address
         return: Return
         select-return: Select Return
       place-assign-vendor:
@@ -1376,9 +1376,9 @@ fleet-ops:
           infoblock-text: is not able to support this location.
           invalid-coordinates: Invalid coordinates!
           pickup: Pickup
-          select-pickup: Select Pickup
+          select-pickup: Enter Pickup Address
           dropoff: Dropoff
-          select-dropoff: Select Dropoff
+          select-dropoff: Enter Dropoff Address
           return: Return
           edit-address: Edit Address
           select-return: Select Return

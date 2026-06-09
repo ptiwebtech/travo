@@ -22,7 +22,7 @@ export default class OperationsBusRoutesIndexNewRoute extends Route {
             'Lagos', 'Abuja', 'Ibadan', 'Port Harcourt', 'Onitsha', 'Enugu', 'Owerri', 'Asaba', 'Warri', 'Benin City', 
             'Akure', 'Ado-Ekiti', 'Ilorin', 'Osogbo', 'Abeokuta', 'Kano', 'Kaduna', 'Jos', 'Minna', 'Lokoja', 'Makurdi', 
             'Lafia', 'Keffi', 'Accra', 'Kumasi', 'Tema', 'Takoradi', 'Lomé', 'Cotonou', 'Porto-Novo', 'Ouagadougou', 
-            'Niamey', 'N\'Djamena'
+            'Niamey', 'N\'Djamena', 'Abia', 'Calabar', 'Uyo', 'Abakaliki', 'Bayelsa', 'Akure', 'Maiduguri', 'Kebbi', 'Taraba', 'Sokoto', 'Yobe',
         ];
 
         const africaCountries = [

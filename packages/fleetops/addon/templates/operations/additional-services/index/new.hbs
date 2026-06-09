@@ -1,0 +1,161 @@
+<Overlay @position="right" @noBackdrop={{true}} @isResizable={{true}} @width="570px" @fullHeight={{true}} as |overlay|>
+    <Overlay::Header @overlay={{overlay}} @title="Add New Additional Service" @onPressCancel={{this.transitionBack}}>
+        <Button
+            @icon="check"
+            @type="primary"
+            @text="Save Service"
+            @onClick={{this.saveService}}
+            @isLoading={{this.isSaving}}
+            @disabled={{not this.isValid}}
+        />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="new-additional-service-overlay-body">
+
+        <ContentPanel @title="Service Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+
+            <div class="flex mb-4 text-sm dark:text-gray-300">
+                <p>Fill in the details for the new additional service.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-3">
+
+                <div class="lg:col-span-2">
+                    <div class="input-group">
+                        <InputLabel @labelText="Order Type" @helpText="The order type this additional service applies to." @required={{true}} />
+                        <Select
+                            @options={{this.orderConfigs}}
+                            @optionValue="id"
+                            @optionLabel="name"
+                            @value={{this.order_type}}
+                            @onChange={{this.setOrderType}}
+                            @placeholder="Select Order Type"
+                            class="w-full"
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Service Name" @helpText="The display name for this additional service (e.g. Packaging, Insurance, Express Delivery)" @required={{true}} />
+                    <Input
+                        @value={{this.name}}
+                        @type="text"
+                        class="form-input w-full"
+                        placeholder="e.g. Packaging Service"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Price (₦)" @helpText="Price in Naira. Added to the order quote when this service is selected." @required={{true}} />
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm pointer-events-none">₦</span>
+                        <Input
+                            @value={{this.price}}
+                            @type="number"
+                            min="0"
+                            step="0.01"
+                            class="form-input w-full pl-7"
+                            placeholder="0.00"
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Status" @helpText="Active services are visible to users when creating orders." />
+                    <Select
+                        @options={{this.statusOptions}}
+                        @optionValue="value"
+                        @optionLabel="label"
+                        @value={{this.status}}
+                        @onChange={{this.setStatus}}
+                        @placeholder="Select Status"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="flex items-center pt-5">
+                    <InputGroup @wrapperClass="pt-1">
+                        <Toggle
+                            @label="Add to Price Quote"
+                            @wrapperClass="justify-start-i"
+                            @isToggled={{this.addToQuote}}
+                            @onToggle={{this.toggleAddToQuote}}
+                            @helpText="When enabled, selecting this service automatically adds its price to the order quote."
+                        />
+                    </InputGroup>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <InputGroup @name="Description" @helpText="Optional description shown to users in the order form.">
+                        <Textarea
+                            @value={{this.description}}
+                            class="form-input w-full"
+                            placeholder="Describe what this service includes..."
+                            rows={{3}}
+                        />
+                    </InputGroup>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <InputGroup @name="Info Tooltip Text" @helpText="Text shown in the info button popup next to this service in the order form. Leave blank to hide the info button.">
+                        <Textarea
+                            @value={{this.infoText}}
+                            class="form-input w-full"
+                            placeholder="e.g. Secure packaging included. Fragile items will be wrapped with bubble wrap and foam."
+                            rows={{3}}
+                        />
+                    </InputGroup>
+                </div>
+
+            </div>
+        </ContentPanel>
+
+        {{#if (or this.name this.price this.description)}}
+        <ContentPanel @title="Preview" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+
+            <div class="flex mb-3 text-sm text-gray-500 dark:text-gray-400">
+                <p>This is how the service will appear as a toggle in the order form.</p>
+            </div>
+
+            <div class="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="font-semibold text-sm text-gray-800 dark:text-gray-100">
+                                {{if this.name this.name "Service Name"}}
+                            </span>
+                            {{#if this.infoText}}
+                                <div class="relative group flex items-center">
+                                    <FaIcon @icon="info-circle" class="text-gray-400 w-3.5 h-3.5 cursor-pointer" />
+                                    <div class="absolute left-1/2 -top-10 w-64 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-10" style="background: #111827; border: 1px solid #484848;">
+                                        {{this.infoText}}
+                                    </div>
+                                </div>
+                            {{/if}}
+                        </div>
+                        {{#if this.description}}
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{this.description}}</p>
+                        {{/if}}
+                    </div>
+                    <div class="flex items-center space-x-3 ml-4">
+                        {{#if this.price}}
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">+ ₦{{this.price}}</span>
+                        {{/if}}
+                        <div class="w-10 h-5 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center px-0.5">
+                            <div class="w-4 h-4 rounded-full bg-white shadow-sm"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{#if this.addToQuote}}
+                <div class="mt-3 flex items-center space-x-2 text-xs text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md px-3 py-2">
+                    <FaIcon @icon="circle-check" class="text-green-500 mr-1" />
+                    <span>When selected, <strong>₦{{if this.price this.price "0"}}</strong> will be added to the order price quote automatically.</span>
+                </div>
+            {{/if}}
+
+        </ContentPanel>
+        {{/if}}
+    </Overlay::Body>
+</Overlay>

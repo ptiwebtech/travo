@@ -24,9 +24,17 @@
     </div>
 
     {{!-- Header --}}
-    <div class="mb-10 text-center directory-content-wrapper">
+    <div class="mb-8 text-center directory-content-wrapper">
         <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white">Travo Directory</h1>
         <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Browse all logistics and transport hubs across the network.</p>
+
+        <div class="flex flex-col mt-4 px-3">
+            {{!-- Single Primary Button --}}
+            <a href="https://travo.ng/onboard" style="width: max-content;padding: 10px 60px;margin: auto;"
+            class="w-full py-4 bg-sky-600 hover:bg-sky-500 text-white text-center rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95 uppercase tracking-wider block">
+                BOOK NOW
+            </a>
+        </div>
     </div>
 
     {{!-- Main Grid --}}
@@ -38,43 +46,44 @@
                 <FaIcon @icon="bus" class="mr-2" /> Transit Hubs
             </h3>
             <ul class="space-y-2 text-sm">
-            <li><a href="#" {{on "click" (fn this.viewCategory "bus-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bus Station (Local)</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "railway-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Railway Station</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "ferry-terminal" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Ferry Terminal</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "taxi-stand" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Taxi Stand</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "airport" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Airport</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "seaport" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Seaport</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "bus-terminal" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bus Terminal (Interstate)</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "car-rental" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Car Rental Location</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "bicycle-sharing" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bicycle Sharing</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "bus-park" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Korope (mini bus) Park</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "heliport" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Heliport</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "drone-port" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Drone port</a></li>
-        </ul>
+                {{!-- SEO FIX: href="#" ki jagah LinkTo aur @model (slug) use kiya --}}
+                <li><LinkTo @route="directory.place" @model="bus-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bus Station (Local)</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="railway-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Railway Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="ferry-terminal" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Ferry Terminal</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="taxi-stand" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Taxi Stand</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="airport" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Airport</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="seaport" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Seaport</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="bus-terminal" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bus Terminal (Interstate)</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="car-rental-location" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Car Rental Location</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="bicycle-sharing-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Bicycle Sharing Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="minibus" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Korope (mini bus) Park</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="heliport" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Heliport</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="drone-port" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Drone port</LinkTo></li>
+            </ul>
         </div>
 
-        {{!-- 2. Logistics & Travel Points --}}
+        {{!-- 2. Logistics & Travel Points --}}       
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-xl font-bold text-sky-600 mb-4 flex items-center border-b pb-2">
                 <FaIcon @icon="truck-loading" class="mr-2" /> Logistics & Travel
             </h3>
-           <ul class="space-y-2 text-sm">
-            <li><a href="#" {{on "click" (fn this.viewCategory "pickup-point" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Pickup/Drop-off Point</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "border-crossing" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Border Crossing</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "parking-lot" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Parking Lot/Garage</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "service-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Service Station</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "cargo-terminal" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Cargo Terminal</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "rest-stop" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Rest Stops/Service Area</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "courier-depot" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Courier Service Depot</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "warehouse" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Warehousing</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "truck-park" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Truck Park</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "market" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Market</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "cold-storage" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Cold Storage</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "waste-management" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Waste Management</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "oil-block" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Oil Block</a></li>
-            <li><a href="#" {{on "click" (fn this.viewCategory "oil-refinery" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Oil Refinery</a></li>
-
-        </ul>
+            <ul class="space-y-2 text-sm">
+                {{!-- SEO Optimized Links using LinkTo --}}
+                <li><LinkTo @route="directory.place" @model="pickup-drop-off-point" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Pickup/Drop-off Point</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="border-crossing" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Border Crossing</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="parking-lot-garage" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Parking Lot/Garage</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="service-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Service Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="cargo-terminal" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Cargo Terminal</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="rest-stops-service-area" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Rest Stops/Service Area</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="courier-service-depot" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Courier Service Depot</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="warehousing-location" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Warehousing</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="truck-park" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Truck Park</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="market" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Market</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="cold-storage" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Cold Storage</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="waste-management" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Waste Management</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="oil-block" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Oil Block</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="oil-refinery" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Oil Refinery</LinkTo></li>
+            </ul>
         </div>
 
         {{!-- 3. Commercial & Accommodation --}}
@@ -83,41 +92,53 @@
                 <FaIcon @icon="building" class="mr-2" /> Accommodation
             </h3>
             <ul class="space-y-2 text-sm">
-                <li><a href="#" {{on "click" (fn this.viewCategory "hotel-and-accommodation" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Hotel and Accommodation</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "serviced-apartment" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Serviced Apartment</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "serviced-office" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Serviced Office</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "conference-center" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Conference Center </a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "guesthouse" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Guesthouse</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "event-space" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Event Space</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "passenger-airline" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Passenger Airline</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "Commercial-Airline" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Commercial Airline</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "petrol-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Petrol Station</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "gas-filling-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Gas Filling Station</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "heliport-operator" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Heliport Operator</a></li>
+                {{!-- SEO Friendly Links using LinkTo --}}
+                <li><LinkTo @route="directory.place" @model="hotel-and-accomodation" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Hotel and Accommodation</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="serviced-apartment" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Serviced Apartment</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="serviced-office" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Serviced Office</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="conference-center" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Conference Center</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="guesthouse" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Guesthouse</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="event-space" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Event Space</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="passenger-airline" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Passenger Airline</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="Commercial-Airline" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Commercial Airline</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="petrol-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Petrol Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="gas-filling-station" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Gas Filling Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="heliport-operator" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Heliport Operator</LinkTo></li>
             </ul>
         </div>
+    
+    </div>
 
+    <div class="travo-top-horizontal-banner w-full overflow-hidden mb-6 mt-6">
+        <a href="https://travo.ng/" target="_blank" class="block w-full">
+            <img src="https://travo.ng/images/travo-app-banner.png" 
+                alt="Travo - One App. Multiple Services." 
+                class="w-full h-auto block rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {{!-- 4. Retail & Service Locations --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-xl font-bold text-sky-600 mb-4 flex items-center border-b pb-2">
                 <FaIcon @icon="store" class="mr-2" /> Retail & Services
             </h3>
             <ul class="space-y-2 text-sm flex flex-wrap gap-x-4">
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "storefront" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Storefront</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "food-takeaway" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Food Takeaway</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "restaurant" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition"> Restaurant</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "supermarket" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition"> Supermarket</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "auto-repair-shop" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Auto Repair shop</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "laundromat" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Laundromat</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "beauty salon" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Beauty Salon</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "barber-shop" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Barber Shop</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "pharmacy" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Pharmacy</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "gym" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Gym</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "Dentist" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Dentist</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "Optician" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Optician</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "Physiotherapist" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Physiotherapist</a></li>
-                <li class="w-full"><a href="#" {{on "click" (fn this.viewCategory "tailor" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Tailor</a></li>
-
+                {{!-- SEO Optimized Links --}}
+                <li class="w-full"><LinkTo @route="directory.place" @model="storefront" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Storefront</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="food-takeaway" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Food Takeaway</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="restaurant" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Restaurant</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="supermarket" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Supermarket</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="auto-repair-shop" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Auto Repair shop</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="laundromat" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Laundromat</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="beauty-salon" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Beauty Salon</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="barber-shop" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Barber Shop</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="pharmacy" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Pharmacy</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="gym" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Gym</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="dentist" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Dentist</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="optician" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Optician</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="physiotherapist" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Physiotherapist</LinkTo></li>
+                <li class="w-full"><LinkTo @route="directory.place" @model="tailor" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Tailor</LinkTo></li>
             </ul>
         </div>
 
@@ -127,14 +148,12 @@
                 <FaIcon @icon="heartbeat" class="mr-2" /> Emergency
             </h3>
             <ul class="space-y-2 text-sm">
-                <li><a href="#" {{on "click" (fn this.viewCategory "police-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Police Station</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "clinic" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Clinic</a></li>
-
-                <li><a href="#" {{on "click" (fn this.viewCategory "hospital" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Hospital</a></li>
-
-
-                <li><a href="#" {{on "click" (fn this.viewCategory "fire-station" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Fire Station</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "paediatrics" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Paediatrics</a></li>
+                {{!-- SEO Optimized: href="#" replaced with LinkTo --}}
+                <li><LinkTo @route="directory.place" @model="police-station" class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Police Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="clinic" class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Clinic</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="hospital" class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Hospital</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="fire-station" class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Fire Station</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="paediatrics" class="text-gray-700 dark:text-gray-300 hover:text-red-500 block py-1 transition">Paediatrics</LinkTo></li>
             </ul>
         </div>
 
@@ -144,9 +163,9 @@
                 <FaIcon @icon="university" class="mr-2" /> Education
             </h3>
             <ul class="space-y-2 text-sm">
-                <li><a href="#" {{on "click" (fn this.viewCategory "school" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Schools</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "university" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Universities</a></li>
-                <li><a href="#" {{on "click" (fn this.viewCategory "daycare" "places")}} class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Daycares and Nurseries</a></li>
+                <li><LinkTo @route="directory.place" @model="schools" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Schools</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="universities" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Universities</LinkTo></li>
+                <li><LinkTo @route="directory.place" @model="daycares-and-nurseries" class="text-gray-700 dark:text-gray-300 hover:text-sky-500 block py-1 transition">Daycares and Nurseries</LinkTo></li>
             </ul>
         </div>
 
@@ -166,26 +185,27 @@
     {{!-- 4-Column Grid --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
         {{#each this.vendorTypeOptions as |type|}}
-            <a href="#" 
-            {{on "click" (fn this.viewCategory type "operations.vendors.index")}}
-            class="group flex items-center p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:border-sky-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                
-                {{!-- Icon representation --}}
-                <div class="w-10 h-10 flex items-center justify-center bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-lg mr-4 group-hover:bg-sky-500 group-hover:text-white transition-colors">
-                    <FaIcon @icon="truck" class="text-sm" />
-                </div>
+            <LinkTo 
+                @route="directory.vendor" 
+                @model={{type}}
+                class="group flex items-center p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:border-sky-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            >
+            {{!-- Icon representation --}}
+            <div class="w-10 h-10 flex items-center justify-center bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-lg mr-4 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                <FaIcon @icon="truck" class="text-sm" />
+            </div>
 
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate capitalize">
-                        {{humanize (dasherize type)}}
-                    </p>
-                    <span class="text-[11px] text-gray-500 dark:text-gray-400 group-hover:text-sky-500 transition-colors">
-                        View Network
-                    </span>
-                </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate capitalize">
+                    {{humanize (dasherize type)}}
+                </p>
+                <span class="text-[11px] text-gray-500 dark:text-gray-400 group-hover:text-sky-500 transition-colors">
+                    View Network
+                </span>
+            </div>
 
-                <FaIcon @icon="arrow-right" class="text-gray-300 group-hover:text-sky-500 text-xs opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-            </a>
+            <FaIcon @icon="arrow-right" class="text-gray-300 group-hover:text-sky-500 text-xs opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+            </LinkTo>
         {{/each}}
     </div>
 </div>

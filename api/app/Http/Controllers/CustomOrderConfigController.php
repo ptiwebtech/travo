@@ -24,6 +24,8 @@ class CustomOrderConfigController extends BaseOrderConfigController
             'ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf',
             '1d9af4c6-979f-4cd9-8583-a8b7ae2c7281',
             '4405acd5-2d4a-49d4-ae54-8c995a13f244',
+            'bcba39af-d6b0-4abf-af92-98fc7798a4b5',
+            'a226300a-acaa-40ca-9f2a-d42c3c374cc5',
         ];
 
         $orderConfigs = OrderConfig::whereIn('uuid', $allowedUuids)->get();

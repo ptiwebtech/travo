@@ -150,6 +150,33 @@ export default class ConsoleController extends Controller {
         }
     }
 
+
+    @action async deleteAccount() {
+        this.modalsManager.confirm({
+            title: 'Delete Account',
+            body: 'Are you sure you want to delete your account? This action cannot be undone.',
+            acceptButtonText: 'Yes, Delete Account',
+            acceptButtonScheme: 'danger',
+            confirm: async (modal) => {
+                modal.startLoading();
+                try {
+                    await this.fetch.delete('users/me');
+                    this.notifications.success('Your account has been successfully deleted.');
+                    return later(
+                        this,
+                        async () => {
+                            await this.session.invalidate();
+                        },
+                        900
+                    );
+                } catch (error) {
+                    modal.stopLoading();
+                    return this.notifications.serverError(error);
+                }
+            }
+        });
+    }
+
     /**
      * Action to invalidate and log user out
      *

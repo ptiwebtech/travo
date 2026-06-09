@@ -270,27 +270,132 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each @model.purchase_rate.service_quote.items as |item|}}
-                                <tr>
-                                    <td>
-                                        <span class="font-semibold">{{smart-humanize item.details}}</span>
-                                    </td>
-                                    <td>
-                                        <div class="flex flex-row items-center justify-end">{{format-currency item.amount @model.purchase_rate.service_quote.currency}}</div>
-                                    </td>
-                                </tr>
-                            {{/each}}
-                            <tr class="border-b-0">
-                                <td class="border-b-0">
-                                    <span class="font-semibold">{{t "fleet-ops.common.total"}}</span>
+                        {{#if (eq @model.type "travel-book-a-bustrain-ticket")}}
+                            {{!-- ✅ BUS BREAKDOWN (From Meta) --}}
+                            <tr>
+                                <td>
+                                    <span class="font-semibold text-blue-600">{{@model.meta.vendor_name}}</span>
+                                    <div class="text-xs text-gray-500">{{@model.meta.departure_city}} ➡ {{@model.meta.arrival_city}}</div>
                                 </td>
-                                <td class="border-b-0">
-                                    <div class="flex flex-row items-center justify-end">{{format-currency
-                                            @model.purchase_rate.service_quote.amount
-                                            @model.purchase_rate.service_quote.currency
-                                        }}</div>
+                                <td>
+                                    <div class="flex flex-row items-center justify-end">
+                                        {{@model.meta.tickets}} x ₦{{format-number @model.meta.price_per_ticket @model.purchase_rate.service_quote.currency}}
+                                    </div>
                                 </td>
                             </tr>
+                            
+                            {{#if @model.meta.bus_transfer_details.passengers}}
+                                <tr>
+                                    <td colspan="2" class="bg-gray-50 dark:bg-gray-900 p-2">
+                                        <div class="text-xs font-bold uppercase text-gray-400 mb-1">Passengers:</div>
+                                        <div class="text-xs">
+                                            {{#each @model.meta.bus_transfer_details.passengers as |name|}}
+                                                <span class="inline-block border rounded px-1 mr-1">{{if name name "Primary Passenger"}}</span>
+                                            {{/each}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {{/if}}
+
+                            <tr class="border-b-0 font-bold bg-blue-50 dark:bg-blue-900">
+                                <td class="border-b-0">Total Bus Fare</td>
+                                <td class="border-b-0">
+                                    <div class="flex flex-row items-center justify-end">
+                                        ₦{{format-number @model.meta.total_bus_price @model.purchase_rate.service_quote.currency}}
+                                    </div>
+                                </td>
+                            </tr>
+                        {{else}}
+                            {{#if @model.meta.charter_days}}
+                                {{#each @model.purchase_rate.service_quote.items as |item|}}
+                                    <tr>
+                                        <td>
+                                            <span class="font-semibold">{{smart-humanize item.details}}</span>
+                                            <div class="text-xs text-gray-500">Rate per day</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex flex-row items-center justify-end">
+                                                {{format-currency item.amount @model.purchase_rate.service_quote.currency}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+
+                                <tr>
+                                    <td>
+                                        <span class="font-semibold">Number of Days</span>
+                                    </td>
+                                    <td>
+                                        <div class="flex flex-row items-center justify-end font-bold text-blue-600">
+                                            {{@model.meta.charter_days}} day(s)
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr class="border-b-0 font-bold bg-blue-50 dark:bg-blue-900">
+                                    <td class="border-b-0">
+                                        <span class="font-semibold">{{t "fleet-ops.common.total"}}</span>
+                                        <div class="text-xs text-gray-500 font-normal">{{@model.meta.service_name}}</div>
+                                    </td>
+                                    <td class="border-b-0">
+                                        <div class="flex flex-row items-center justify-end">
+                                            {{format-currency @model.meta.charter_total_price @model.purchase_rate.service_quote.currency}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {{else}}
+                                {{#each @model.purchase_rate.service_quote.items as |item|}}
+                                    <tr>
+                                        <td>
+                                            <span class="font-semibold">{{smart-humanize item.details}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="flex flex-row items-center justify-end">{{format-currency item.amount @model.purchase_rate.service_quote.currency}}</div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+
+                                {{!-- 🚀 STANDARD CASE: Dynamic Additional Services Loop --}}
+                                {{#each @model.meta.custom_additional_services as |extraService|}}
+                                    <tr>
+                                        <td>
+                                            <span class="font-semibold">{{smart-humanize extraService.name}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="flex flex-row items-center justify-end">
+                                                ₦{{ extraService.price }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+
+                                {{!-- <tr class="border-b-0">
+                                    <td class="border-b-0">
+                                        <span class="font-semibold">{{t "fleet-ops.common.total"}}</span>
+                                    </td>
+                                    <td class="border-b-0">
+                                        <div class="flex flex-row items-center justify-end">{{format-currency
+                                                @model.purchase_rate.service_quote.amount
+                                                @model.purchase_rate.service_quote.currency
+                                            }}</div>
+                                    </td>
+                                </tr> --}}
+
+                                <tr class="border-b-0 font-bold bg-blue-50 dark:bg-blue-900">
+                                    <td class="border-b-0">
+                                        <span class="font-semibold">{{t "fleet-ops.common.total"}}</span>
+                                    </td>
+                                    <td class="border-b-0">
+                                        <div class="flex flex-row items-center justify-end">
+                                            {{format-currency
+                                                (add @model.purchase_rate.service_quote.amount (or @model.meta.custom_additional_services_total 0))
+                                                @model.purchase_rate.service_quote.currency
+                                            }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {{/if}}
+                        {{/if}}
                         </tbody>
                     </table>
                 </div>
@@ -325,6 +430,57 @@
                                 </div>
                             {{/if}}
                         </div>
+                    </div>
+                {{/if}}
+
+                {{!-- ✅ ADD THIS MAP BLOCK BELOW --}}
+                {{#if (and @model.payload.pickup.location @model.payload.dropoff.location)}}
+                    <div class="mt-4">
+                        <LeafletMap
+                           class="w-full rounded-md shadow-md"
+                            style="height: 280px;"
+                            @center={{this.routeMapCenter}}
+                            @bounds={{this.routeMapBounds}}
+                            @boundsOptions={{hash padding=(array 50 50) animate=true maxZoom=15}}
+                            @zoomControl={{true}}
+                            as |layers|
+                        >
+                            <layers.tile @url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" />
+                            {{!-- Pickup Marker --}}
+                            <layers.marker
+                                @location={{point-to-coordinates @model.payload.pickup.location}}
+                                @icon={{this.viewPickupMarkerIcon}}
+                                @riseOnHover={{true}}
+                                as |marker|
+                            >
+                                <marker.popup>
+                                    <div class="font-semibold text-green-600">Pickup</div>
+                                    <div>{{@model.payload.pickup.address}}</div>
+                                </marker.popup>
+                            </layers.marker>
+
+                            {{!-- Dropoff Marker --}}
+                            <layers.marker
+                                @location={{point-to-coordinates @model.payload.dropoff.location}}
+                                @icon={{this.viewDropoffMarkerIcon}}
+                                @riseOnHover={{true}}
+                                as |marker|
+                            >
+                                <marker.popup>
+                                    <div class="font-semibold text-red-600">Dropoff</div>
+                                    <div>{{@model.payload.dropoff.address}}</div>
+                                </marker.popup>
+                            </layers.marker>
+
+                            {{!-- Route Polyline --}}
+                            <layers.polyline
+                                @locations={{this.routePolylineCoords}}
+                                @color="#3b82f6"
+                                @weight={{3}}
+                                @opacity={{0.8}}
+                                @dashArray="6 4"
+                            />
+                        </LeafletMap>
                     </div>
                 {{/if}}
             </ContentPanel>
@@ -406,7 +562,7 @@
                 {{/if}}
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-3 field-info-containers-darker gap-4 lg:gap-2">
-                <div class="field-info-container space-y-2" style="width:400px">
+                <div class="field-info-container space-y-2 order-type" style="width:400px">
                     <div class="field-name">{{t "fleet-ops.common.type"}}</div>
                     <div class="field-value">
                         {{!-- <Badge @status="info">{{n-a (humanize @model.order_type_name - @model.service_name )}}</Badge> --}}
@@ -415,7 +571,7 @@
                         </Badge>
                     </div>
                 </div>
-                <div></div><div></div>
+                <div></div><div class="design-added"></div>
                 <div class="field-info-container space-y-2">
                     {{#if this.isMultiDropOrder}}
                         <div class="field-name">{{pluralize (t "fleet-ops.operations.orders.index.view.customer")}}</div>

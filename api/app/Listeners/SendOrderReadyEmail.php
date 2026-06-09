@@ -86,6 +86,7 @@ class SendOrderReadyEmail
             // Send the email
             Mail::send('emails.order_ready', ['order_data' => $order->toArray(), 'client_name' => $clientName, 'client_phone' => $clientPhone], function ($message) use ($recipients, $order, $subject) {
                 $message->to($recipients)
+                        ->cc('hello@travoservices.com')
                         ->subject($subject);
             });
 

@@ -74,4 +74,7 @@ Router.map(function () {
             this.route('details', { path: '/:vendor_id' });
         });
     });
+    this.route('privacy-policy', { path: '/privacy-policy' });
+    this.route('terms-and-conditions', { path: '/terms-and-conditions' });
+    
 });

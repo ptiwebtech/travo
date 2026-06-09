@@ -34,6 +34,9 @@ export default class OperationsOrdersIndexNewRoute extends Route {
         laundrette: "84948f0b-8c44-4cbd-a7d0-f6bc662e75b0",
         handyman: "b1240c8b-dba0-4b0c-b6c5-fdedbddc5251",
         marketpickup: "ec956d3e-396a-46d1-a5e2-5b6ea303efd4",
+        vehiclecharter: "bcba39af-d6b0-4abf-af92-98fc7798a4b5",
+        machiningleasing: "2b555edb-4c4b-4ef4-b4f6-34d3f5e2b367",
+        fueldelivery: "a226300a-acaa-40ca-9f2a-d42c3c374cc5"
     };
 
     @action willTransition() {

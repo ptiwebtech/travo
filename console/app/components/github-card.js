@@ -10,6 +10,7 @@ import fetch from 'fetch';
 
 export default class GithubCardComponent extends Component {
     @storageFor('local-cache') localCache;
+    @tracked products = [];
     @tracked data = {
         owner: {
             avatar_url: 'https://avatars.githubusercontent.com/u/38091894?v=4',
@@ -39,6 +40,7 @@ export default class GithubCardComponent extends Component {
         super(...arguments);
         this.getRepositoryData.perform();
         this.getRepositoryTags.perform();
+        this.getWigmoreProducts.perform();
     }
 
     @task *getRepositoryData() {
@@ -78,6 +80,21 @@ export default class GithubCardComponent extends Component {
                 this.localCache.set('fleetbase-github-tags', this.tags);
                 this.localCache.set('fleetbase-github-tags-expiration', add(new Date(), { hours: 6 }));
             }
+        }
+    }
+
+    @task *getWigmoreProducts() {
+        try {
+            const response = yield fetch('https://wigmorewholesale.com/index.php?route=api/random_product');
+            if (response.ok) {
+                const result = yield response.json();
+                if (result && result.data) {
+                    // Sirf 4 products le rahe hain ek row mein fit karne ke liye
+                    this.products = result.data.slice(0, 9);
+                }
+            }
+        } catch (e) {
+            console.error('Wigmore API Error:', e);
         }
     }
 }

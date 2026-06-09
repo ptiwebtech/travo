@@ -1,0 +1,210 @@
+<Overlay @position="right" @noBackdrop={{true}} @isResizable={{true}} @fullHeight={{true}} @width="570px">
+    <Overlay::Header
+        @title="Edit Bus Route"
+        @onPressCancel={{this.onClose}}
+    >
+        <Button 
+            @icon={{if this.isSubmitting "spinner" "save"}}
+            @type="primary" 
+            @text={{if this.isSubmitting "Saving..." "Save Changes"}}
+            @isLoading={{this.isSubmitting}}
+            @disabled={{this.isSubmitting}}
+            @onClick={{this.updateRoute}} 
+        />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="new-service-rate-overlay-body px-4 space-y-4 pt-4">
+
+        {{!-- SECTION 1: BASIC DETAILS --}}
+        <ContentPanel @title="Basic Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+            <div class="grid grid-cols-1 gap-4">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <InputLabel @labelText="Select Country (Africa)" @required={{true}} />
+                        <Select 
+                            @options={{this.africaCountries}} 
+                            @value={{this.model.country}} 
+                            @onSelect={{fn (mut this.model.country)}} 
+                            @placeholder="Choose Country"
+                            class="w-full" 
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <InputLabel @labelText="Travel Type" @required={{true}} />
+                        <Select 
+                            @options={{this.travelTypes}} 
+                            @value={{this.model.travel_type}} 
+                            @onSelect={{fn (mut this.model.travel_type)}} 
+                            @placeholder="Select Travel Type"
+                            class="w-full" 
+                        />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="input-group">
+                        <InputLabel @labelText="Departure City" @required={{true}} />
+                        <Select 
+                            @options={{this.cities}} 
+                            @value={{this.model.departure_city}} 
+                            @onSelect={{fn (mut this.model.departure_city)}} 
+                            @placeholder="Select Departure" 
+                            class="w-full" 
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <InputLabel @labelText="Arrival City" @required={{true}} />
+                        <Select 
+                            @options={{this.cities}} 
+                            @value={{this.model.arrival_city}} 
+                            @onSelect={{fn (mut this.model.arrival_city)}} 
+                            @placeholder="Select Arrival" 
+                            class="w-full" 
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Assign Vendor (Intercity Operator)" @required={{true}} />
+                    <Select 
+                        @options={{this.vendors}} 
+                        @value={{this.model.vendor_uuid}}
+                        @optionLabel="name"
+                        @optionValue="id"
+                        @onSelect={{this.handleVendorSelection}} 
+                        @placeholder="Select Vendor"
+                        class="w-full" 
+                    />
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Bus Park Departure Location" @helpText="Select the station or terminal" />
+                    <ModelSelect
+                        @modelName="place"
+                        @selectedModel={{this.model.departure_location}}
+                        @placeholder={{or this.model.departure_address "Select Departure Bus Park/Terminal"}}
+                        @triggerClass="form-select form-input w-full"
+                        @infiniteScroll={{true}}
+                        @renderInPlace={{true}}
+                        @onChange={{this.selectDepartureLocation}}
+                        as |model|
+                    >
+                        <div class="truncate flex-1">{{model.address}}</div>
+                    </ModelSelect>
+                </div>
+
+                <div class="input-group">
+                    <InputLabel @labelText="Bus Park Arrival Location" @helpText="Select the station or terminal" />
+                    <ModelSelect
+                        @modelName="place"
+                        @selectedModel={{this.model.arrival_location}}
+                        @placeholder={{or this.model.arrival_address "Select Arrival Bus Park/Terminal"}}
+                        @triggerClass="form-select form-input w-full"
+                        @infiniteScroll={{true}}
+                        @renderInPlace={{true}}
+                        @onChange={{this.selectArrivalLocation}}
+                        as |model|
+                    >
+                        <div class="truncate flex-1">{{model.address}}</div>
+                    </ModelSelect>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 border-t border-gray-100 dark:border-gray-700 pt-4">
+                    <div class="input-group">
+                        <InputLabel @labelText="Route Ticket Price" @required={{true}} />
+                        <Input @type="number" @value={{this.model.price}} class="form-input w-full" placeholder="0.00" />
+                    </div>
+
+                    <div class="input-group">
+                        <InputLabel @labelText="Route Class" />
+                        <Select 
+                            @options={{this.routeClasses}} 
+                            @value={{this.model.route_class}} 
+                            @onSelect={{fn (mut this.model.route_class)}} 
+                            class="w-full" 
+                        />
+                    </div>
+                </div>
+            </div>
+        </ContentPanel>
+
+        {{!-- SECTION 2: AVAILABILITY --}}
+        <ContentPanel @title="Availability" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-800">
+            <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg mb-6">
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-800 dark:text-white">Same timing for all days?</h4>
+                    <p class="text-xs text-gray-500">Switch off to set different times for each day</p>
+                </div>
+                <Toggle @isToggled={{this.useSameTime}} @onToggle={{this.toggleTimeMode}} />
+            </div>
+
+            {{#if this.useSameTime}}
+                <div class="space-y-6">
+                    <div class="input-group max-w-xs">
+                        <InputLabel @labelText="Departure Time" @required={{true}} />
+                        <Input 
+                            @type="time" 
+                            @value={{this.model.departure_time}} 
+                            class="form-input w-full" 
+                        />
+                    </div>
+
+                    <div class="input-group">
+                        <InputLabel @labelText="Operating Days" @required={{true}} />
+                        <div class="grid grid-cols-4 gap-3 mt-2">
+                            {{#each this.daysOfWeek as |day|}}
+                                <label 
+                                    class="flex flex-col items-center justify-center gap-2 px-2 py-3 border rounded-lg cursor-pointer transition-all select-none
+                                        {{if (includes day this.model.operating_days) 
+                                            'bg-blue-600 border-blue-500 text-white' 
+                                            'bg-gray-800 border-gray-600 text-gray-400 hover:border-gray-400'}}"
+                                >
+                                    <span class="text-xs font-bold uppercase tracking-wider text-center">{{day}}</span>
+                                    <input 
+                                        type="checkbox"
+                                        checked={{includes day this.model.operating_days}}
+                                        {{on "change" (fn this.toggleDay day)}}
+                                        class="w-4 h-4 rounded accent-white cursor-pointer"
+                                    />
+                                </label>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            {{else}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{#each this.daysOfWeek as |day|}}
+                        {{#let (get this.customSchedule day) as |dayConfig|}}
+                            <div class="flex flex-col p-3 border rounded-lg transition-all {{if dayConfig.enabled 'border-blue-500 bg-blue-50 dark:bg-blue-900/10' 'border-gray-200 dark:border-gray-800 opacity-60'}}">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold uppercase {{if dayConfig.enabled 'text-blue-600' 'text-gray-500'}}">{{day}}</span>
+                                    <Input 
+                                        @type="checkbox" 
+                                        @checked={{dayConfig.enabled}} 
+                                        {{on "change" (fn this.updateSchedule day 'enabled')}} 
+                                        class="form-checkbox h-4 w-4 text-blue-600"
+                                    />
+                                </div>
+                                {{#if dayConfig.enabled}}
+                                    <Input 
+                                        @type="time" 
+                                        @value={{dayConfig.time}} 
+                                        {{on "change" (fn this.updateSchedule day 'time')}}
+                                        class="form-input w-full text-sm p-2 rounded" 
+                                    />
+                                {{else}}
+                                    <div class="text-[11px] text-gray-500 py-3 italic text-center">Not Operating</div>
+                                {{/if}}
+                            </div>
+                        {{/let}}
+                    {{/each}}
+                </div>
+            {{/if}}
+        </ContentPanel>
+
+        <Spacer @height="300px" />
+    </Overlay::Body>
+</Overlay>

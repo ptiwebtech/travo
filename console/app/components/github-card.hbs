@@ -15,7 +15,41 @@
                 </div> --}}
             </div>
             <div class="w-100 flex flex-row mt-2 ml-4 mb-2">
-                <p class="dark:text-gray-100 text-black text-sm">Buy a wide range of wholesale products is offered, including commodities, minerals, building materials, agricultural supplies, electronics, fashion, and industrial parts.</p>
+                <p class="dark:text-gray-100 text-black text-sm">Buy a wide range of wholesale products, including commodities, minerals, building materials, agricultural supplies, electronics, fashion, and industrial parts.</p>
+            </div>
+            {{!-- Product Slider Section --}}
+            <div class="relative px-4 pb-4">
+                {{!-- Scroll Container --}}
+                <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-3 pb-2 items-stretch" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    
+                    {{#if this.getWigmoreProducts.isRunning}}
+                        {{!-- Loading Shimmers --}}
+                        <div class="snap-start flex-none w-[31%] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg h-36"></div>
+                        <div class="snap-start flex-none w-[31%] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg h-36"></div>
+                        <div class="snap-start flex-none w-[31%] bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg h-36"></div>
+                    {{else}}
+                        {{#each this.products as |product|}}
+                            <a href={{product.href}} target="_blank" rel="noopener noreferrer" class="snap-start flex-none w-[31%] group block bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all hover:border-blue-500">
+                                
+                                {{!-- Image Container: Iska background dark mode mein transparent/dark rakha hai --}}
+                                <div class="h-24 w-full bg-white dark:bg-gray-800 rounded-md flex items-center justify-center mb-2 overflow-hidden border border-gray-100 dark:border-gray-700">
+                                    <img src={{product.image}} 
+                                        alt={{product.name}} 
+                                        class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform mix-blend-multiply dark:mix-blend-normal">
+                                </div>
+
+                                {{!-- Price & Name --}}
+                                <div class="text-[10px] font-bold text-blue-500 dark:text-blue-400 mb-1 leading-none">
+                                    {{product.price}}
+                                </div>
+                                <div class="text-[9px] font-semibold truncate text-gray-800 dark:text-gray-200 leading-tight">
+                                    {{product.name}}
+                                </div>
+                            </a>
+                        {{/each}}
+                    {{/if}}
+
+                </div>
             </div>
             {{!-- <div class="rounded-b-lg px-4 py-2">
                 <div class="grid grid-cols-12 gap-2">
@@ -40,3 +74,9 @@
         {{/if}}
     </div>
 </div>
+<style>
+    /* Slider ko clean dikhane ke liye scrollbar hide kar di hai */
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+</style>

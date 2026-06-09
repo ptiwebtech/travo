@@ -56,6 +56,9 @@
   .next-content-overlay-panel-header .next-view-header-right {
     justify-content: flex-end !important;
   }
+  .leaflet-control-attribution {
+      display: none !important;
+  }
 </style>
 
 <script>
@@ -178,6 +181,50 @@
       }
       updateCanonical('https://travo.ng/vendor-signup');
     }
+
+    if (path === '/auth' || path.includes('/auth')) {
+        document.title = 'Travo.ng – Parcel Delivery, Travel Booking & Logistics Services in Nigeria';
+        
+        let desc = document.querySelector('meta[name="description"]');
+        if (!desc) {
+            desc = document.createElement('meta');
+            desc.name = "description";
+            document.head.appendChild(desc);
+        }
+        // Descriptive content taaki tool 183 characters wala error na de
+        desc.setAttribute('content', 'Travo.ng offers fast parcel delivery, travel bookings, haulage, driver hire, food delivery, and container import/export services across Nigeria. Your trusted all-in-one logistics solution.');
+        updateCanonical('https://travo.ng/auth');
+        return;
+    }
+
+    // Privacy Policy page
+    if (path === '/privacy-policy') {
+        document.title = 'Travo.ng Privacy Policy | Data Protection, Shipping & Logistics Privacy';
+        let desc = document.querySelector('meta[name="description"]');
+        if (!desc) {
+            desc = document.createElement('meta');
+            desc.name = "description";
+            document.head.appendChild(desc);
+        }
+        desc.setAttribute('content', 'Read the Travo.ng Privacy Policy to understand how we collect, use, protect, and process personal information for logistics, transportation, delivery, and international shipping services across Nigeria and globally.');
+        updateCanonical('https://travo.ng/privacy-policy');
+        return;
+    }
+
+    // Terms and Conditions page
+    if (path === '/terms-and-conditions') {
+        document.title = 'Travo.ng Terms and Conditions | Logistics, Delivery & Shipping Services';
+        let desc = document.querySelector('meta[name="description"]');
+        if (!desc) {
+            desc = document.createElement('meta');
+            desc.name = "description";
+            document.head.appendChild(desc);
+        }
+        desc.setAttribute('content', 'Read the Travo.ng Terms and Conditions governing the use of our logistics, transportation, delivery, courier, and international shipping services across Nigeria and worldwide.');
+        updateCanonical('https://travo.ng/terms-and-conditions');
+        return;
+    }
+    
   }
 
   function updateCanonical(url) {
@@ -211,9 +258,127 @@
     }
   }, 500);
 </script>
+
+<script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@graph": [
+  {
+  "@type": ["SoftwareApplication", "LocalBusiness"],
+  "@id": "https://travo.ng/#platform",
+  "name": "Travo.ng",
+  "alternateName": "Travo Nigeria",
+  "description": "Travo.ng is Nigeria's all-in-one platform for logistics, transport, and everyday services. Users can book parcel delivery, haulage, container shipping, bus and train tickets, car hire with driver, airport pickups, grocery delivery, LPG and water utilities, food delivery, emergency services, and vehicle breakdown response — all from one app. The platform also provides digital storefront and marketplace tools for vendors and SMEs, and SaaS booking and delivery management software for businesses.",
+  "url": "https://travo.ng",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "offers": {"@type": "Offer", "description": "Book logistics, transport, and everyday services across Nigeria through the Travo platform."},
+  "areaServed": [
+  {"@type": "Country", "name": "Nigeria"},
+  {"@type": "AdministrativeArea", "name": "Lagos, Nigeria"}
+  ],
+  "address": {"@type": "PostalAddress", "addressLocality": "Lagos", "addressCountry": "NG"},
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "customer service", "url": "https://travo.ng", "availableLanguage": "English"}],
+  "sameAs": ["https://services.travo.ng", "https://services.travo.ng/about/"],
+  "hasOfferCatalog": {
+  "@type": "OfferCatalog",
+  "name": "Travo.ng Services",
+  "itemListElement": [
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Parcel and Courier Delivery Nigeria", "description": "Same-day and scheduled parcel delivery across Nigeria with boxing, packaging, real-time tracking, and delivery proof."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Haulage and Bulk Transport Nigeria", "description": "Heavy goods haulage and bulk cargo transport across Nigeria using vans, trucks, and articulated lorries."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Barrel and Container Shipping", "description": "Local and international barrel and container shipping services for diaspora, export, and bulk cargo."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Bus and Train Ticket Booking Nigeria", "description": "Online booking for bus and train tickets across Nigeria."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Car Hire with Driver Nigeria", "description": "Book a car with a professional driver for business travel, personal trips, and airport transfers."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Airport Pickup and Drop-off Nigeria", "description": "Pre-booked airport meet-and-greet pickup and drop-off across Nigerian airports."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Grocery and Storefront Delivery", "description": "Order groceries, food, and home essentials from local vendors through Travo storefronts."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "LPG Water and Diesel Utility Delivery", "description": "Subscription and on-demand delivery of LPG gas, water, and diesel for homes and businesses across Nigeria."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Emergency Services Dispatch Nigeria", "description": "Rapid emergency response dispatch — police, fire, and medical assistance — bookable through Travo."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Vehicle Breakdown Response Nigeria", "description": "On-demand roadside assistance and vehicle breakdown response bookable from the Travo app."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Vendor Storefronts and Marketplace Tools", "description": "Digital storefront tools for SMEs and local sellers to list products and manage orders."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Logistics and Booking Management Software", "description": "SaaS booking engines, delivery dashboards, order management systems, and logistics APIs."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Rubbish Collection and Skip Hire", "description": "Waste removal, rubbish collection, and skip hire for residential and commercial clients in Nigeria."}},
+  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Food Delivery and Catering Services", "description": "On-demand food delivery and catering for individuals and corporate clients across Nigeria."}}
+  ]
+  }
+  }
+  ]
+  }
+  </script>
     
   </head>
   <body>
+
+  <div id="app-loading-screen" style="
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+  ">
+      <img src="/images/Travo-logo.png" style="width: 160px; margin-bottom: 24px;" />
+      
+      <div style="
+          width: 40px; height: 40px;
+          border: 3px solid rgba(255,255,255,0.2);
+          border-top-color: #38bdf8;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          margin-bottom: 24px;
+      "></div>
+      
+      <p style="color:#94a3b8; font-size:14px; margin-bottom: 16px;">Loading Travo...</p>
+
+      <div id="reload-btn-wrapper" style="display:none; text-align:center;">
+          <p style="color:#94a3b8; margin-bottom:12px; font-size:14px;">Taking too long?</p>
+          <button onclick="window.location.reload()" style="
+              background: #38bdf8;
+              color: white;
+              border: none;
+              padding: 10px 24px;
+              border-radius: 8px;
+              font-size: 14px;
+              cursor: pointer;
+          ">Reload Page</button>
+      </div>
+  </div>
+
+  <style>
+      @keyframes spin {
+          to { transform: rotate(360deg); }
+      }
+  </style>
+
+  <script>
+      // 8 sec baad reload button show karo
+      setTimeout(function() {
+          var btn = document.getElementById('reload-btn-wrapper');
+          if (btn) btn.style.display = 'block';
+      }, 8000);
+
+      // Ember load hone pe loading screen hide karo
+      document.addEventListener('DOMContentLoaded', function() {
+          var checkInterval = setInterval(function() {
+              var emberApp = document.querySelector('.next-view-container, .ember-view, #next-view-section');
+              if (emberApp) {
+                  clearInterval(checkInterval);
+                  var screen = document.getElementById('app-loading-screen');
+                  if (screen) {
+                      screen.style.opacity = '0';
+                      screen.style.transition = 'opacity 0.5s';
+                      setTimeout(function() {
+                          screen.style.display = 'none';
+                      }, 500);
+                  }
+              }
+          }, 300);
+      });
+  </script>
+
+
     {{content-for "body"}}
 
     <script src="{{rootURL}}assets/vendor.js"></script>

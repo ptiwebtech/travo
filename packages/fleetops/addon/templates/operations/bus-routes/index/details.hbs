@@ -1,0 +1,101 @@
+<Overlay
+    @position="right"
+    @noBackdrop={{true}}
+    @isResizable={{true}}
+    @fullHeight={{true}}
+    @width="570px"
+>
+    <Overlay::Header
+        @title={{concat this.busRoute.departure_city " → " this.busRoute.arrival_city}}
+        @status={{this.busRoute.public_id}}
+        @hideStatusDot={{true}}
+        @onPressCancel={{this.onClose}}
+    >
+        <Button
+            @icon="pencil"
+            @type="default"
+            @text="Edit"
+            @onClick={{this.editRoute}}
+            class="mr-2"
+        />
+    </Overlay::Header>
+
+    <Overlay::Body @wrapperClass="p-4 space-y-4">
+
+        {{!-- ROUTE DETAILS --}}
+        <ContentPanel @title="Route Details" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 text-xs dark:text-gray-100">
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Country</div>
+                    <div class="field-value">{{n-a this.busRoute.country}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Travel Type</div>
+                    <div class="field-value">{{n-a this.busRoute.travel_type}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Departure City</div>
+                    <div class="field-value">{{n-a this.busRoute.departure_city}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Arrival City</div>
+                    <div class="field-value">{{n-a this.busRoute.arrival_city}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Ticket Price</div>
+                    <div class="field-value">{{n-a this.busRoute.price}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Route Class</div>
+                    <div class="field-value">{{n-a this.busRoute.route_class}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Departure Time</div>
+                    <div class="field-value">{{n-a this.busRoute.departure_time}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Status</div>
+                    <div class="field-value">
+                        <Badge @status={{this.busRoute.status}} />
+                    </div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Vendor</div>
+                    <div class="field-value">{{n-a this.busRoute.vendor_name}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Created At</div>
+                    <div class="field-value">{{this.busRoute.createdAtDisplay}}</div>
+                </div>
+            </div>
+        </ContentPanel>
+
+        {{!-- LOCATIONS --}}
+        {{#if (or this.busRoute.departure_address this.busRoute.arrival_address)}}
+        <ContentPanel @title="Locations" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <div class="grid grid-cols-1 gap-2 text-xs dark:text-gray-100">
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Departure Location</div>
+                    <div class="field-value">{{n-a this.busRoute.departure_address}}</div>
+                </div>
+                <div class="field-info-container space-y-2">
+                    <div class="field-name">Arrival Location</div>
+                    <div class="field-value">{{n-a this.busRoute.arrival_address}}</div>
+                </div>
+            </div>
+        </ContentPanel>
+        {{/if}}
+
+        {{!-- OPERATING DAYS --}}
+        <ContentPanel @title="Availability" @open={{true}} @pad={{true}} @panelBodyClass="bg-white dark:bg-gray-900">
+            <div class="flex flex-wrap gap-2">
+                {{#each this.busRoute.operating_days as |day|}}
+                    <span class="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold uppercase">
+                        {{day}}
+                    </span>
+                {{/each}}
+            </div>
+        </ContentPanel>
+
+    </Overlay::Body>
+</Overlay>

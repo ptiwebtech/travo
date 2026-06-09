@@ -15,6 +15,7 @@ use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\CustomOrderConfigController;
 use App\Http\Controllers\CustomOrderController;
 use App\Http\Controllers\BusRouteController;
+use App\Http\Controllers\AdditionalServiceController;
 
 
 class RouteServiceProvider extends ServiceProvider
@@ -78,6 +79,14 @@ class RouteServiceProvider extends ServiceProvider
                         Route::get('/{id}', [BusRouteController::class, 'find']);
                         Route::put('/{id}', [BusRouteController::class, 'update']);
                         Route::delete('/{id}', [BusRouteController::class, 'delete']);
+                    });
+
+                    Route::prefix('additional-services')->group(function () {
+                        Route::get('/',        [AdditionalServiceController::class, 'query']);
+                        Route::post('/',       [AdditionalServiceController::class, 'create']);
+                        Route::get('/{id}',    [AdditionalServiceController::class, 'find']);
+                        Route::put('/{id}',    [AdditionalServiceController::class, 'update']);
+                        Route::delete('/{id}', [AdditionalServiceController::class, 'delete']);
                     });
                 });
 

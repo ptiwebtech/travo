@@ -1,3 +1,6 @@
 # http://www.robotstxt.org
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://travo.ng/sitemap
+Sitemap: https://services.travo.ng/sitemap

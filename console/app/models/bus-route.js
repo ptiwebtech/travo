@@ -8,6 +8,10 @@ export default class BusRouteModel extends Model {
     @attr('string') company_uuid;
     @attr('string') vendor_uuid;
 
+    @attr('string') vendor_name;
+    @attr('string') vendor_logo;
+    @attr('string') status;
+
     /** @attributes */
     @attr('string') country;
     @attr('string') travel_type;
@@ -22,8 +26,11 @@ export default class BusRouteModel extends Model {
     @attr('raw') operating_days;
     @attr('raw') advanced_schedule;
 
+    @attr('string') departure_location_uuid;
+    @attr('string') arrival_location_uuid;
+
     /** @relationships */
-    @belongsTo('vendor', { async: true, inverse: null }) vendor;
+    //@belongsTo('vendor', { async: true, inverse: null }) vendor;
     //@hasMany('file') files;
 
     /** @dates */
@@ -31,17 +38,7 @@ export default class BusRouteModel extends Model {
     @attr('date') updated_at;
 
     /** @computed */
-    @computed('updated_at') get updatedAgo() {
-        if (!isValid(this.updated_at)) return '-';
-        return formatDistanceToNow(this.updated_at);
-    }
-
-    @computed('updated_at') get updatedAt() {
-        if (!isValid(this.updated_at)) return '-';
-        return format(this.updated_at, 'PPP p');
-    }
-
-    @computed('created_at') get createdAt() {
+    @computed('created_at') get createdAtDisplay() {
         if (!isValid(this.created_at)) return '-';
         return format(this.created_at, 'PPP p');
     }

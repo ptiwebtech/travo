@@ -7,7 +7,12 @@ export default class OperationsBusRoutesIndexNewController extends Controller {
     @service notifications;
     @service store;
 
+    @service router;        // ✅ ADD KARO
+    @service hostRouter; 
+
     daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    @tracked travelTypes = ['Bus', 'Train', 'Ferry'];
 
     @tracked isSubmitting = false;
     @tracked useSameTime = true;
@@ -60,11 +65,13 @@ export default class OperationsBusRoutesIndexNewController extends Controller {
     @action 
     async saveRoute() {
         const { model } = this;
+        this.isSubmitting = true;
+    
+        // 1. Get IDs from current state
         let vId = model.get('vendor.id') || model.get('vendor_uuid');
         let dId = model.get('departure_location.id') || model.get('departure_location_uuid');
         let aId = model.get('arrival_location.id') || model.get('arrival_location_uuid');
-
-        // 2. UUID Cleanup Logic (Regex for <model::vendor:UUID> format)
+    
         const cleanId = (id) => {
             if (typeof id === 'string' && id.includes(':')) {
                 const parts = id.split(':');
@@ -72,51 +79,41 @@ export default class OperationsBusRoutesIndexNewController extends Controller {
             }
             return id;
         };
-
-        model.set('vendor_uuid', cleanId(vId));
-        model.set('departure_location_uuid', cleanId(dId));
-        model.set('arrival_location_uuid', cleanId(aId));
-
-        // 3. Schedule & Operating Days Sync
+    
+        // 2. Explicitly set these on the model so they go in the payload
+        model.setProperties({
+            vendor_uuid: cleanId(vId),
+            departure_location_uuid: cleanId(dId),
+            arrival_location_uuid: cleanId(aId),
+            // Add company_uuid if you have it on frontend, else backend handles it
+        });
+    
         if (this.useSameTime) {
-            // Agar same time hai, toh model.operating_days pehle se hi toggleDay se update ho raha hai
-            model.set('custom_schedule', null);
+            model.set('custom_schedule', []);
         } else {
             model.set('custom_schedule', this.customSchedule);
-            const activeDays = Object.keys(this.customSchedule)
-                .filter(day => this.customSchedule[day].enabled);
+            const activeDays = Object.keys(this.customSchedule).filter(day => this.customSchedule[day].enabled);
             model.set('operating_days', activeDays);
         }
-
-        // 4. Final Validations
-        const vendorUuid = model.get('vendor_uuid');
-        const depCity = model.get('departure_city');
-        const arrCity = model.get('arrival_city');
-
-        if (!depCity || !arrCity || !vendorUuid) {
-            return this.notifications.error('Please fill all required fields (Vendor, Cities).');
+    
+        // Validation
+        if (!model.get('departure_city') || !model.get('arrival_city') || !model.get('vendor_uuid')) {
+            this.isSubmitting = false;
+            return this.notifications.error('Please fill all required fields.');
         }
-
-        if (depCity === arrCity) {
-            return this.notifications.error('Departure and Arrival cities cannot be the same!');
-        }
-
-        // 5. Submit to Backend
+    
         try {
+            // model.save() will send { busRoute: { ... } } or { bus-route: { ... } }
             await model.save();
             this.notifications.success('Bus route created successfully!');
             
-            // 1. Run the callback if it exists
             if (this.onAfterSave) {
                 this.onAfterSave(model);
             }
-
-            // 2. REDIRECT TO LISTING PAGE
-            // Change the string below to match your actual route name
-            this.router.transitionTo('console.fleet-ops.operations.bus-routes.index');
-
+            this.hostRouter.transitionTo('console.fleet-ops.operations.bus-routes.index');
+            //this.hostRouter.transitionTo('console.fleet-ops.operations.bus-routes.index.details', model.id);
         } catch (error) {
-            console.error("Save Error:", error);
+            console.error("Backend Error:", error);
             this.notifications.serverError(error);
         } finally {
             this.isSubmitting = false;
@@ -152,21 +149,19 @@ export default class OperationsBusRoutesIndexNewController extends Controller {
         }
     }
 
-    get travelTypes() {
-        return ['Bus', 'Train', 'Ferry'];
-    }
+    // get travelTypes() {
+    //     return ['Bus', 'Train', 'Ferry'];
+    // }
 
     @action
     selectDepartureLocation(place) {
-        this.model.departure_location = place;
-        this.model.departure_address = place.address; // Text format mein save karne ke liye
-        this.model.departure_location_uuid = place.id; // Relationship ke liye
+        this.model.set('departure_location_uuid', place?.id ?? null);
+        this.model.set('departure_address', place?.address ?? null);
     }
 
     @action
     selectArrivalLocation(place) {
-        this.model.arrival_location = place;
-        this.model.arrival_address = place.address;
-        this.model.arrival_location_uuid = place.id;
+        this.model.set('arrival_location_uuid', place?.id ?? null);
+        this.model.set('arrival_address', place?.address ?? null);
     }
 }

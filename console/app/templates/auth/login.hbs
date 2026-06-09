@@ -2,7 +2,7 @@
     <div class="mx-auto h-12">
         <Image src="/images/Travo-logo.png" @fallbackSrc="/images/Travo-logo.png" alt={{t "app.name"}} width="160" height="56" class="w-40 mx-auto" />
     </div>
-    <h4 class="mt-6 mb-3 text-2 leading-9 text-center text-gray-900 dark:text-gray-100">The Transport and Logistics platform transforming Africa and the World</h4>
+    <h4 class="mt-6 mb-3 text-2 leading-6 text-center text-gray-900 dark:text-gray-100">The Transport and Logistics platform transforming Nigeria, Africa and the World</h4>
     <h2 class="mt-6 mb-3 text-3xl font-extrabold leading-9 text-center text-gray-900 dark:text-gray-100">
         {{t "auth.login.title"}}
     </h2>
@@ -80,14 +80,34 @@
     <div class="mt-3">
         <Button @text={{t "auth.login.form.create-account-button"}} @wrapperClass="btn-block" @disabled={{this.isLoading}} @onClick={{fn (transition-to "onboard")}} />
     </div>
-    
-    <div class="mt-3"> 
-        <Button @type="secondary" @text="Signup as a Vendor" @icon="store" @wrapperClass="btn-block"  @disabled={{this.isLoading}} @onClick={{fn (transition-to "vendor-signup")}} />
-    </div>
 </form>
+
+<div class="mt-4 mb-1">
+    <div class="flex items-center justify-between gap-3">
+        <a href="https://apps.apple.com/us/app/travo-ng/id6769794240" target="_blank" class="flex-1">
+            <img src="/images/app_store_icon.png" alt="Download on App Store" 
+                 class="h-12 w-full object-contain opacity-90 hover:opacity-100 transition-opacity" />
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.travong.app&pcampaignid=web_share" target="_blank" class="flex-1">
+            <img src="/images/google-play-badge.png" alt="Get it on Google Play" 
+                 class="h-12 w-full object-contain opacity-90 hover:opacity-100 transition-opacity" />
+        </a>
+    </div>
+</div>
+
 <div class="mt-6 text-left">
-    {{!-- Yahan '#' ki jagah exact route name likhna zaroori hai --}}
     <LinkTo @route="directory" class="text-sm font-medium transition duration-150 ease-in-out text-sky-600 hover:text-sky-500 focus:outline-none focus:underline">
         Browse Directory
     </LinkTo>
+</div>
+<div class="mt-3 flex space-x-4">
+    <LinkTo @route="privacy-policy" class="text-sm font-medium transition duration-150 ease-in-out text-sky-600 hover:text-sky-500 focus:outline-none focus:underline">
+        Privacy Policy
+    </LinkTo>
+    <LinkTo @route="terms-and-conditions" class="text-sm font-medium transition duration-150 ease-in-out text-sky-600 hover:text-sky-500 focus:outline-none focus:underline">
+        Terms and Conditions
+    </LinkTo>
+</div>
+<div class="mt-3"> 
+        <Button @type="secondary" @text="Signup as a Vendor" @icon="store" @wrapperClass="btn-block"  @disabled={{this.isLoading}} @onClick={{fn (transition-to "vendor-signup")}} />
 </div>

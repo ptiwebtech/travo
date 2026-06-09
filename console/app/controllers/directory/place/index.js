@@ -50,7 +50,7 @@ export default class DirectoryPlaceIndexController extends Controller {
             // Response key check: Fleetbase aksar result.data mein array deta hai
             this.items = result.data ? result.data : (Array.isArray(result) ? result : []);
 
-            //this.totalRecords = result.meta?.total || this.items.length;
+            this.totalRecords = result.meta?.total || this.items.length;
 
             console.log(this.items);
             

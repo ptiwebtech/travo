@@ -11,14 +11,7 @@
 
     <VisibleColumnPicker @columns={{this.columns}} @onChange={{fn (mut this.columns)}} class="mr-2" />
 
-    <Button
-        @icon="plus"
-        @iconPrefix="fas"
-        @type="primary"
-        @text="New Bus Route"
-        class="mr-2"
-        @onClick={{this.createRoute}}
-    />
+    <Button @icon="plus" @iconPrefix="fas" @type="primary" @text="New Bus Route" class="mr-2"  @onClick={{this.createRoute}}/>
 </Layout::Section::Header>
 
 
@@ -38,11 +31,11 @@
     />
 
     {{!-- Loading Indicator agar data fetch ho raha hai --}}
-    {{#if @model.isLoading}}
+    {{!-- {{#if @model.isLoading}}
         <div class="p-4 text-center">
             <FaIcon @icon="spinner" @spin={{true}} class="text-blue-500" />
             <span class="ml-2 text-gray-500">Loading routes...</span>
         </div>
-    {{/if}}
+    {{/if}} --}}
 </Layout::Section::Body>
 {{outlet}}

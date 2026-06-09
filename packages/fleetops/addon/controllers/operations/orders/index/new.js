@@ -217,6 +217,30 @@ export default class OperationsOrdersIndexNewController extends BaseController {
     @tracked showReturnInput = false;
     @tracked isAdmin = false;
     @tracked isRubbishCollection = false;
+    @tracked isVehicleCharter = false;
+    @tracked isTravel = false;
+    @tracked numberOfCharterDays = 1;
+
+    // Tracked variables add karo
+    @tracked additionalServices = [];
+    @tracked selectedAdditionalServices = [];
+    @tracked additionalServicesTotal = 0;
+
+    //bus route 
+
+    @tracked departureCity;
+    @tracked arrivalCity;
+    @tracked travelDate = new Date();
+    @tracked numberOfTickets = 1;
+    @tracked busResults = [];
+    @tracked passengerNames = [];
+    @tracked selectedBusRoute = null;
+    @tracked isLoading = false;
+    @tracked allActiveRoutes = [];
+
+    @tracked availableDepartureCities;
+    @tracked availableArrivalCities;
+    @tracked isFuelDelivery = false;
 
     parcelSizes = {
         "Parcel size up to 10kg": {
@@ -292,6 +316,7 @@ export default class OperationsOrdersIndexNewController extends BaseController {
             this.checkServiceRates(true);
         }, 1000);
         this.updateIsAdmin();
+        this.loadAllRoutes();
     }
     
     updatePayloadCoordinates() {
@@ -421,6 +446,45 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         }
         // attach share quote details if form is visible
         payload.meta = payload.meta || {};
+
+        if (this.selectedBusRoute) {
+            payload.meta = {
+                ...payload.meta,
+                bus_transfer_details: {
+                    vendor: this.selectedBusRoute.vendor_name,
+                    tickets: this.numberOfTickets,
+                    passengers: this.passengerNames, // Passenger list yahan se jayegi
+                    departure: this.selectedBusRoute.departure_city,
+                    arrival: this.selectedBusRoute.arrival_city,
+                    price: this.selectedBusRoute.price * this.numberOfTickets
+                }
+            };
+        }
+
+        if (this.isVehicleCharter && this.numberOfCharterDays >= 1) {
+            const activeQuote = this.serviceQuotes?.[0];
+            const baseAmount = activeQuote?.amount ?? 0;
+            payload.meta = {
+                ...payload.meta,
+                charter_days: this.numberOfCharterDays,
+                charter_total_price: baseAmount * this.numberOfCharterDays
+            };
+        }
+
+        // 🚀 3. DYNAMIC ADDITIONAL SERVICES SAVE LOGIC (Direct Meta Assignment)
+        if (this.selectedAdditionalServices && this.selectedAdditionalServices.length > 0) {
+            payload.meta = {
+                ...payload.meta,
+                custom_additional_services: this.selectedAdditionalServices
+                    .filter(s => s.add_to_quote)
+                    .map(s => ({
+                        name: s.name,
+                        price: parseFloat(s.price || 0), // Agar database se pehle hi cents (250000) aa rha hai to seedhe save hoga
+                        uuid: s.uuid
+                    })),
+                    custom_additional_services_total: this.additionalServicesTotal
+            };
+        }
 
         const toggleOptions = {
             package_required: this.packageRequired,
@@ -791,7 +855,8 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         if (this.isMeetAndGreet) {
             if (!this.hasDefaultBeenSet) {
                 this.hasDefaultBeenSet = true;
-                await this.setPayloadPlace('pickup', 'place_z3WdzDc');
+                //await this.setPayloadPlace('pickup', 'place_z3WdzDc');
+                await this.setPayloadPlace('pickup', 'place_rvoj6GN');
                 return; 
             }
 
@@ -1385,19 +1450,30 @@ export default class OperationsOrdersIndexNewController extends BaseController {
             familyChildAssistance: false,
             executiveEscortService: false,
             protocolDiplomaticHandling: false,
-            medicalAccessibilityAssistance: false
+            medicalAccessibilityAssistance: false,
+            additionalServices:       [],
+            selectedAdditionalServices: [],
+            additionalServicesTotal:  0,
         });
         this.resetInterface();
     }
 
     @action setConfig(event) {
+
+        this.set('selectedBusRoute', null);
+
+        this.numberOfCharterDays = 1;
+
+        this.setPayloadPlace('pickup', null);
+        this.setPayloadPlace('dropoff', null);
+
         const orderConfigId = event.target.value;
         if (!orderConfigId) {
             return;
         }
 
         if(orderConfigId == 'ba5bf36d-f2d7-46f5-a43f-b4895dd47aaf') {
-            this.setInitialPickupLocation();
+            //this.setInitialPickupLocation();
             this.isDriver = true;
         } else {
             this.isDriver = false;
@@ -1412,10 +1488,28 @@ export default class OperationsOrdersIndexNewController extends BaseController {
             this.isAirportPickup = false;
         }
 
+        if (orderConfigId === 'a226300a-acaa-40ca-9f2a-d42c3c374cc5') {
+            this.isFuelDelivery = true;
+        } else {
+            this.isFuelDelivery = false;
+        }
+
         if (orderConfigId === '4405acd5-2d4a-49d4-ae54-8c995a13f244') {
             this.isRubbishCollection = true;
         } else {
             this.isRubbishCollection = false;
+        }
+
+        if (orderConfigId === 'bcba39af-d6b0-4abf-af92-98fc7798a4b5') {
+            this.isVehicleCharter = true;
+        } else {
+            this.isVehicleCharter = false;
+        }
+
+        if (orderConfigId === '8283f663-9320-482f-94d8-1136a8b1d08e') {
+            this.isTravel = true;
+        } else {
+            this.isTravel = false;
         }
 
         const orderConfig = this.store.peekRecord('order-config', orderConfigId);
@@ -1426,6 +1520,7 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         // load custom fields
         this.loadCustomFields.perform(orderConfig);
         this.checkServiceRates(true);
+        this.loadAdditionalServices(orderConfigId);
     }
 
     @action
@@ -1682,17 +1777,27 @@ export default class OperationsOrdersIndexNewController extends BaseController {
     @action async setPayloadPlace(prop, place) {
         if (!place) {
             this.payload[prop] = place;
-            if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
+            if ((this.isMeetAndGreet || this.isRubbishCollection || this.isVehicleCharter) && prop === 'pickup') {
                 this.payload['dropoff'] = null;
             }
+
+            if (this.isFuelDelivery && prop === 'dropoff') {
+                this.payload['pickup'] = null;
+            }
+
+            return;
         } 
         else {
             const placeObj = typeof place.toJSON === 'function' ? place.toJSON() : place;
             if ((placeObj.latitude && placeObj.longitude) || (placeObj.location?.coordinates?.length === 2)
             ) {
                 this.payload[prop] = place;
-                if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
+                if ((this.isMeetAndGreet || this.isRubbishCollection || this.isVehicleCharter) && prop === 'pickup') {
                     this.payload['dropoff'] = place;
+                }
+
+                if (this.isFuelDelivery && prop === 'dropoff') {
+                    this.payload['pickup'] = place;
                 }
             }
             else if (typeof place === 'string' || (placeObj.type === 'google_autocomplete' || placeObj?.meta?.source === 'google_autocomplete')) {
@@ -1728,12 +1833,17 @@ export default class OperationsOrdersIndexNewController extends BaseController {
                         //     this.payload['dropoff'] = placeRecord;
                         //     this.hasDefaultBeenSet = true; // Taaki loop na bane
                         // }
-                        if ((this.isMeetAndGreet || this.isRubbishCollection) && prop === 'pickup') {
+                        if ((this.isMeetAndGreet || this.isRubbishCollection || this.isVehicleCharter) && prop === 'pickup') {
                             this.payload['dropoff'] = placeRecord;
                             if (this.isMeetAndGreet) {
                                 this.hasDefaultBeenSet = true;
                             }
                         }
+
+                        if (this.isFuelDelivery && prop === 'dropoff') {
+                            this.payload['pickup'] = placeRecord;
+                        }
+                        
                     } else {
                         console.error('❌ Failed to fetch place details:', data?.message || data);
                         return;
@@ -2093,5 +2203,243 @@ export default class OperationsOrdersIndexNewController extends BaseController {
         } else {
             window.open(file.url, '_blank');
         }
+    }
+
+    async loadAllRoutes() {
+        try {
+            const response = await this.fetch.get('bus-routes', { status: 'active', limit: 1000 });
+            this.allActiveRoutes = response.bus_routes || [];
+            
+            // Departure dropdown ko populate karo un cities se jinka route exist karta hai
+            this.availableDepartureCities = [...new Set(this.allActiveRoutes.map(r => r.departure_city))].sort();
+        } catch (e) {
+            console.error("Routes not loadin", e);
+        }
+    }
+
+    @action
+    updateTickets(amount) {
+        let newCount = this.numberOfTickets + amount;
+        if (newCount >= 1) {
+            this.numberOfTickets = newCount;
+
+            let namesNeeded = newCount - 1;
+            let newNames = [...this.passengerNames];
+
+            if (newNames.length < namesNeeded) {
+                newNames.push('');
+            } else if (newNames.length > namesNeeded) {
+                newNames.pop();
+            }
+            this.passengerNames = newNames;
+        }
+    }
+
+    // Jab user "From" city select karega
+    @action
+    onDepartureSelect(city) {
+        this.departureCity = city;
+        this.arrivalCity = null; // Reset destination
+        const destinations = this.allActiveRoutes
+            .filter(route => route.departure_city === city)
+            .map(route => route.arrival_city);
+
+        this.availableArrivalCities = [...new Set(destinations)].sort();
+        this.busResults = [];
+        this.searchBusRoutes();
+    }
+
+    @action
+    onArrivalSelect(city) {
+        this.arrivalCity = city;
+        if (this.departureCity && this.arrivalCity) {
+            this.searchBusRoutes();
+        }
+    }
+
+    @action
+    searchBusRoutes() {
+        this.isLoading = true;
+        
+        const selectedDate = new Date(this.travelDate);
+        const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+        // API Call to your Bus Route CRUD endpoint
+        return this.fetch.get('bus-routes', { 
+            departure_city: this.departureCity,
+            arrival_city: this.arrivalCity,
+            status: 'active' 
+        }).then((response) => {
+            // 2. Filter karein: Sirf wahi routes dikhao jo us din operate karte hain
+            this.busResults = (response.bus_routes || []).filter(route => {
+                // Check if day exists in operating_days array
+                return route.operating_days.includes(dayName);
+            });
+        }).catch((error) => {
+            this.notifications.error('Bus routes load nahi ho paye: ' + error.message);
+        }).finally(() => {
+            this.isLoading = false;
+        });
+    }
+
+    @action
+    async selectBusRoute(route) {
+        this.selectedBusRoute = route;
+        const totalPrice = route.price * this.numberOfTickets;
+        
+        try {
+            const pickupPlace = await this.store.findRecord('place', route.departure_location_uuid);
+            const dropoffPlace = await this.store.findRecord('place', route.arrival_location_uuid);
+
+            await this.setPayloadPlace('pickup', pickupPlace);
+            await this.setPayloadPlace('dropoff', dropoffPlace);
+
+            // Meta mein bus aur passenger ki basic info set karein
+            this.order.set('meta', {
+                bus_route_id: route.uuid,
+                vendor_id: route.vendor_uuid,
+                vendor_name: route.vendor_name,
+                tickets: this.numberOfTickets,
+                price_per_ticket: route.price,
+                total_bus_price: totalPrice,
+                // Passenger names array ko yahan save karein
+                passenger_list: this.passengerNames || [],
+                departure_city: route.departure_city,
+                arrival_city: route.arrival_city,
+                departure_time: route.departure_time
+            });
+            await this.getQuotes();
+
+            this.notifications.success(`Selected ${route.vendor_name} for your trip.`);
+        } catch (error) {
+            console.error('Error selecting bus route:', error);
+            this.notifications.error('Could not update map locations.');
+        }
+    }
+
+    get hasMultipleTickets() {
+        return this.numberOfTickets > 1;
+    }
+
+    @action updateCharterDays(delta) {
+        const newVal = this.numberOfCharterDays + delta;
+        if (newVal >= 1) {
+            this.numberOfCharterDays = newVal;
+        }
+    }
+
+    @action onCharterDaysInput(event) {
+        const val = parseInt(event.target.value);
+        if (!isNaN(val) && val >= 1) {
+            this.numberOfCharterDays = val;
+        }
+    }
+
+    get newOrderRouteMapBounds() {
+        const pickup  = this.payload?.pickup;
+        const dropoff = this.payload?.dropoff;
+        if (!pickup || !dropoff) return null;
+    
+        const pLat = pickup.get('latitude');
+        const pLng = pickup.get('longitude');
+        const dLat = dropoff.get('latitude');
+        const dLng = dropoff.get('longitude');
+    
+        if (!pLat || !pLng || !dLat || !dLng) return null;
+    
+        const latPad = Math.abs(pLat - dLat) * 0.3 || 0.05;
+        const lngPad = Math.abs(pLng - dLng) * 0.3 || 0.05;
+    
+        return [
+            [Math.min(pLat, dLat) - latPad, Math.min(pLng, dLng) - lngPad],
+            [Math.max(pLat, dLat) + latPad, Math.max(pLng, dLng) + lngPad],
+        ];
+    }
+    
+    get newOrderRoutePolyline() {
+        const pickup  = this.payload?.pickup;
+        const dropoff = this.payload?.dropoff;
+        if (!pickup || !dropoff) return [];
+    
+        return [
+            { lat: pickup.get('latitude'),  lng: pickup.get('longitude') },
+            { lat: dropoff.get('latitude'), lng: dropoff.get('longitude') },
+        ];
+    }
+
+    get pickupLatLng() {
+        const pickup = this.payload?.pickup;
+        if (!pickup) return null;
+        const lat = pickup.get ? pickup.get('latitude') : pickup.latitude;
+        const lng = pickup.get ? pickup.get('longitude') : pickup.longitude;
+        if (!lat || !lng) return null;
+        return { lat: parseFloat(lat), lng: parseFloat(lng) };
+    }
+    
+    get dropoffLatLng() {
+        const dropoff = this.payload?.dropoff;
+        if (!dropoff) return null;
+        const lat = dropoff.get ? dropoff.get('latitude') : dropoff.latitude;
+        const lng = dropoff.get ? dropoff.get('longitude') : dropoff.longitude;
+        if (!lat || !lng) return null;
+        return { lat: parseFloat(lat), lng: parseFloat(lng) };
+    }
+    
+    get pickupMarkerIcon() {
+        return L.icon({
+            iconUrl: '/assets/images/marker-icon.png',
+            iconRetinaUrl: '/assets/images/marker-icon-2x.png',
+            shadowUrl: '/assets/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
+    }
+    
+    get dropoffMarkerIcon() {
+        return L.icon({
+            iconUrl: '/assets/images/marker-icon.png',
+            iconRetinaUrl: '/assets/images/marker-icon-2x.png',
+            shadowUrl: '/assets/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
+    }
+
+    get selectedServiceUuidsMap() {
+        const map = {};
+        (this.selectedAdditionalServices || []).forEach(s => {
+            map[s.uuid] = true;
+        });
+        return map;
+    }
+    
+    async loadAdditionalServices(orderConfigId) {
+        try {
+            const response = await this.fetch.get('additional-services', {
+                order_config_uuid: orderConfigId,
+                status: 'active',
+            });
+            this.additionalServices = response.additional_services || [];
+            this.selectedAdditionalServices = [];
+            this.additionalServicesTotal = 0;
+        } catch (e) {
+            console.error('Additional services load error:', e);
+            this.additionalServices = [];
+        }
+    }
+    
+
+    @action toggleAdditionalService(service) {
+        const isSelected = (this.selectedAdditionalServices || []).some(s => s.uuid === service.uuid);
+    
+        if (isSelected) {
+            this.selectedAdditionalServices = this.selectedAdditionalServices.filter(s => s.uuid !== service.uuid);
+        } else {
+            this.selectedAdditionalServices = [...(this.selectedAdditionalServices || []), service];
+        }
+    
+        // ✅ Cents mein store karo (serviceQuote.amount same unit mein hai)
+        this.additionalServicesTotal = this.selectedAdditionalServices
+            .filter(s => s.add_to_quote)
+            .reduce((sum, s) => sum + (parseFloat(s.price || 0) * 100), 0);
     }
 }

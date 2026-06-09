@@ -21,7 +21,8 @@
     COPY console/.npmr[c] ./
     
     # Install global dependencies
-    RUN npm install -g ember-cli pnpm 
+   # RUN npm install -g ember-cli pnpm 
+    RUN npm install -g ember-cli pnpm@8
     
     # Install git
     RUN apk update && apk add git openssh-client

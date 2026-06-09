@@ -87,8 +87,60 @@
                     <li><strong>Client Phone Number:</strong> {{ $client_phone ?? 'N/A' }}</li>
                 </ul>
 
+                {{-- BUS TICKET & PASSENGER DETAILS --}}
+                @php
+                    $busDetails = data_get($meta, 'bus_transfer_details');
+                    $passengers = data_get($busDetails, 'passengers', []);
+                @endphp
+
+                @if($busDetails)
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                    <h3 style="font-size: 17px; font-weight: 600; color: #222;">🚌 Bus Ticket Details</h3>
+                    <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
+                        <li><strong>Operator:</strong> {{ data_get($busDetails, 'vendor', 'N/A') }}</li>
+                        <li><strong>Route:</strong> {{ data_get($busDetails, 'departure') }} ➡ {{ data_get($busDetails, 'arrival') }}</li>
+                        <li><strong>Total Tickets:</strong> {{ data_get($busDetails, 'tickets', 1) }}</li>
+                        <li><strong>Fare:</strong> <b>₦{{ number_format(data_get($busDetails, 'price', 0), 2) }}</b></li>
+                    </ul>
+
+                    <h4 style="font-size: 15px; font-weight: 600; color: #444; margin-bottom: 5px;">👤 Passenger Names:</h4>
+                    <ul style="font-size: 13px; color: #666; line-height: 1.4; padding-left: 20px; margin-top: 0;">
+                        @if(!empty($passengers))
+                            @foreach($passengers as $name)
+                                @if(!empty($name))
+                                    <li>{{ $name }}</li>
+                                @endif
+                            @endforeach
+                        @endif
+                    </ul>
+                @endif
+
+                {{-- VEHICLE CHARTER DETAILS --}}
+                @php
+                    $charterDays = data_get($meta, 'charter_days');
+                    $charterTotal = data_get($meta, 'charter_total_price');
+                    $serviceName = data_get($meta, 'service_name');
+                    $orderTypeName = data_get($meta, 'order_type_name');
+                    $isVehicleCharter = $charterDays !== null;
+                @endphp
+
+                @if($isVehicleCharter)
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                    <h3 style="font-size: 17px; font-weight: 600; color: #222;">🚐 Vehicle Charter Details</h3>
+                    <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
+                        <li><strong>Service:</strong> {{ $serviceName ?? 'N/A' }}</li>
+                        <li><strong>Charter Type:</strong> {{ $orderTypeName ?? 'N/A' }}</li>
+                        <li><strong>Number of Days:</strong> {{ $charterDays }} day(s)</li>
+                        <li><strong>Total Charter Cost:</strong> 
+                            <b style="font-size: 16px; color: #007bff;">
+                                ₦{{ number_format($charterTotal / 100, 2) }}
+                            </b>
+                        </li>
+                    </ul>
+                @endif
+
                 {{-- Additional Services (Extras) --}}
-                @if(count($enabledExtras) > 0)
+                <!-- @if(count($enabledExtras) > 0)
                     <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
                     <h3 style="font-size: 17px; font-weight: 600; color: #222;">✨ Additional Services (Extras)</h3>
                     <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
@@ -96,6 +148,30 @@
                             <li><span style="color: #28a745;">✔</span> {{ $extra }}</li>
                         @endforeach
                     </ul>
+                @endif -->
+
+                {{-- Dynamic Additional Services (Extras) --}}
+                @php
+                    $customServices = data_get($meta, 'custom_additional_services', []);
+                @endphp
+
+                @if(!empty($customServices) && is_array($customServices))
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                    <h3 style="font-size: 17px; font-weight: 600; color: #222;">✨ Additional Services (Extras)</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #444;">
+                        @foreach($customServices as $service)
+                            <tr>
+                                <td style="padding: 6px 0;">
+                                    <span style="color: #28a745; margin-right: 5px;">✔</span> 
+                                    <strong>{{ data_get($service, 'name') }}</strong>
+                                </td>
+                                <td align="right" style="padding: 6px 0; font-weight: 600;">
+                                    {{-- Cents mein data hai isliye 100 se divide kiya --}}
+                                    ₦{{ number_format(data_get($service, 'price', 0)) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
                 @endif
 
                 {{-- DISTANCE & SERVICE QUOTATION --}}
@@ -148,12 +224,56 @@
 
 
                 {{-- TRANSACTION DETAILS --}}
+                <!-- @if(isset($order_data['transaction']))
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+                    <h3 style="font-size: 17px; font-weight: 600; color: #222;">💳 Transaction Details</h3>
+                    <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
+                        <li><strong>Transaction ID:</strong> {{ $order_data['transaction']['gateway_transaction_id'] ?? 'N/A' }}</li>
+                        <li><strong>Amount:</strong> 
+                            <b style="font-size: 16px;">
+                                @if(isset($meta['total_bus_price']))
+                                    ₦{{ number_format($meta['total_bus_price'], 2) }} NGN
+                                @elseif(isset($meta['charter_total_price']))
+                                    ₦{{ number_format($meta['charter_total_price'] / 100, 2) }} NGN
+                                @else
+                                    {{ number_format(($order_data['transaction']['amount'] ?? 0) / 100, 2) }} NGN
+                                @endif
+                            </b>
+                        </li>
+                        <li><strong>Status:</strong> {{ ucfirst('payment Pending') }}</li>
+                        <li><strong>Quote Expiry: </strong>24 Hours</li>
+                    </ul>
+                @endif -->
+
+                {{-- TRANSACTION DETAILS --}}
                 @if(isset($order_data['transaction']))
                     <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
                     <h3 style="font-size: 17px; font-weight: 600; color: #222;">💳 Transaction Details</h3>
                     <ul style="font-size: 14px; color: #444; line-height: 1.6; list-style-type: none; padding-left: 0;">
                         <li><strong>Transaction ID:</strong> {{ $order_data['transaction']['gateway_transaction_id'] ?? 'N/A' }}</li>
-                        <li><strong>Amount:</strong> <b style="font-size: 16px;">{{ number_format(($order_data['transaction']['amount'] ?? 0) / 100, 2) }} NGN</b></li>
+                        <li><strong>Amount:</strong> 
+                            <b style="font-size: 16px;">
+                                @php
+                                    // 1. Base price calculate karo cents units mein
+                                    if (isset($meta['total_bus_price'])) {
+                                        $baseCents = $meta['total_bus_price'] * 100; // Bus price plain format me tha
+                                    } elseif (isset($meta['charter_total_price'])) {
+                                        $baseCents = $meta['charter_total_price'];
+                                    } else {
+                                        $baseCents = $order_data['transaction']['amount'] ?? 0;
+                                    }
+
+                                    // 2. Saved Meta se dynamic array total cents nikalo
+                                    $additionalCents = data_get($meta, 'custom_additional_services_total', 0);
+
+                                    // 3. Final Sum karke dynamic divide execute karo
+                                    $finalEmailTotal = ($baseCents + $additionalCents) / 100;
+                                @endphp
+                                
+                                {{-- Final Dynamic Calculated Total Output --}}
+                                ₦{{ number_format($finalEmailTotal, 2) }} NGN
+                            </b>
+                        </li>
                         <li><strong>Status:</strong> {{ ucfirst('payment Pending') }}</li>
                         <li><strong>Quote Expiry: </strong>24 Hours</li>
                     </ul>

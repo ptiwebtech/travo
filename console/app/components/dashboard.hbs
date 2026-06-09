@@ -14,6 +14,13 @@
                     </h1>
                     <p>Ship a Parcel or Package Quickly and Securely</p>
                 </div>
+
+                <div class="widget-count lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                        <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="travel"}} style="cursor: pointer !important;">TRAVEL</LinkToExternal>
+                    </h1>
+                    <p>Book Your Bus or Train Ticket for Easy Commutes</p>
+                </div>
             
                <div class="widget-count lg:col-span-2 h-full">
                     <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
@@ -31,13 +38,6 @@
 
                 <div class="widget-count lg:col-span-2 h-full">
                     <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
-                        <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="travel"}} style="cursor: pointer !important;">TRAVEL</LinkToExternal>
-                    </h1>
-                    <p>Book Your Bus or Train Ticket for Easy Commutes</p>
-                </div>
-
-                <div class="widget-count lg:col-span-2 h-full">
-                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
                         <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="airportpickup"}} style="cursor: pointer !important;">AIRPORT PICKUP</LinkToExternal>
                     </h1>
                     <p>Meet-and-Greet Airport Pickup for Your Arrival</p>
@@ -49,6 +49,21 @@
                     </h1>
                     <p>Skip Hire and Waste Collection Made Easy</p>
                 </div>
+                {{#unless this.isAdmin}}
+                    <div class="widget-count lg:col-span-2 h-full">
+                        <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                            <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="vehiclecharter"}} style="cursor: pointer !important;">VEHICLE CHARTER</LinkToExternal>
+                        </h1>
+                        <p>Vehicles available for daily, weekly, or monthly charter</p>
+                    </div>
+
+                    <div class="widget-count lg:col-span-2 h-full">
+                        <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                            <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="fueldelivery"}} style="cursor: pointer !important;">FUEL DELIVERY</LinkToExternal>
+                        </h1>
+                        <p>Energy Products for Home and Business</p>
+                    </div>
+                {{/unless}}
             </div>
         </div>
 
@@ -123,6 +138,27 @@
                         <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="marketpickup"}} style="cursor: pointer !important;">MARKET PICKUP</LinkToExternal>
                     </h1>
                     <p>Pickup and Delivery from All Major Markets</p>
+                </div>
+
+                <div class="widget-count lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                        <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="vehiclecharter"}} style="cursor: pointer !important;">VEHICLE CHARTER</LinkToExternal>
+                    </h1>
+                    <p>Vehicles available for daily, weekly, or monthly charter</p>
+                </div>
+
+                <div class="widget-count lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                        <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="machiningleasing"}} style="cursor: pointer !important;">MACHINERY LEASING</LinkToExternal>
+                    </h1>
+                    <p>Heavy machinery available for short or long-term leasing</p>
+                </div>
+
+                <div class="widget-count lg:col-span-2 h-full">
+                    <h1 class="text-3xl font-bold dark:text-gray-100 text-black">
+                        <LinkToExternal @route="console.fleet-ops.operations.orders.index.new" @query={{hash orderType="fueldelivery"}} style="cursor: pointer !important;">FUEL DELIVERY</LinkToExternal>
+                    </h1>
+                    <p>Energy Products for Home and Business</p>
                 </div>
             </div>
         </div>
@@ -204,7 +240,6 @@
                                 <span>{{t "component.dashboard.delete-dashboard"}}</span>
                             </a>
                         {{/unless}}
-
                     </div>
                 </div>
             </DropdownButton>

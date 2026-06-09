@@ -97,9 +97,15 @@ export default class LayoutFleetOpsSidebarComponent extends Component {
             },
 
             {
-                title: 'Airport Meet and Greet',
-                icon: 'plane-arrival',
-                route: 'operations.airport-meet-greet.index',
+                title: 'Additional Services',
+                icon: 'layer-group',
+                route: 'operations.additional-services.index',
+                visible: this.isAdmin,
+            },
+            {
+                title: 'Exchange Rates',
+                icon: 'money-bill-transfer',
+                route: 'operations.exchange-rates.index', // Aapke route ka exact naam jo router.js me hai
                 visible: this.isAdmin,
             },
         ];
